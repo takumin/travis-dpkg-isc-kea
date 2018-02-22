@@ -1,0 +1,16 @@
+[Unit]
+Description=ISC KEA Control Agent
+Documentation=man:kea-ctrl-agent(8)
+After=network-online.target time-sync.target
+
+[Service]
+Environment="KEA_PIDFILE_DIR=/var/run/"
+Environment="KEA_LOCKFILE_DIR=/var/run/lock/kea/"
+ExecStart=/usr/sbin/kea-ctrl-agent -c /etc/kea/kea-ctrl-agent.conf
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=kea-dhcpv4-server.service
+WantedBy=kea-dhcpv6-server.service

@@ -21,6 +21,8 @@ DAEMON=/usr/sbin/kea-dhcp6
 DAEMON_ARGS="-c /etc/kea-dhcp6-server.conf"
 PIDFILE=/var/run/$NAME.$DESC.pid
 SCRIPTNAME=/etc/init.d/$NAME
+KEA_LOCKFILE_DIR=/var/run/lock/kea/
+KEA_LOGGER_DESTINATION=/var/log/kea/
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
