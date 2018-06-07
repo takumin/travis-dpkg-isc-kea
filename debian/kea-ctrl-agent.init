@@ -19,9 +19,11 @@ DESC=kea-ctrl-agent
 NAME=kea-ctrl-agent
 DAEMON=kea-ctrl-agent
 DAEMON_ARGS="-c /etc/kea/kea-ctrl-agent.conf"
-PIDFILE=/var/run/$NAME.$DESC.pid
+PIDFILE=/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
-KEA_LOCKFILE_DIR=/var/run/lock/kea/
+KEA_PIDFILE_DIR=/run/
+KEA_LOCKFILE_DIR=/run/lock/kea/
+KEA_LOGGER_DESTINATION=/var/log/kea/
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0

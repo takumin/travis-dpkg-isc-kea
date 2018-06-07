@@ -18,10 +18,11 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=kea-dhcp-ddns
 NAME=kea-dhcp-ddns
 DAEMON=kea-dhcp-ddns
-DAEMON_ARGS="-c /etc/kea-dhcp-ddns-server.conf"
-PIDFILE=/var/run/$NAME.$DESC.pid
+DAEMON_ARGS="-c /etc/kea/kea-dhcp-ddns.conf"
+PIDFILE=/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
-KEA_LOCKFILE_DIR=/var/run/lock/kea/
+KEA_PIDFILE_DIR=/run/
+KEA_LOCKFILE_DIR=/run/lock/kea/
 KEA_LOGGER_DESTINATION=/var/log/kea/
 
 # Exit if the package is not installed
