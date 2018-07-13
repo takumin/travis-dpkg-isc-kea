@@ -1,2 +1,5 @@
 usr/sbin/perfdhcp
 usr/share/man/man8/perfdhcp.8
+etc/kea/kea-ctrl-agent.conf
+usr/sbin/kea-ctrl-agent
+usr/share/man/man8/kea-ctrl-agent.8
