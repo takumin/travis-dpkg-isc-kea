@@ -1,9 +1,13 @@
-isc-kea (1.4.0-0) UNRELEASED; urgency=medium
+isc-kea (1.4.0-1) unstable; urgency=medium
 
   * New upstream version 1.4.0
   * Rebase patches on top of Kea 1.4
+  * Use upstream conffiles
+  * Run d/ through wrap-and-sort -a + add dh-autoconf
+  * Enable autoreconf
+  * Don't install *.spec files
 
- -- Ondřej Surý <ondrej@debian.org>  Fri, 13 Jul 2018 17:07:13 +0000
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 13 Jul 2018 18:42:25 +0000
 
 isc-kea (1.1.0-1) unstable; urgency=medium
 
