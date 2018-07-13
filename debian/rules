@@ -20,9 +20,6 @@ export DEB_CXXFLAGS_MAINT_STRIP = -O2
 	dh $@  --with autotools-dev --parallel -B
 
 override_dh_auto_configure:
-	cat debian/conffiles.md5 | md5sum -c --status
-	@if [ $$? -ne 0 ]; then echo '*** Conffiles updated. Update and fix conffiles.md5'; exit 1; fi
-
 	dh_auto_configure $@ -- \
 		--with-dhcp-mysql \
 		--with-dhcp-pgsql \

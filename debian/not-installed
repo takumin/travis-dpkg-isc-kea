@@ -1,4 +1,3 @@
-debian/tmp/etc/kea/kea.conf
 debian/tmp/usr/share/doc/kea/AUTHORS
 debian/tmp/usr/share/doc/kea/COPYING
 debian/tmp/usr/share/doc/kea/ChangeLog
