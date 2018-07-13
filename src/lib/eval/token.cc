@@ -1,8 +1,10 @@
-// Copyright (C) 2015-2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2015-2017 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+#include <config.h>
 
 #include <eval/token.h>
 #include <eval/eval_log.h>
@@ -179,7 +181,17 @@ OptionPtr TokenRelay6Option::getOption(Pkt& pkt) {
         try {
             // Now that we have the right type of packet we can
             // get the option and return it.
-            return(pkt6.getRelayOption(option_code_, nest_level_));
+            if (nest_level_ >= 0) {
+                uint8_t nesting_level = static_cast<uint8_t>(nest_level_);
+                return(pkt6.getRelayOption(option_code_, nesting_level));
+            } else {
+                int nesting_level = pkt6.relay_info_.size() + nest_level_;
+                if (nesting_level < 0) {
+                    return (OptionPtr());
+                }
+                return(pkt6.getRelayOption(option_code_,
+                                           static_cast<uint8_t>(nesting_level)));
+            }
         }
         catch (const isc::OutOfRange&) {
             // The only exception we expect is OutOfRange if the nest
@@ -383,18 +395,29 @@ TokenRelay6Field::evaluate(Pkt& pkt, ValueStack& values) {
         // Check if it's a Pkt6.  If it's not the dynamic_cast will
         // throw std::bad_cast.
         const Pkt6& pkt6 = dynamic_cast<const Pkt6&>(pkt);
+        uint8_t relay_level;
 
         try {
-        switch (type_) {
+            if (nest_level_ >= 0) {
+                relay_level = static_cast<uint8_t>(nest_level_);
+            } else {
+                int nesting_level = pkt6.relay_info_.size() + nest_level_;
+                if (nesting_level < 0) {
+                    // Don't throw OutOfRange here
+                    nesting_level = 32;
+                }
+                relay_level = static_cast<uint8_t>(nesting_level);
+            }
+            switch (type_) {
             // Now that we have the right type of packet we can
             // get the option and return it.
             case LINKADDR:
                 type_str = "linkaddr";
-                binary = pkt6.getRelay6LinkAddress(nest_level_).toBytes();
+                binary = pkt6.getRelay6LinkAddress(relay_level).toBytes();
                 break;
             case PEERADDR:
                 type_str = "peeraddr";
-                binary = pkt6.getRelay6PeerAddress(nest_level_).toBytes();
+                binary = pkt6.getRelay6PeerAddress(relay_level).toBytes();
                 break;
             }
         } catch (const isc::OutOfRange&) {
@@ -404,7 +427,7 @@ TokenRelay6Field::evaluate(Pkt& pkt, ValueStack& values) {
             // Log what we pushed
             LOG_DEBUG(eval_logger, EVAL_DBG_STACK, EVAL_DEBUG_RELAY6_RANGE)
               .arg(type_str)
-              .arg(unsigned(nest_level_))
+              .arg(int(nest_level_))
               .arg("0x");
             return;
         }
@@ -422,7 +445,7 @@ TokenRelay6Field::evaluate(Pkt& pkt, ValueStack& values) {
     // Log what we pushed
     LOG_DEBUG(eval_logger, EVAL_DBG_STACK, EVAL_DEBUG_RELAY6)
         .arg(type_str)
-        .arg(unsigned(nest_level_))
+        .arg(int(nest_level_))
         .arg(toHex(value));
 }
 
@@ -489,7 +512,7 @@ TokenSubstring::evaluate(Pkt& /*pkt*/, ValueStack& values) {
         start_pos = boost::lexical_cast<int>(start_str);
     } catch (const boost::bad_lexical_cast&) {
         isc_throw(EvalTypeError, "the parameter '" << start_str
-                  << "' for the starting postion of the substring "
+                  << "' for the starting position of the substring "
                   << "couldn't be converted to an integer.");
     }
     try {
@@ -505,7 +528,7 @@ TokenSubstring::evaluate(Pkt& /*pkt*/, ValueStack& values) {
     }
 
     const int string_length = string_str.length();
-    // If the starting postion is outside of the string push an
+    // If the starting position is outside of the string push an
     // empty string and leave
     if ((start_pos < -string_length) || (start_pos >= string_length)) {
         values.push("");
@@ -520,7 +543,7 @@ TokenSubstring::evaluate(Pkt& /*pkt*/, ValueStack& values) {
     }
 
     // Adjust the values to be something for substr.  We first figure out
-    // the starting postion, then update it and the length to get the
+    // the starting position, then update it and the length to get the
     // characters before or after it depending on the sign of length
     if (start_pos < 0) {
         start_pos = string_length + start_pos;
@@ -568,6 +591,42 @@ TokenConcat::evaluate(Pkt& /*pkt*/, ValueStack& values) {
         .arg(toHex(op1))
         .arg(toHex(op2))
         .arg(toHex(values.top()));
+}
+
+void
+TokenIfElse::evaluate(Pkt& /*pkt*/, ValueStack& values) {
+
+    if (values.size() < 3) {
+        isc_throw(EvalBadStack, "Incorrect stack order. Expected at least "
+                  "3 values for ifelse, got " << values.size());
+    }
+
+    string iffalse = values.top();
+    values.pop();
+    string iftrue = values.top();
+    values.pop();
+    string cond = values.top();
+    values.pop();
+    bool val = toBool(cond);
+
+    if (val) {
+        values.push(iftrue);
+    } else {
+        values.push(iffalse);
+    }
+
+    // Log what we popped and pushed
+    if (val) {
+        LOG_DEBUG(eval_logger, EVAL_DBG_STACK, EVAL_DEBUG_IFELSE_TRUE)
+            .arg('\'' + cond + '\'')
+            .arg(toHex(iffalse))
+            .arg(toHex(iftrue));
+    } else {
+        LOG_DEBUG(eval_logger, EVAL_DBG_STACK, EVAL_DEBUG_IFELSE_FALSE)
+            .arg('\'' +cond + '\'')
+            .arg(toHex(iftrue))
+            .arg(toHex(iffalse));
+    }
 }
 
 void
@@ -646,6 +705,20 @@ TokenOr::evaluate(Pkt& /*pkt*/, ValueStack& values) {
     LOG_DEBUG(eval_logger, EVAL_DBG_STACK, EVAL_DEBUG_OR)
         .arg('\'' + op1 + '\'')
         .arg('\'' + op2 + '\'')
+        .arg('\'' + values.top() + '\'');
+}
+
+void
+TokenMember::evaluate(Pkt& pkt, ValueStack& values) {
+    if (pkt.inClass(client_class_)) {
+        values.push("true");
+    } else {
+        values.push("false");
+    }
+
+    // Log what we pushed
+    LOG_DEBUG(eval_logger, EVAL_DBG_STACK, EVAL_DEBUG_MEMBER)
+        .arg(client_class_)
         .arg('\'' + values.top() + '\'');
 }
 

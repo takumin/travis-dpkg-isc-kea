@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2015-2017 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -142,8 +142,11 @@ Dhcpv6SrvTest::acquireAndDecline(Dhcp6Client& client,
     // Use the second duid
     client.setDUID(duid2);
 
-    // Use the second IAID
-    client.config_.leases_[0].iaid_ = iaid2;
+    // Use the second IAID (but not in NO_IA which has cleared leases)
+    if (addr_type != NO_IA) {
+        ASSERT_NE(0, client.config_.leases_.size());
+        client.config_.leases_[0].iaid_ = iaid2;
+    }
 
     // Ok, let's decline the lease.
     ASSERT_NO_THROW(client.doDecline(include_address_));
@@ -166,7 +169,7 @@ Dhcpv6SrvTest::acquireAndDecline(Dhcp6Client& client,
     if (expected_result == SHOULD_PASS) {
         EXPECT_EQ(Lease::STATE_DECLINED, lease->state_);
 
-        // The decline succeded, so the declined-addresses statistic should
+        // The decline succeeded, so the declined-addresses statistic should
         // be increased by one
         EXPECT_EQ(after, before + 1);
         EXPECT_EQ(after_global, before_global + 1);

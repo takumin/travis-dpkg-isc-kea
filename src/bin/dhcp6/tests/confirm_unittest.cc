@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2014-2018 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -96,16 +96,16 @@ TEST_F(ConfirmTest, sanityCheck) {
 
     // A message with no client-id should fail
     Pkt6Ptr confirm = Pkt6Ptr(new Pkt6(DHCPV6_CONFIRM, 1234));
-    EXPECT_THROW(srv.processConfirm(confirm), RFCViolation);
+    EXPECT_FALSE(srv.sanityCheck(confirm));
 
     // A message with a single client-id should succeed
     OptionPtr clientid = generateClientId();
     confirm->addOption(clientid);
-    EXPECT_NO_THROW(srv.processConfirm(confirm));
+    EXPECT_TRUE(srv.sanityCheck(confirm));
 
     // A message with server-id present should fail
     confirm->addOption(srv.getServerID());
-    EXPECT_THROW(srv.processConfirm(confirm), RFCViolation);
+    EXPECT_FALSE(srv.sanityCheck(confirm));
 }
 
 // Test that directly connected client's Confirm message is processed and Reply
@@ -274,7 +274,7 @@ TEST_F(ConfirmTest, relayedClientNoSubnet) {
     // Send Confirm message to the server.
     ASSERT_NO_THROW(client.doConfirm());
     // Client should have received a status code option and this option should
-    // indicate that the client is NotOnLink becuase subnet could not be
+    // indicate that the client is NotOnLink because subnet could not be
     // selected.
     ASSERT_TRUE(client.receivedStatusCode());
     ASSERT_EQ(STATUS_NotOnLink, client.getStatusCode());

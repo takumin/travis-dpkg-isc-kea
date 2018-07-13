@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2016-2018 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -57,36 +57,89 @@ public:
     /// @throw isc::dhcp::DbOpenError Error opening the database
     /// @throw isc::dhcp::DbOperationError An operation on the open database has
     ///        failed.
-    PgSqlHostDataSource(const DatabaseConnection::ParameterMap& parameters);
+   PgSqlHostDataSource(const DatabaseConnection::ParameterMap& parameters);
 
     /// @brief Virtual destructor.
     /// Frees database resources and closes the database connection through
     /// the destruction of member impl_.
     virtual ~PgSqlHostDataSource();
 
-    /// @brief Return all hosts for the specified HW address or DUID.
+    /// @brief Adds a new host to the collection.
     ///
-    /// This method returns all @c Host objects which represent reservations
-    /// for the specified HW address or DUID. Note, that this method may
-    /// return multiple reservations because a particular client may have
-    /// reservations in multiple subnets and the same client may be identified
-    /// by HW address or DUID. The server is unable to verify that the specific
-    /// DUID and HW address belong to the same client, until the client sends
-    /// a DHCP message.
+    /// The method will insert the given host and all of its children (v4
+    /// options, v6 options, and v6 reservations) into the database.  It
+    /// relies on constraints defined as part of the PostgreSQL schema to
+    /// defend against duplicate entries and to ensure referential
+    /// integrity.
     ///
-    /// Specifying both hardware address and DUID is allowed for this method
-    /// and results in returning all objects that are associated with hardware
-    /// address OR duid. For example: if one host is associated with the
-    /// specified hardware address and another host is associated with the
-    /// specified DUID, two hosts will be returned.
+    /// Violation of any of these constraints for a host will result in a
+    /// DuplicateEntry exception:
     ///
-    /// @param hwaddr HW address of the client or NULL if no HW address
-    /// available.
-    /// @param duid client id or NULL if not available, e.g. DHCPv4 client case.
+    /// -# IPV4_ADDRESS and DHCP4_SUBNET_ID combination must be unique
+    /// -# IPV6 ADDRESS and PREFIX_LEN combination must be unique
+    /// -# DHCP ID, DHCP ID TYPE, and DHCP4_SUBNET_ID combination must be unique
+    /// -# DHCP ID, DHCP ID TYPE, and DHCP6_SUBNET_ID combination must be unique
     ///
-    /// @return Collection of const @c Host objects.
-    virtual ConstHostCollection
-    getAll(const HWAddrPtr& hwaddr, const DuidPtr& duid = DuidPtr()) const;
+    /// In addition, violating the following referential constraints will
+    /// a DbOperationError exception:
+    ///
+    /// -# DHCP ID TYPE must be defined in the HOST_IDENTIFIER_TYPE table
+    /// -# For DHCP4 Options:
+    ///  -# HOST_ID must exist with HOSTS
+    ///  -# SCOPE_ID must be defined in DHCP_OPTION_SCOPE
+    /// -# For DHCP6 Options:
+    ///  -# HOST_ID must exist with HOSTS
+    ///  -# SCOPE_ID must be defined in DHCP_OPTION_SCOPE
+    /// -# For IPV6 Reservations:
+    ///  -# HOST_ID must exist with HOSTS
+    ///  -# Address and Prefix Length must be unique (DuplicateEntry)
+    ///
+    /// @param host Pointer to the new @c Host object being added.
+    /// @throw DuplicateEntry or DbOperationError dependent on the constraint
+    /// violation
+    virtual void add(const HostPtr& host);
+
+    /// @brief Attempts to delete a host by (subnet-id, address)
+    ///
+    /// This method supports both v4 and v6.
+    ///
+    /// @param subnet_id subnet identifier.
+    /// @param addr specified address.
+    /// @return true if deletion was successful, false if the host was not there.
+    /// @throw various exceptions in case of errors
+    virtual bool del(const SubnetID& subnet_id, const asiolink::IOAddress& addr);
+
+    /// @brief Attempts to delete a host by (subnet4-id, identifier type, identifier)
+    ///
+    /// This method supports v4 hosts only.
+    ///
+    /// @param subnet_id subnet identifier.
+    /// @param identifier_type Identifier type.
+    /// @param identifier_begin Pointer to a beginning of a buffer containing
+    /// an identifier.
+    /// @param identifier_len Identifier length.
+    ///
+    /// @return true if deletion was successful, false if the host was not there.
+    /// @throw various exceptions in case of errors
+    virtual bool del4(const SubnetID& subnet_id,
+                      const Host::IdentifierType& identifier_type,
+                      const uint8_t* identifier_begin, const size_t identifier_len);
+
+    /// @brief Attempts to delete a host by (subnet6-id, identifier type, identifier)
+    ///
+    /// This method supports v6 hosts only.
+    ///
+    /// @param subnet_id subnet identifier.
+    /// @param identifier_type Identifier type.
+    /// @param identifier_begin Pointer to a beginning of a buffer containing
+    /// an identifier.
+    /// @param identifier_len Identifier length.
+    ///
+    /// @return true if deletion was successful, false if the host was not there.
+    /// @throw various exceptions in case of errors
+    virtual bool del6(const SubnetID& subnet_id,
+                      const Host::IdentifierType& identifier_type,
+                      const uint8_t* identifier_begin, const size_t identifier_len);
 
     /// @brief Return all hosts connected to any subnet for which reservations
     /// have been made using a specified identifier.
@@ -96,7 +149,7 @@ public:
     /// because a particular client may have reservations in multiple subnets.
     ///
     /// @param identifier_type Identifier type.
-    /// @param identifier_begin Pointer to a begining of a buffer containing
+    /// @param identifier_begin Pointer to a beginning of a buffer containing
     /// an identifier.
     /// @param identifier_len Identifier length.
     ///
@@ -118,27 +171,9 @@ public:
 
     /// @brief Returns a host connected to the IPv4 subnet.
     ///
-    /// Implementations of this method should guard against the case when
-    /// mutliple instances of the @c Host are present, e.g. when two
-    /// @c Host objects are found, one for the DUID, another one for the
-    /// HW address. In such case, an implementation of this method
-    /// should throw an MultipleRecords exception.
-    ///
-    /// @param subnet_id Subnet identifier.
-    /// @param hwaddr HW address of the client or NULL if no HW address
-    /// available.
-    /// @param duid client id or NULL if not available.
-    ///
-    /// @return Const @c Host object using a specified HW address or DUID.
-    virtual ConstHostPtr
-    get4(const SubnetID& subnet_id, const HWAddrPtr& hwaddr,
-         const DuidPtr& duid = DuidPtr()) const;
-
-    /// @brief Returns a host connected to the IPv4 subnet.
-    ///
     /// @param subnet_id Subnet identifier.
     /// @param identifier_type Identifier type.
-    /// @param identifier_begin Pointer to a begining of a buffer containing
+    /// @param identifier_begin Pointer to a beginning of a buffer containing
     /// an identifier.
     /// @param identifier_len Identifier length.
     ///
@@ -167,27 +202,9 @@ public:
 
     /// @brief Returns a host connected to the IPv6 subnet.
     ///
-    /// Implementations of this method should guard against the case when
-    /// mutliple instances of the @c Host are present, e.g. when two
-    /// @c Host objects are found, one for the DUID, another one for the
-    /// HW address. In such case, an implementation of this method
-    /// should throw an MultipleRecords exception.
-    ///
-    /// @param subnet_id Subnet identifier.
-    /// @param hwaddr HW address of the client or NULL if no HW address
-    /// available.
-    /// @param duid DUID or NULL if not available.
-    ///
-    /// @return Const @c Host object using a specified HW address or DUID.
-    virtual ConstHostPtr
-    get6(const SubnetID& subnet_id, const DuidPtr& duid,
-            const HWAddrPtr& hwaddr = HWAddrPtr()) const;
-
-    /// @brief Returns a host connected to the IPv6 subnet.
-    ///
     /// @param subnet_id Subnet identifier.
     /// @param identifier_type Identifier type.
-    /// @param identifier_begin Pointer to a begining of a buffer containing
+    /// @param identifier_begin Pointer to a beginning of a buffer containing
     /// an identifier.
     /// @param identifier_len Identifier length.
     ///
@@ -202,7 +219,7 @@ public:
     /// @param prefix IPv6 prefix for which the @c Host object is searched.
     /// @param prefix_len IPv6 prefix length.
     ///
-    /// @return Const @c Host object using a specified HW address or DUID.
+    /// @return Const @c Host object using a specified IPv6 prefix.
     virtual ConstHostPtr
     get6(const asiolink::IOAddress& prefix, const uint8_t prefix_len) const;
 
@@ -215,41 +232,6 @@ public:
     /// @return Const @c Host object using a specified IPv6 address/prefix.
     virtual ConstHostPtr
     get6(const SubnetID& subnet_id, const asiolink::IOAddress& address) const;
-
-    /// @brief Adds a new host to the collection.
-    ///
-    /// The method will insert the given host and all of its children (v4
-    /// options, v6 options, and v6 reservations) into the database.  It
-    /// relies on constraints defined as part of the PostgreSQL schema to
-    /// defend against duplicate entries and to ensure referential 
-    /// integrity.
-    ///
-    /// Violation of any of these constraints for a host will result in a
-    /// DuplicateEntry exception:
-    ///
-    /// -# IPV4_ADDRESS and DHCP4_SUBNET_ID combination must be unique
-    /// -# IPV6 ADDRESS and PREFIX_LEN combination must be unique
-    /// -# DHCP ID, DHCP ID TYPE, and DHCP4_SUBNET_ID combination must be unique
-    /// -# DHCP ID, DHCP ID TYPE, and DHCP6_SUBNET_ID combination must be unique
-    ///
-    /// In addition, violating the following referential contraints will
-    /// a DbOperationError exception:
-    ///
-    /// -# DHCP ID TYPE must be defined in the HOST_IDENTIFIER_TYPE table
-    /// -# For DHCP4 Options:
-    ///  -# HOST_ID must exist with HOSTS
-    ///  -# SCOPE_ID must be defined in DHCP_OPTION_SCOPE
-    /// -# For DHCP6 Options:
-    ///  -# HOST_ID must exist with HOSTS
-    ///  -# SCOPE_ID must be defined in DHCP_OPTION_SCOPE
-    /// -# For IPV6 Reservations:
-    ///  -# HOST_ID must exist with HOSTS
-    ///  -# Address and Prefix Length must be unique (DuplicateEntry)
-    ///
-    /// @param host Pointer to the new @c Host object being added.
-    /// @throw DuplicateEntry or DbOperationError dependent on the constraint
-    /// violation
-    virtual void add(const HostPtr& host);
 
     /// @brief Return backend type
     ///
@@ -275,6 +257,11 @@ public:
 
     /// @brief Returns backend version.
     ///
+    /// The method is called by the constructor after opening the database
+    /// but prior to preparing SQL statements, to verify that the schema version
+    /// is correct. Thus it must not rely on a pre-prepared statement or
+    /// formal statement execution error checking.
+    ///
     /// @return Version number stored in the database, as a pair of unsigned
     ///         integers. "first" is the major version number, "second" the
     ///         minor number.
@@ -294,7 +281,6 @@ public:
     virtual void rollback();
 
 private:
-
     /// @brief Pointer to the implementation of the @ref PgSqlHostDataSource.
     PgSqlHostDataSourceImpl* impl_;
 };

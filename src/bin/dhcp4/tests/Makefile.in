@@ -93,6 +93,8 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/test_libraries.h.in $(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4macros/ax_boost_for_kea.m4 \
+	$(top_srcdir)/m4macros/ax_cpp11.m4 \
+	$(top_srcdir)/m4macros/ax_crypto.m4 \
 	$(top_srcdir)/m4macros/ax_isc_rpath.m4 \
 	$(top_srcdir)/m4macros/libtool.m4 \
 	$(top_srcdir)/m4macros/ltoptions.m4 \
@@ -132,6 +134,16 @@ libco2_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(libco2_la_CXXFLAGS) \
 	$(CXXFLAGS) $(libco2_la_LDFLAGS) $(LDFLAGS) -o $@
 @HAVE_GTEST_TRUE@am_libco2_la_rpath =
+libco3_la_LIBADD =
+am__libco3_la_SOURCES_DIST = callout_library_3.cc \
+	callout_library_common.h
+@HAVE_GTEST_TRUE@am_libco3_la_OBJECTS =  \
+@HAVE_GTEST_TRUE@	libco3_la-callout_library_3.lo
+libco3_la_OBJECTS = $(am_libco3_la_OBJECTS)
+libco3_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(libco3_la_CXXFLAGS) \
+	$(CXXFLAGS) $(libco3_la_LDFLAGS) $(LDFLAGS) -o $@
+@HAVE_GTEST_TRUE@am_libco3_la_rpath =
 @HAVE_GTEST_TRUE@am__EXEEXT_1 = dhcp4_unittests$(EXEEXT)
 am__EXEEXT_2 = $(am__EXEEXT_1)
 PROGRAMS = $(noinst_PROGRAMS)
@@ -142,9 +154,11 @@ am__dhcp4_unittests_SOURCES_DIST = d2_unittest.h d2_unittest.cc \
 	config_parser_unittest.cc fqdn_unittest.cc marker_file.cc \
 	dhcp4_client.cc dhcp4_client.h hooks_unittest.cc \
 	inform_unittest.cc dora_unittest.cc host_options_unittest.cc \
-	release_unittest.cc out_of_range_unittest.cc \
-	decline_unittest.cc kea_controller_unittest.cc \
-	dhcp4to6_ipc_unittest.cc
+	release_unittest.cc parser_unittest.cc \
+	out_of_range_unittest.cc decline_unittest.cc \
+	kea_controller_unittest.cc dhcp4to6_ipc_unittest.cc \
+	simple_parser4_unittest.cc get_config_unittest.cc \
+	get_config_unittest.h shared_network_unittest.cc
 @HAVE_GTEST_TRUE@am_dhcp4_unittests_OBJECTS =  \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-d2_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-dhcp4_unittests.$(OBJEXT) \
@@ -162,10 +176,14 @@ am__dhcp4_unittests_SOURCES_DIST = d2_unittest.h d2_unittest.cc \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-dora_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-host_options_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-release_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	dhcp4_unittests-parser_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-out_of_range_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-decline_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-kea_controller_unittest.$(OBJEXT) \
-@HAVE_GTEST_TRUE@	dhcp4_unittests-dhcp4to6_ipc_unittest.$(OBJEXT)
+@HAVE_GTEST_TRUE@	dhcp4_unittests-dhcp4to6_ipc_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	dhcp4_unittests-simple_parser4_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	dhcp4_unittests-get_config_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	dhcp4_unittests-shared_network_unittest.$(OBJEXT)
 nodist_dhcp4_unittests_OBJECTS =
 dhcp4_unittests_OBJECTS = $(am_dhcp4_unittests_OBJECTS) \
 	$(nodist_dhcp4_unittests_OBJECTS)
@@ -251,9 +269,10 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libco1_la_SOURCES) $(libco2_la_SOURCES) \
-	$(dhcp4_unittests_SOURCES) $(nodist_dhcp4_unittests_SOURCES)
+	$(libco3_la_SOURCES) $(dhcp4_unittests_SOURCES) \
+	$(nodist_dhcp4_unittests_SOURCES)
 DIST_SOURCES = $(am__libco1_la_SOURCES_DIST) \
-	$(am__libco2_la_SOURCES_DIST) \
+	$(am__libco2_la_SOURCES_DIST) $(am__libco3_la_SOURCES_DIST) \
 	$(am__dhcp4_unittests_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -311,12 +330,19 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BENCHMARK_CPPFLAGS = @BENCHMARK_CPPFLAGS@
+BENCHMARK_INCLUDES = @BENCHMARK_INCLUDES@
+BENCHMARK_LDADD = @BENCHMARK_LDADD@
+BENCHMARK_LDFLAGS = @BENCHMARK_LDFLAGS@
+BENCHMARK_SOURCE = @BENCHMARK_SOURCE@
 BOOST_INCLUDES = @BOOST_INCLUDES@
 BOOST_LIBS = @BOOST_LIBS@
+BOTAN1_TOOL = @BOTAN1_TOOL@
 BOTAN_TOOL = @BOTAN_TOOL@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CONTRIB_DIR = @CONTRIB_DIR@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CQL_CPPFLAGS = @CQL_CPPFLAGS@
@@ -335,9 +361,14 @@ CYGPATH_W = @CYGPATH_W@
 DBLATEX = @DBLATEX@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DISTCHECK_BENCHMARK_CONFIGURE_FLAG = @DISTCHECK_BENCHMARK_CONFIGURE_FLAG@
 DISTCHECK_BOOST_CONFIGURE_FLAG = @DISTCHECK_BOOST_CONFIGURE_FLAG@
+DISTCHECK_CONTRIB_CONFIGURE_FLAG = @DISTCHECK_CONTRIB_CONFIGURE_FLAG@
 DISTCHECK_CRYPTO_CONFIGURE_FLAG = @DISTCHECK_CRYPTO_CONFIGURE_FLAG@
 DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
+DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
+DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
+DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -397,8 +428,10 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
 PGSQL_CPPFLAGS = @PGSQL_CPPFLAGS@
 PGSQL_LIBS = @PGSQL_LIBS@
+PKGPYTHONDIR = @PKGPYTHONDIR@
 PKG_CONFIG = @PKG_CONFIG@
 PLANTUML = @PLANTUML@
+PREMIUM_DIR = @PREMIUM_DIR@
 PYTHON = @PYTHON@
 PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
@@ -481,14 +514,16 @@ noinst_SCRIPTS = dhcp4_process_tests.sh
 EXTRA_DIST = dhcp4_process_tests.sh.in
 AM_CPPFLAGS = -I$(top_srcdir)/src/lib -I$(top_builddir)/src/lib \
 	-I$(top_srcdir)/src -I$(top_builddir)/src \
-	-I$(top_builddir)/src/bin -I$(top_srcdir)/src/bin \
+	-I$(top_srcdir)/src/bin -I$(top_builddir)/src/bin \
 	$(BOOST_INCLUDES) \
 	-DTEST_DATA_BUILDDIR=\"$(abs_top_builddir)/src/bin/dhcp4/tests\" \
-	-DINSTALL_PROG=\"$(abs_top_srcdir)/install-sh\"
+	-DINSTALL_PROG=\"$(abs_top_srcdir)/install-sh\" \
+	-DCFG_EXAMPLES=\"$(abs_top_srcdir)/doc/examples/kea4\"
 CLEANFILES = $(builddir)/interfaces.txt $(builddir)/logger_lockfile \
 	$(builddir)/load_marker.txt $(builddir)/unload_marker.txt \
 	$(builddir)/test_leases.csv.* *.json *.log
-DISTCLEANFILES = dhcp4_process_tests.sh
+DISTCLEANFILES = dhcp4_process_tests.sh marker_file.h \
+	test_data_files_config.h test_libraries.h
 AM_CXXFLAGS = $(KEA_CXXFLAGS)
 @USE_STATIC_LINK_TRUE@AM_LDFLAGS = -static
 TESTS_ENVIRONMENT = \
@@ -506,7 +541,7 @@ TESTS_ENVIRONMENT = \
 # own copy of the static objects (e.g. logger, ServerHooks) and that will lead
 # to unexpected errors. For this reason, the --enable-static-link option is
 # ignored for unit tests built here.
-@HAVE_GTEST_TRUE@noinst_LTLIBRARIES = libco1.la libco2.la
+@HAVE_GTEST_TRUE@noinst_LTLIBRARIES = libco1.la libco2.la libco3.la
 
 # -rpath /nowhere is a hack to trigger libtool to not create a
 # convenience archive, resulting in shared modules
@@ -518,6 +553,10 @@ TESTS_ENVIRONMENT = \
 @HAVE_GTEST_TRUE@libco2_la_CXXFLAGS = $(AM_CXXFLAGS)
 @HAVE_GTEST_TRUE@libco2_la_CPPFLAGS = $(AM_CPPFLAGS)
 @HAVE_GTEST_TRUE@libco2_la_LDFLAGS = -avoid-version -export-dynamic -module -rpath /nowhere
+@HAVE_GTEST_TRUE@libco3_la_SOURCES = callout_library_3.cc callout_library_common.h
+@HAVE_GTEST_TRUE@libco3_la_CXXFLAGS = $(AM_CXXFLAGS)
+@HAVE_GTEST_TRUE@libco3_la_CPPFLAGS = $(AM_CPPFLAGS)
+@HAVE_GTEST_TRUE@libco3_la_LDFLAGS = -avoid-version -export-dynamic -module -rpath /nowhere
 @HAVE_GTEST_TRUE@dhcp4_unittests_SOURCES = d2_unittest.h \
 @HAVE_GTEST_TRUE@	d2_unittest.cc dhcp4_unittests.cc \
 @HAVE_GTEST_TRUE@	dhcp4_srv_unittest.cc dhcp4_test_utils.cc \
@@ -528,10 +567,13 @@ TESTS_ENVIRONMENT = \
 @HAVE_GTEST_TRUE@	marker_file.cc dhcp4_client.cc dhcp4_client.h \
 @HAVE_GTEST_TRUE@	hooks_unittest.cc inform_unittest.cc \
 @HAVE_GTEST_TRUE@	dora_unittest.cc host_options_unittest.cc \
-@HAVE_GTEST_TRUE@	release_unittest.cc out_of_range_unittest.cc \
-@HAVE_GTEST_TRUE@	decline_unittest.cc \
+@HAVE_GTEST_TRUE@	release_unittest.cc parser_unittest.cc \
+@HAVE_GTEST_TRUE@	out_of_range_unittest.cc decline_unittest.cc \
 @HAVE_GTEST_TRUE@	kea_controller_unittest.cc \
-@HAVE_GTEST_TRUE@	dhcp4to6_ipc_unittest.cc
+@HAVE_GTEST_TRUE@	dhcp4to6_ipc_unittest.cc \
+@HAVE_GTEST_TRUE@	simple_parser4_unittest.cc \
+@HAVE_GTEST_TRUE@	get_config_unittest.cc get_config_unittest.h \
+@HAVE_GTEST_TRUE@	shared_network_unittest.cc
 @HAVE_GTEST_TRUE@nodist_dhcp4_unittests_SOURCES = marker_file.h test_libraries.h
 @HAVE_GTEST_TRUE@dhcp4_unittests_CPPFLAGS = $(AM_CPPFLAGS) $(GTEST_INCLUDES)
 @HAVE_GTEST_TRUE@dhcp4_unittests_LDFLAGS = $(AM_LDFLAGS) \
@@ -622,6 +664,9 @@ libco1.la: $(libco1_la_OBJECTS) $(libco1_la_DEPENDENCIES) $(EXTRA_libco1_la_DEPE
 libco2.la: $(libco2_la_OBJECTS) $(libco2_la_DEPENDENCIES) $(EXTRA_libco2_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(libco2_la_LINK) $(am_libco2_la_rpath) $(libco2_la_OBJECTS) $(libco2_la_LIBADD) $(LIBS)
 
+libco3.la: $(libco3_la_OBJECTS) $(libco3_la_DEPENDENCIES) $(EXTRA_libco3_la_DEPENDENCIES) 
+	$(AM_V_CXXLD)$(libco3_la_LINK) $(am_libco3_la_rpath) $(libco3_la_OBJECTS) $(libco3_la_LIBADD) $(LIBS)
+
 clean-noinstPROGRAMS:
 	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
 	echo " rm -f" $$list; \
@@ -654,15 +699,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-direct_client_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-dora_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-fqdn_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-get_config_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-hooks_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-host_options_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-inform_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-kea_controller_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-marker_file.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-out_of_range_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-parser_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-release_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-shared_network_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-simple_parser4_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libco1_la-callout_library_1.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libco2_la-callout_library_2.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libco3_la-callout_library_3.Plo@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -698,6 +748,13 @@ libco2_la-callout_library_2.lo: callout_library_2.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='callout_library_2.cc' object='libco2_la-callout_library_2.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libco2_la_CPPFLAGS) $(CPPFLAGS) $(libco2_la_CXXFLAGS) $(CXXFLAGS) -c -o libco2_la-callout_library_2.lo `test -f 'callout_library_2.cc' || echo '$(srcdir)/'`callout_library_2.cc
+
+libco3_la-callout_library_3.lo: callout_library_3.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libco3_la_CPPFLAGS) $(CPPFLAGS) $(libco3_la_CXXFLAGS) $(CXXFLAGS) -MT libco3_la-callout_library_3.lo -MD -MP -MF $(DEPDIR)/libco3_la-callout_library_3.Tpo -c -o libco3_la-callout_library_3.lo `test -f 'callout_library_3.cc' || echo '$(srcdir)/'`callout_library_3.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libco3_la-callout_library_3.Tpo $(DEPDIR)/libco3_la-callout_library_3.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='callout_library_3.cc' object='libco3_la-callout_library_3.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libco3_la_CPPFLAGS) $(CPPFLAGS) $(libco3_la_CXXFLAGS) $(CXXFLAGS) -c -o libco3_la-callout_library_3.lo `test -f 'callout_library_3.cc' || echo '$(srcdir)/'`callout_library_3.cc
 
 dhcp4_unittests-d2_unittest.o: d2_unittest.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-d2_unittest.o -MD -MP -MF $(DEPDIR)/dhcp4_unittests-d2_unittest.Tpo -c -o dhcp4_unittests-d2_unittest.o `test -f 'd2_unittest.cc' || echo '$(srcdir)/'`d2_unittest.cc
@@ -923,6 +980,20 @@ dhcp4_unittests-release_unittest.obj: release_unittest.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-release_unittest.obj `if test -f 'release_unittest.cc'; then $(CYGPATH_W) 'release_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/release_unittest.cc'; fi`
 
+dhcp4_unittests-parser_unittest.o: parser_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-parser_unittest.o -MD -MP -MF $(DEPDIR)/dhcp4_unittests-parser_unittest.Tpo -c -o dhcp4_unittests-parser_unittest.o `test -f 'parser_unittest.cc' || echo '$(srcdir)/'`parser_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-parser_unittest.Tpo $(DEPDIR)/dhcp4_unittests-parser_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser_unittest.cc' object='dhcp4_unittests-parser_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-parser_unittest.o `test -f 'parser_unittest.cc' || echo '$(srcdir)/'`parser_unittest.cc
+
+dhcp4_unittests-parser_unittest.obj: parser_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-parser_unittest.obj -MD -MP -MF $(DEPDIR)/dhcp4_unittests-parser_unittest.Tpo -c -o dhcp4_unittests-parser_unittest.obj `if test -f 'parser_unittest.cc'; then $(CYGPATH_W) 'parser_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/parser_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-parser_unittest.Tpo $(DEPDIR)/dhcp4_unittests-parser_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='parser_unittest.cc' object='dhcp4_unittests-parser_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-parser_unittest.obj `if test -f 'parser_unittest.cc'; then $(CYGPATH_W) 'parser_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/parser_unittest.cc'; fi`
+
 dhcp4_unittests-out_of_range_unittest.o: out_of_range_unittest.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-out_of_range_unittest.o -MD -MP -MF $(DEPDIR)/dhcp4_unittests-out_of_range_unittest.Tpo -c -o dhcp4_unittests-out_of_range_unittest.o `test -f 'out_of_range_unittest.cc' || echo '$(srcdir)/'`out_of_range_unittest.cc
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-out_of_range_unittest.Tpo $(DEPDIR)/dhcp4_unittests-out_of_range_unittest.Po
@@ -978,6 +1049,48 @@ dhcp4_unittests-dhcp4to6_ipc_unittest.obj: dhcp4to6_ipc_unittest.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dhcp4to6_ipc_unittest.cc' object='dhcp4_unittests-dhcp4to6_ipc_unittest.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-dhcp4to6_ipc_unittest.obj `if test -f 'dhcp4to6_ipc_unittest.cc'; then $(CYGPATH_W) 'dhcp4to6_ipc_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/dhcp4to6_ipc_unittest.cc'; fi`
+
+dhcp4_unittests-simple_parser4_unittest.o: simple_parser4_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-simple_parser4_unittest.o -MD -MP -MF $(DEPDIR)/dhcp4_unittests-simple_parser4_unittest.Tpo -c -o dhcp4_unittests-simple_parser4_unittest.o `test -f 'simple_parser4_unittest.cc' || echo '$(srcdir)/'`simple_parser4_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-simple_parser4_unittest.Tpo $(DEPDIR)/dhcp4_unittests-simple_parser4_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='simple_parser4_unittest.cc' object='dhcp4_unittests-simple_parser4_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-simple_parser4_unittest.o `test -f 'simple_parser4_unittest.cc' || echo '$(srcdir)/'`simple_parser4_unittest.cc
+
+dhcp4_unittests-simple_parser4_unittest.obj: simple_parser4_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-simple_parser4_unittest.obj -MD -MP -MF $(DEPDIR)/dhcp4_unittests-simple_parser4_unittest.Tpo -c -o dhcp4_unittests-simple_parser4_unittest.obj `if test -f 'simple_parser4_unittest.cc'; then $(CYGPATH_W) 'simple_parser4_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/simple_parser4_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-simple_parser4_unittest.Tpo $(DEPDIR)/dhcp4_unittests-simple_parser4_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='simple_parser4_unittest.cc' object='dhcp4_unittests-simple_parser4_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-simple_parser4_unittest.obj `if test -f 'simple_parser4_unittest.cc'; then $(CYGPATH_W) 'simple_parser4_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/simple_parser4_unittest.cc'; fi`
+
+dhcp4_unittests-get_config_unittest.o: get_config_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-get_config_unittest.o -MD -MP -MF $(DEPDIR)/dhcp4_unittests-get_config_unittest.Tpo -c -o dhcp4_unittests-get_config_unittest.o `test -f 'get_config_unittest.cc' || echo '$(srcdir)/'`get_config_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-get_config_unittest.Tpo $(DEPDIR)/dhcp4_unittests-get_config_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='get_config_unittest.cc' object='dhcp4_unittests-get_config_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-get_config_unittest.o `test -f 'get_config_unittest.cc' || echo '$(srcdir)/'`get_config_unittest.cc
+
+dhcp4_unittests-get_config_unittest.obj: get_config_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-get_config_unittest.obj -MD -MP -MF $(DEPDIR)/dhcp4_unittests-get_config_unittest.Tpo -c -o dhcp4_unittests-get_config_unittest.obj `if test -f 'get_config_unittest.cc'; then $(CYGPATH_W) 'get_config_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/get_config_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-get_config_unittest.Tpo $(DEPDIR)/dhcp4_unittests-get_config_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='get_config_unittest.cc' object='dhcp4_unittests-get_config_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-get_config_unittest.obj `if test -f 'get_config_unittest.cc'; then $(CYGPATH_W) 'get_config_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/get_config_unittest.cc'; fi`
+
+dhcp4_unittests-shared_network_unittest.o: shared_network_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-shared_network_unittest.o -MD -MP -MF $(DEPDIR)/dhcp4_unittests-shared_network_unittest.Tpo -c -o dhcp4_unittests-shared_network_unittest.o `test -f 'shared_network_unittest.cc' || echo '$(srcdir)/'`shared_network_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-shared_network_unittest.Tpo $(DEPDIR)/dhcp4_unittests-shared_network_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='shared_network_unittest.cc' object='dhcp4_unittests-shared_network_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-shared_network_unittest.o `test -f 'shared_network_unittest.cc' || echo '$(srcdir)/'`shared_network_unittest.cc
+
+dhcp4_unittests-shared_network_unittest.obj: shared_network_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-shared_network_unittest.obj -MD -MP -MF $(DEPDIR)/dhcp4_unittests-shared_network_unittest.Tpo -c -o dhcp4_unittests-shared_network_unittest.obj `if test -f 'shared_network_unittest.cc'; then $(CYGPATH_W) 'shared_network_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/shared_network_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-shared_network_unittest.Tpo $(DEPDIR)/dhcp4_unittests-shared_network_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='shared_network_unittest.cc' object='dhcp4_unittests-shared_network_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-shared_network_unittest.obj `if test -f 'shared_network_unittest.cc'; then $(CYGPATH_W) 'shared_network_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/shared_network_unittest.cc'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

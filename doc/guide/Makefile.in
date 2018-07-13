@@ -83,6 +83,8 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(dist_doc_DATA) $(dist_html_DATA)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4macros/ax_boost_for_kea.m4 \
+	$(top_srcdir)/m4macros/ax_cpp11.m4 \
+	$(top_srcdir)/m4macros/ax_crypto.m4 \
 	$(top_srcdir)/m4macros/ax_isc_rpath.m4 \
 	$(top_srcdir)/m4macros/libtool.m4 \
 	$(top_srcdir)/m4macros/ltoptions.m4 \
@@ -155,12 +157,19 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BENCHMARK_CPPFLAGS = @BENCHMARK_CPPFLAGS@
+BENCHMARK_INCLUDES = @BENCHMARK_INCLUDES@
+BENCHMARK_LDADD = @BENCHMARK_LDADD@
+BENCHMARK_LDFLAGS = @BENCHMARK_LDFLAGS@
+BENCHMARK_SOURCE = @BENCHMARK_SOURCE@
 BOOST_INCLUDES = @BOOST_INCLUDES@
 BOOST_LIBS = @BOOST_LIBS@
+BOTAN1_TOOL = @BOTAN1_TOOL@
 BOTAN_TOOL = @BOTAN_TOOL@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CONTRIB_DIR = @CONTRIB_DIR@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CQL_CPPFLAGS = @CQL_CPPFLAGS@
@@ -179,9 +188,14 @@ CYGPATH_W = @CYGPATH_W@
 DBLATEX = @DBLATEX@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DISTCHECK_BENCHMARK_CONFIGURE_FLAG = @DISTCHECK_BENCHMARK_CONFIGURE_FLAG@
 DISTCHECK_BOOST_CONFIGURE_FLAG = @DISTCHECK_BOOST_CONFIGURE_FLAG@
+DISTCHECK_CONTRIB_CONFIGURE_FLAG = @DISTCHECK_CONTRIB_CONFIGURE_FLAG@
 DISTCHECK_CRYPTO_CONFIGURE_FLAG = @DISTCHECK_CRYPTO_CONFIGURE_FLAG@
 DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
+DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
+DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
+DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -241,8 +255,10 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
 PGSQL_CPPFLAGS = @PGSQL_CPPFLAGS@
 PGSQL_LIBS = @PGSQL_LIBS@
+PKGPYTHONDIR = @PKGPYTHONDIR@
 PKG_CONFIG = @PKG_CONFIG@
 PLANTUML = @PLANTUML@
+PREMIUM_DIR = @PREMIUM_DIR@
 PYTHON = @PYTHON@
 PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
@@ -327,15 +343,16 @@ dist_html_DATA = $(HTMLDOCS) kea-guide.css kea-logo-100x70.png
 DOCBOOK = kea-guide.xml intro.xml quickstart.xml install.xml admin.xml \
 	config.xml keactrl.xml dhcp4-srv.xml dhcp6-srv.xml \
 	lease-expiration.xml logging.xml ddns.xml hooks.xml \
-	libdhcp.xml lfc.xml stats.xml ctrl-channel.xml faq.xml \
-	classify.xml
+	hooks-ha.xml hooks-host-cache.xml hooks-radius.xml \
+	hooks-stat-cmds.xml libdhcp.xml lfc.xml stats.xml \
+	ctrl-channel.xml faq.xml classify.xml shell.xml agent.xml
 EXTRA_DIST = $(DOCBOOK)
 DISTCLEANFILES = $(HTMLDOCS) $(DOCS) kea-messages.xml
 @HAVE_DBLATEX_TRUE@CLEANFILES = kea-guide.pdf kea-messages.pdf
 @HAVE_DBLATEX_TRUE@DBLATEX_FLAGS = --xslt-opts=--path --xslt-opts=$(abs_top_builddir)/doc \
 @HAVE_DBLATEX_TRUE@	-P doc.collab.show=0 -P latex.output.revhistory=0 \
 @HAVE_DBLATEX_TRUE@	-P term.breakline=1 -P filename.as.url=0 \
-@HAVE_DBLATEX_TRUE@	-P imagedata.default.scale="maxwidth=50px,maxheigth=35px"
+@HAVE_DBLATEX_TRUE@	-P imagedata.default.scale="maxwidth=50px,maxheight=35px"
 
 all: all-am
 
@@ -578,7 +595,7 @@ uninstall-am: uninstall-dist_docDATA uninstall-dist_htmlDATA
 
 
 kea-messages.xml:
-	$(top_srcdir)/tools/system_messages -o $@ \
+	$(top_builddir)/tools/system_messages -o $@ \
 	`find $(top_srcdir) -name "*.mes" -print`
 
 # This is not a "man" manual, but reuse this for now for docbook.

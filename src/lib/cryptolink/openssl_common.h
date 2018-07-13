@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2015 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2014-2016 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,23 +26,23 @@ public:
 
     typedef typename std::vector<T>::const_iterator const_iterator;
 
-    explicit SecBuf() : vec_(std::vector<T>()) {}
+    explicit SecBuf() : vec_() {}
 
-    explicit SecBuf(size_t n, const T& value = T()) :
-        vec_(std::vector<T>(n, value))
-    {}
+    explicit SecBuf(size_t n, const T& value = T()) : vec_(n, value) {}
 
-    SecBuf(iterator first, iterator last) :
-        vec_(std::vector<T>(first, last))
-    {}
+    SecBuf(iterator first, iterator last) : vec_(first, last) {}
 
-    SecBuf(const_iterator first, const_iterator last) :
-        vec_(std::vector<T>(first, last))
-    {}
+    SecBuf(const_iterator first, const_iterator last) : vec_(first, last) {}
 
     SecBuf(const std::vector<T>& x) : vec_(x) {}
 
     ~SecBuf() {
+#if defined(__has_feature)
+#if __has_feature(address_sanitizer)
+        // Make the address sanitizer happy assuming this won't reallocate
+        vec_.resize(vec_.capacity());
+#endif
+#endif
         std::memset(&vec_[0], 0, vec_.capacity() * sizeof(T));
     };
 
@@ -69,6 +69,17 @@ public:
     void resize(size_t sz) {
         vec_.resize(sz);
     };
+
+    void clear() {
+#if defined(__has_feature)
+#if __has_feature(address_sanitizer)
+        // Make the address sanitizer happy assuming this won't reallocate
+        vec_.resize(vec_.capacity());
+#endif
+#endif
+        std::memset(&vec_[0], 0, vec_.capacity() * sizeof(T));
+        vec_.clear();
+    }
 
     SecBuf& operator=(const SecBuf& x) {
         if (&x != *this) {

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2014-2018 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,28 +26,12 @@ public:
 
     /// @brief Non-const version of the @c getAll const method.
     ///
-    /// Specifying both hardware address and DUID is allowed for this method
-    /// and results in returning all objects that are associated with hardware
-    /// address OR duid. For example: if one host is associated with the
-    /// specified hardware address and another host is associated with the
-    /// specified DUID, two hosts will be returned.
-    ///
-    /// @param hwaddr HW address of the client or NULL if no HW address
-    /// available.
-    /// @param duid client id or NULL if not available, e.g. DHCPv4 client case.
-    ///
-    /// @return Collection of non-const @c Host objects.
-    virtual HostCollection
-    getAll(const HWAddrPtr& hwaddr, const DuidPtr& duid = DuidPtr()) = 0;
-
-    /// @brief Non-const version of the @c getAll const method.
-    ///
     /// This method returns all @c Host objects which represent reservations
     /// for a specified identifier. This method may return multiple hosts
     /// because a particular client may have reservations in multiple subnets.
     ///
     /// @param identifier_type Identifier type.
-    /// @param identifier_begin Pointer to a begining of a buffer containing
+    /// @param identifier_begin Pointer to a beginning of a buffer containing
     /// an identifier.
     /// @param identifier_len Identifier length.
     ///
@@ -70,27 +54,9 @@ public:
 
     /// @brief Returns a host connected to the IPv4 subnet.
     ///
-    /// Implementations of this method should guard against the case when
-    /// mutliple instances of the @c Host are present, e.g. when two
-    /// @c Host objects are found, one for the DUID, another one for the
-    /// HW address. In such case, an implementation of this method
-    /// should throw an exception.
-    ///
-    /// @param subnet_id Subnet identifier.
-    /// @param hwaddr HW address of the client or NULL if no HW address
-    /// available.
-    /// @param duid client id or NULL if not available.
-    ///
-    /// @return Non-const @c Host object using a specified HW address or DUID.
-    virtual HostPtr
-    get4(const SubnetID& subnet_id, const HWAddrPtr& hwaddr,
-         const DuidPtr& duid = DuidPtr()) = 0;
-
-    /// @brief Returns a host connected to the IPv4 subnet.
-    ///
     /// @param subnet_id Subnet identifier.
     /// @param identifier_type Identifier type.
-    /// @param identifier_begin Pointer to a begining of a buffer containing
+    /// @param identifier_begin Pointer to a beginning of a buffer containing
     /// an identifier.
     /// @param identifier_len Identifier length.
     ///
@@ -102,27 +68,9 @@ public:
 
     /// @brief Returns a host connected to the IPv6 subnet.
     ///
-    /// Implementations of this method should guard against the case when
-    /// mutliple instances of the @c Host are present, e.g. when two
-    /// @c Host objects are found, one for the DUID, another one for the
-    /// HW address. In such case, an implementation of this method
-    /// should throw an exception.
-    ///
-    /// @param subnet_id Subnet identifier.
-    /// @param hwaddr HW address of the client or NULL if no HW address
-    /// available.
-    /// @param duid DUID or NULL if not available.
-    ///
-    /// @return Non-const @c Host object using a specified HW address or DUID.
-    virtual HostPtr
-    get6(const SubnetID& subnet_id, const DuidPtr& duid,
-         const HWAddrPtr& hwaddr = HWAddrPtr()) = 0;
-
-    /// @brief Returns a host connected to the IPv6 subnet.
-    ///
     /// @param subnet_id Subnet identifier.
     /// @param identifier_type Identifier type.
-    /// @param identifier_begin Pointer to a begining of a buffer containing
+    /// @param identifier_begin Pointer to a beginning of a buffer containing
     /// an identifier.
     /// @param identifier_len Identifier length.
     ///
@@ -137,7 +85,7 @@ public:
     /// @param prefix IPv6 prefix for which the @c Host object is searched.
     /// @param prefix_len IPv6 prefix length.
     ///
-    /// @return Non-const @c Host object using a specified HW address or DUID.
+    /// @return Non-const @c Host object using a specified IPv6 prefix.
     virtual HostPtr
     get6(const asiolink::IOAddress& prefix, const uint8_t prefix_len) = 0;
 

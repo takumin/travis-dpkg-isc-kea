@@ -2,12 +2,12 @@
 .\"     Title: kea-dhcp6
 .\"    Author: 
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: Sep. 28, 2016
+.\"      Date: June 15, 2018
 .\"    Manual: Kea
-.\"    Source: ISC Kea 1.1.0
+.\"    Source: ISC Kea 1.4.0
 .\"  Language: English
 .\"
-.TH "KEA\-DHCP6" "8" "Sep\&. 28, 2016" "ISC Kea 1.1.0" "Kea"
+.TH "KEA\-DHCP6" "8" "June 15, 2018" "ISC Kea 1.4.0" "Kea"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -31,7 +31,7 @@
 kea-dhcp6 \- DHCPv6 server in Kea
 .SH "SYNOPSIS"
 .HP \w'\fBkea\-dhcp6\fR\ 'u
-\fBkea\-dhcp6\fR [\fB\-v\fR] [\fB\-V\fR] [\fB\-W\fR] [\fB\-d\fR] [\fB\-c\fR\fB\fIconfig\-file\fR\fR] [\fB\-p\fR\fB\fIport\-number\fR\fR]
+\fBkea\-dhcp6\fR [\fB\-v\fR] [\fB\-V\fR] [\fB\-W\fR] [\fB\-d\fR] [\fB\-c\ \fR\fB\fIconfig\-file\fR\fR] [\fB\-t\ \fR\fB\fIconfig\-file\fR\fR] [\fB\-p\ \fR\fB\fIport\-number\fR\fR]
 .SH "DESCRIPTION"
 .PP
 The
@@ -66,6 +66,11 @@ Enable the debug mode with extra verbosity\&.
 Configuration file including the configuration for DHCPv6 server\&. It may also contain configuration entries for other Kea services\&.
 .RE
 .PP
+\fB\-t\fR
+.RS 4
+Check the configuration file and report the first error if any\&. Note that not all parameters are completely checked, in particular, service and control channel sockets are not opened, and hook libraries are not loaded\&.
+.RE
+.PP
 \fB\-p\fR
 .RS 4
 Port number (1\-65535) on which the server listens\&. This is useful for testing purposes only\&.
@@ -93,6 +98,7 @@ Kea became a standalone server and the BIND10 framework was removed\&. The DHCPv
 .PP
 \fBkea-dhcp4\fR(8),
 \fBkea-dhcp-ddns\fR(8),
+\fBkea-ctrl-agent\fR(8),
 \fBkea-admin\fR(8),
 \fBkeactrl\fR(8),
 \fBperfdhcp\fR(8),
@@ -104,5 +110,5 @@ Kea Administrator\*(Aqs Guide\&.
 The Kea software has been written by a number of engineers working for ISC: Tomek Mrugalski, Stephen Morris, Marcin Siodelski, Thomas Markwalder, Francis Dupont, Jeremy C\&. Reed, Wlodek Wencel and Shawn Routhier\&. That list is roughly in the chronological order in which the authors made their first contribution\&. For a complete list of authors and contributors, see AUTHORS file\&.
 .SH "COPYRIGHT"
 .br
-Copyright \(co 2011-2016 Internet Systems Consortium, Inc. ("ISC")
+Copyright \(co 2011-2018 Internet Systems Consortium, Inc. ("ISC")
 .br

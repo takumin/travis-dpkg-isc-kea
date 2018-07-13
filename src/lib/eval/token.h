@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2015-2017 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -338,16 +338,17 @@ protected:
 /// exist or the option is not found an empty string ("") is returned
 /// (or "false" when the representation is EXISTS).
 ///
-/// The nesting level can go from 0 (closest to the server) to 31
+/// The nesting level can go from 0 (closest to the server) to 31,
+/// or from -1 (closest to the client) to -32
 class TokenRelay6Option : public TokenOption {
 public:
     /// @brief Constructor that takes a nesting level and an option
-    /// code as paramaters.
+    /// code as parameters.
     ///
     /// @param nest_level the nesting for which relay to examine.
     /// @param option_code code of the option.
     /// @param rep_type Token representation type.
-    TokenRelay6Option(const uint8_t nest_level, const uint16_t option_code,
+    TokenRelay6Option(const int8_t nest_level, const uint16_t option_code,
                       const RepresentationType& rep_type)
         :TokenOption(option_code, rep_type), nest_level_(nest_level) {}
 
@@ -358,7 +359,7 @@ public:
     ///
     /// @return nest-level of the relay block this token expects to use
     /// for extraction.
-    uint8_t getNest() const {
+    int8_t getNest() const {
         return (nest_level_);
     }
 
@@ -368,7 +369,7 @@ protected:
     /// @return option instance if available
     virtual OptionPtr getOption(Pkt& pkt);
 
-    uint8_t nest_level_; ///< nesting level of the relay block to use
+    int8_t nest_level_; ///< nesting level of the relay block to use
 };
 
 /// @brief Token that represents meta data of a DHCP packet.
@@ -398,10 +399,10 @@ public:
 
     /// @brief Gets a value from the specified packet.
     ///
-    /// Evaluation uses metadatas available in the packet. It does not
+    /// Evaluation uses metadata available in the packet. It does not
     /// require any values to be present on the stack.
     ///
-    /// @param pkt - metadatas will be extracted from here
+    /// @param pkt - metadata will be extracted from here
     /// @param values - stack of values (1 result will be pushed)
     void evaluate(Pkt& pkt, ValueStack& values);
 
@@ -499,7 +500,7 @@ public:
 
     /// @brief Gets a value of the specified packet.
     ///
-    /// The evaluation uses fields that are availabe in the packet.  It does not
+    /// The evaluation uses fields that are available in the packet.  It does not
     /// require any values to be present on the stack.
     ///
     /// @throw EvalTypeError when called for a DHCPv4 packet
@@ -534,7 +535,8 @@ private:
 /// is always returned as a 16 byte IPv6 address.  As the relay may not have
 /// set the field it may be 0s.
 ///
-/// The nesting level can go from 0 (closest to the server) to 31.
+/// The nesting level can go from 0 (closest to the server) to 31,
+/// or from -1 (closest to the client) to -32
 class TokenRelay6Field : public Token {
 public:
 
@@ -549,7 +551,7 @@ public:
     ///
     /// @param nest_level the nesting level for which relay to examine.
     /// @param type which field to extract.
-    TokenRelay6Field(const uint8_t nest_level, const FieldType type)
+    TokenRelay6Field(const int8_t nest_level, const FieldType type)
       : nest_level_(nest_level), type_(type) {}
 
     /// @brief Extracts the specified field from the requested relay
@@ -568,7 +570,7 @@ public:
     ///
     /// @return nest-level of the relay block this token expects to use
     /// for extraction.
-    uint8_t getNest() const {
+    int8_t getNest() const {
         return (nest_level_);
     }
 
@@ -584,7 +586,7 @@ public:
 
 protected:
     /// @brief Specifies field of the DHCPv6 relay option to get
-    uint8_t nest_level_; ///< nesting level of the relay block to use
+    int8_t nest_level_; ///< nesting level of the relay block to use
     FieldType type_; ///< field to get
 };
 
@@ -635,7 +637,7 @@ public:
     /// str is the string to extract a substring from.  If it is empty, an empty
     /// string is pushed onto the value stack.
     ///
-    /// start is the postion from which the code starts extracting the substring.
+    /// start is the position from which the code starts extracting the substring.
     /// 0 is the first character and a negative number starts from the end, with
     /// -1 being the last character.  If the starting point is outside of the
     /// original string an empty string is pushed onto the value stack.
@@ -689,6 +691,37 @@ public:
     /// @param pkt (unused)
     /// @param values - stack of values (2 arguments will be popped, 1 result
     ///        will be pushed)
+    void evaluate(Pkt& pkt, ValueStack& values);
+};
+
+/// @brief Token that represents an alternative
+///
+/// For example in the sub-expression "ifelse(cond, iftrue, iffalse)"
+/// the boolean "cond" expression is evaluated, if it is true then
+/// the "iftrue" value is returned else the "iffalse" value is returned.
+/// Please note that "iftrue" and "iffalse" must be plain string (vs. boolean)
+/// expressions and they are always evaluated. If you want a similar
+/// operator on boolean expressions it can be built from "and", "or" and
+/// "not" boolean operators.
+class TokenIfElse : public Token {
+public:
+    /// @brief Constructor (does nothing)
+    TokenIfElse() { }
+
+    /// @brief Alternative.
+    ///
+    /// Evaluation does not use packet information, but rather consumes the
+    /// last three results. It does a simple string comparison on the
+    /// condition (third value on the stack) which is required to be
+    /// either "true" or "false", and leaves the second and first
+    /// value if the condition is "true" or "false".
+    ///
+    /// @throw EvalBadStack if there are less than 3 values on stack
+    /// @throw EvalTypeError if the third value (the condition) is not
+    ///        either "true" or "false"
+    ///
+    /// @param pkt (unused)
+    /// @param values - stack of values (two items are removed)
     void evaluate(Pkt& pkt, ValueStack& values);
 };
 
@@ -765,6 +798,40 @@ public:
     /// @param values - stack of values (2 arguments will be popped, 1 result
     ///        will be pushed)
     void evaluate(Pkt& pkt, ValueStack& values);
+};
+
+/// @brief Token that represents client class membership
+///
+/// For example "not member('foo')" is the complement of class foo
+class TokenMember : public Token {
+public:
+    /// @brief Constructor
+    ///
+    /// @param client_class client class name
+    TokenMember(const std::string& client_class)
+        :client_class_(client_class){
+    }
+
+    /// @brief Token evaluation (check if client_class_ was added to
+    /// packet client classes)
+    ///
+    /// @param pkt the class name will be check from this packet's client classes
+    /// @param values true (if found) or false (if not found) will be pushed here
+    void evaluate(Pkt& pkt, ValueStack& values);
+
+    /// @brief Returns client class name
+    ///
+    /// This method is used in testing to determine if the parser had
+    /// instantiated TokenMember with correct parameters.
+    ///
+    /// @return client class name the token expects to check membership.
+    const ClientClass& getClientClass() const {
+        return (client_class_);
+    }
+
+protected:
+    /// @brief The client class name
+    ClientClass client_class_;
 };
 
 /// @brief Token that represents vendor options in DHCPv4 and DHCPv6.

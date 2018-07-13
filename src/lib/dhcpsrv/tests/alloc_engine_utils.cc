@@ -1,4 +1,4 @@
-// Copyright (C) 2012-2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2012-2018 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,6 +14,8 @@
 #include <dhcpsrv/host_mgr.h>
 #include <dhcpsrv/lease_mgr.h>
 #include <dhcpsrv/memfile_lease_mgr.h>
+#include <hooks/hooks_manager.h>
+#include <hooks/callout_handle.h>
 #include <stats/stats_mgr.h>
 
 #include <dhcpsrv/tests/test_utils.h>
@@ -39,20 +41,23 @@ namespace isc {
 namespace dhcp {
 namespace test {
 
-bool testStatistics(const std::string& stat_name, const int64_t exp_value) {
+bool testStatistics(const std::string& stat_name, const int64_t exp_value,
+                    const SubnetID subnet_id) {
     try {
-        ObservationPtr observation = StatsMgr::instance().getObservation(stat_name);
+        std::string name = (!subnet_id ? stat_name : 
+                            StatsMgr::generateName("subnet", subnet_id, stat_name));
+        ObservationPtr observation = StatsMgr::instance().getObservation(name);
         if (observation) {
             if (observation->getInteger().first != exp_value) {
                 ADD_FAILURE()
                     << "value of the observed statistics '"
-                    << stat_name << "' " << "("
+                    << name << "' " << "("
                     << observation->getInteger().first << ") "
                     <<  "doesn't match expected value (" << exp_value << ")";
             }
             return (observation->getInteger().first == exp_value);
         } else {
-            ADD_FAILURE() << "Expected statistic " << stat_name
+            ADD_FAILURE() << "Expected statistic " << name
                           << " not found.";
         }
 
@@ -136,20 +141,23 @@ AllocEngine6Test::AllocEngine6Test() {
     // hardcoded anywhere.
     const uint8_t mac[] = { 0, 1, 22, 33, 44, 55};
     hwaddr_ = HWAddrPtr(new HWAddr(mac, sizeof(mac), HTYPE_FDDI));
-
     // Initialize a subnet and short address pool.
     initSubnet(IOAddress("2001:db8:1::"),
                IOAddress("2001:db8:1::10"),
-               IOAddress("2001:db8:1::20"));
+               IOAddress("2001:db8:1::20"),
+               IOAddress("2001:db8:1:2::"),
+               64, 80);
 
     initFqdn("", false, false);
-
 }
 
 void
 AllocEngine6Test::initSubnet(const asiolink::IOAddress& subnet,
-                    const asiolink::IOAddress& pool_start,
-                    const asiolink::IOAddress& pool_end) {
+                             const asiolink::IOAddress& pool_start,
+                             const asiolink::IOAddress& pool_end,
+                             const asiolink::IOAddress& pd_pool_prefix,
+                             const uint8_t pd_pool_length,
+                             const uint8_t pd_delegated_length) {
     CfgMgr& cfg_mgr = CfgMgr::instance();
 
     subnet_ = Subnet6Ptr(new Subnet6(subnet, 56, 100, 200, 300, 400));
@@ -157,19 +165,14 @@ AllocEngine6Test::initSubnet(const asiolink::IOAddress& subnet,
 
     subnet_->addPool(pool_);
 
-    pd_pool_ = Pool6Ptr(new Pool6(Lease::TYPE_PD, subnet, 56, 64));
+    if (!pd_pool_prefix.isV6Zero()) {
+        pd_pool_ = Pool6Ptr(new Pool6(Lease::TYPE_PD, pd_pool_prefix,
+                                      pd_pool_length, pd_delegated_length));
+    }
     subnet_->addPool(pd_pool_);
 
     cfg_mgr.getStagingCfg()->getCfgSubnets6()->add(subnet_);
     cfg_mgr.commit();
-
-    // By default we pretend our subnet has 100 addresses and prefixes allocated.
-    StatsMgr::instance().setValue(
-        StatsMgr::generateName("subnet", subnet_->getID(), "assigned-nas"),
-        static_cast<int64_t>(100));
-    StatsMgr::instance().setValue(
-        StatsMgr::generateName("subnet", subnet_->getID(), "assigned-pds"),
-        static_cast<int64_t>(100));
 }
 
 void
@@ -177,8 +180,8 @@ AllocEngine6Test::findReservation(AllocEngine& engine,
     AllocEngine::ClientContext6& ctx) {
     engine.findReservation(ctx);
     // Let's check whether there's a hostname specified in the reservation
-    if (ctx.host_) {
-        std::string hostname = ctx.host_->getHostname();
+    if (ctx.currentHost()) {
+        std::string hostname = ctx.currentHost()->getHostname();
         // If there is, let's use it
         if (!hostname.empty()) {
             ctx.hostname_ = hostname;
@@ -226,7 +229,7 @@ AllocEngine6Test::allocateTest(AllocEngine& engine, const Pool6Ptr& pool,
     for (Lease6Collection::iterator it = leases.begin(); it != leases.end(); ++it) {
 
         // Do all checks on the lease
-        checkLease6(*it, type, expected_len, in_pool, in_pool);
+        checkLease6(duid_, *it, type, expected_len, in_pool, in_pool);
 
         // Check that context has been updated with allocated addresses or
         // prefixes.
@@ -264,6 +267,12 @@ AllocEngine6Test::allocateTest(AllocEngine& engine, const Pool6Ptr& pool,
 Lease6Ptr
 AllocEngine6Test::simpleAlloc6Test(const Pool6Ptr& pool, const IOAddress& hint,
                                    bool fake, bool in_pool) {
+    return (simpleAlloc6Test(pool, duid_, hint, fake, in_pool));
+}
+
+Lease6Ptr
+AllocEngine6Test::simpleAlloc6Test(const Pool6Ptr& pool, const DuidPtr& duid,
+                                   const IOAddress& hint, bool fake, bool in_pool) {
     Lease::Type type = pool->getType();
     uint8_t expected_len = pool->getLength();
 
@@ -278,12 +287,17 @@ AllocEngine6Test::simpleAlloc6Test(const Pool6Ptr& pool, const IOAddress& hint,
 
     Pkt6Ptr query(new Pkt6(fake ? DHCPV6_SOLICIT : DHCPV6_REQUEST, 1234));
 
-    AllocEngine::ClientContext6 ctx(subnet_, duid_, false, false, "", fake, query);
+    AllocEngine::ClientContext6 ctx(subnet_, duid, false, false, "", fake, query);
     ctx.hwaddr_ = hwaddr_;
     ctx.addHostIdentifier(Host::IDENT_HWADDR, hwaddr_->hwaddr_);
     ctx.currentIA().iaid_ = iaid_;
     ctx.currentIA().type_ = type;
     ctx.currentIA().addHint(hint);
+
+    // Set some non-standard callout status to make sure it doesn't affect the
+    // allocation.
+    ctx.callout_handle_ = HooksManager::createCalloutHandle();
+    ctx.callout_handle_->setStatus(CalloutHandle::NEXT_STEP_SKIP);
 
     findReservation(*engine, ctx);
     Lease6Ptr lease;
@@ -296,7 +310,7 @@ AllocEngine6Test::simpleAlloc6Test(const Pool6Ptr& pool, const IOAddress& hint,
     }
 
     // Do all checks on the lease
-    checkLease6(lease, type, expected_len, in_pool, in_pool);
+    checkLease6(duid, lease, type, expected_len, in_pool, in_pool);
 
     // Check that the lease is indeed in LeaseMgr
     Lease6Ptr from_mgr = LeaseMgrFactory::instance().getLease6(type, lease->addr_);
@@ -341,7 +355,7 @@ AllocEngine6Test::renewTest(AllocEngine& engine, const Pool6Ptr& pool,
     for (Lease6Collection::iterator it = leases.begin(); it != leases.end(); ++it) {
 
         // Do all checks on the lease
-        checkLease6(*it, type, expected_len, in_pool, in_pool);
+        checkLease6(duid_, *it, type, expected_len, in_pool, in_pool);
 
         // Check that context has been updated with allocated addresses or
         // prefixes.
@@ -405,7 +419,7 @@ AllocEngine6Test::allocWithUsedHintTest(Lease::Type type, IOAddress used_addr,
     EXPECT_NE(requested, lease->addr_);
 
     // Do all checks on the lease
-    checkLease6(lease, type, expected_pd_len);
+    checkLease6(duid_, lease, type, expected_pd_len);
 
     // Check that the lease is indeed in LeaseMgr
     Lease6Ptr from_mgr = LeaseMgrFactory::instance().getLease6(lease->type_,
@@ -444,7 +458,7 @@ AllocEngine6Test::allocBogusHint6(Lease::Type type, asiolink::IOAddress hint,
     EXPECT_NE(hint, lease->addr_);
 
     // Do all checks on the lease
-    checkLease6(lease, type, expected_pd_len);
+    checkLease6(duid_, lease, type, expected_pd_len);
 
     // Check that the lease is indeed in LeaseMgr
     Lease6Ptr from_mgr = LeaseMgrFactory::instance().getLease6(lease->type_,
@@ -492,7 +506,7 @@ AllocEngine6Test::testReuseLease6(const AllocEnginePtr& engine,
         ASSERT_EQ(1, leases.size());
         result = leases[0];
 
-        checkLease6(result, Lease::TYPE_NA, 128);
+        checkLease6(duid_, result, Lease::TYPE_NA, 128);
         break;
 
     case SHOULD_FAIL:
@@ -527,6 +541,8 @@ AllocEngine4Test::initSubnet(const asiolink::IOAddress& pool_start,
 }
 
 AllocEngine4Test::AllocEngine4Test() {
+
+    CfgMgr::instance().clear();
 
     // This lease mgr needs to exist to before configuration commits.
     factory_.create("type=memfile universe=4 persist=false");

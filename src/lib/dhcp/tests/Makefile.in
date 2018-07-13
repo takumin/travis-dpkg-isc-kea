@@ -93,6 +93,8 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4macros/ax_boost_for_kea.m4 \
+	$(top_srcdir)/m4macros/ax_cpp11.m4 \
+	$(top_srcdir)/m4macros/ax_crypto.m4 \
 	$(top_srcdir)/m4macros/ax_isc_rpath.m4 \
 	$(top_srcdir)/m4macros/libtool.m4 \
 	$(top_srcdir)/m4macros/ltoptions.m4 \
@@ -140,10 +142,11 @@ am__libdhcp___unittests_SOURCES_DIST = run_unittests.cc \
 	option4_addrlst_unittest.cc option4_client_fqdn_unittest.cc \
 	option6_addrlst_unittest.cc option6_client_fqdn_unittest.cc \
 	option6_ia_unittest.cc option6_iaaddr_unittest.cc \
-	option6_iaprefix_unittest.cc option6_status_code_unittest.cc \
-	option_int_unittest.cc option_int_array_unittest.cc \
-	option_data_types_unittest.cc option_definition_unittest.cc \
-	option_copy_unittest.cc option_custom_unittest.cc \
+	option6_iaprefix_unittest.cc option6_pdexclude_unittest.cc \
+	option6_status_code_unittest.cc option_int_unittest.cc \
+	option_int_array_unittest.cc option_data_types_unittest.cc \
+	option_definition_unittest.cc option_copy_unittest.cc \
+	option_custom_unittest.cc \
 	option_opaque_data_tuples_unittest.cc option_unittest.cc \
 	option_space_unittest.cc option_string_unittest.cc \
 	option_vendor_unittest.cc option_vendor_class_unittest.cc \
@@ -174,6 +177,7 @@ am__libdhcp___unittests_SOURCES_DIST = run_unittests.cc \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option6_ia_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option6_iaaddr_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option6_iaprefix_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	libdhcp___unittests-option6_pdexclude_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option6_status_code_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option_int_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option_int_array_unittest.$(OBJEXT) \
@@ -208,9 +212,11 @@ am__DEPENDENCIES_1 =
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/asiolink/libkea-asiolink.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/dns/libkea-dns++.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/cryptolink/libkea-cryptolink.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/hooks/libkea-hooks.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/log/libkea-log.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/util/threads/libkea-threads.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/util/libkea-util.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/cc/libkea-cc.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/testutils/libkea-testutils.la \
 @HAVE_GTEST_TRUE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -372,12 +378,19 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BENCHMARK_CPPFLAGS = @BENCHMARK_CPPFLAGS@
+BENCHMARK_INCLUDES = @BENCHMARK_INCLUDES@
+BENCHMARK_LDADD = @BENCHMARK_LDADD@
+BENCHMARK_LDFLAGS = @BENCHMARK_LDFLAGS@
+BENCHMARK_SOURCE = @BENCHMARK_SOURCE@
 BOOST_INCLUDES = @BOOST_INCLUDES@
 BOOST_LIBS = @BOOST_LIBS@
+BOTAN1_TOOL = @BOTAN1_TOOL@
 BOTAN_TOOL = @BOTAN_TOOL@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CONTRIB_DIR = @CONTRIB_DIR@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CQL_CPPFLAGS = @CQL_CPPFLAGS@
@@ -396,9 +409,14 @@ CYGPATH_W = @CYGPATH_W@
 DBLATEX = @DBLATEX@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DISTCHECK_BENCHMARK_CONFIGURE_FLAG = @DISTCHECK_BENCHMARK_CONFIGURE_FLAG@
 DISTCHECK_BOOST_CONFIGURE_FLAG = @DISTCHECK_BOOST_CONFIGURE_FLAG@
+DISTCHECK_CONTRIB_CONFIGURE_FLAG = @DISTCHECK_CONTRIB_CONFIGURE_FLAG@
 DISTCHECK_CRYPTO_CONFIGURE_FLAG = @DISTCHECK_CRYPTO_CONFIGURE_FLAG@
 DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
+DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
+DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
+DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -458,8 +476,10 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
 PGSQL_CPPFLAGS = @PGSQL_CPPFLAGS@
 PGSQL_LIBS = @PGSQL_LIBS@
+PKGPYTHONDIR = @PKGPYTHONDIR@
 PKG_CONFIG = @PKG_CONFIG@
 PLANTUML = @PLANTUML@
+PREMIUM_DIR = @PREMIUM_DIR@
 PYTHON = @PYTHON@
 PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
@@ -579,6 +599,7 @@ TESTS_ENVIRONMENT = \
 @HAVE_GTEST_TRUE@	option6_ia_unittest.cc \
 @HAVE_GTEST_TRUE@	option6_iaaddr_unittest.cc \
 @HAVE_GTEST_TRUE@	option6_iaprefix_unittest.cc \
+@HAVE_GTEST_TRUE@	option6_pdexclude_unittest.cc \
 @HAVE_GTEST_TRUE@	option6_status_code_unittest.cc \
 @HAVE_GTEST_TRUE@	option_int_unittest.cc \
 @HAVE_GTEST_TRUE@	option_int_array_unittest.cc \
@@ -614,9 +635,11 @@ TESTS_ENVIRONMENT = \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/asiolink/libkea-asiolink.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/dns/libkea-dns++.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/cryptolink/libkea-cryptolink.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/hooks/libkea-hooks.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/log/libkea-log.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/util/threads/libkea-threads.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/util/libkea-util.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/cc/libkea-cc.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/testutils/libkea-testutils.la \
 @HAVE_GTEST_TRUE@	$(LOG4CPLUS_LIBS) $(CRYPTO_LIBS) \
@@ -704,6 +727,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option6_ia_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option6_iaaddr_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option6_iaprefix_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option6_pdexclude_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option6_status_code_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option_copy_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option_custom_unittest.Po@am__quote@
@@ -1004,6 +1028,20 @@ libdhcp___unittests-option6_iaprefix_unittest.obj: option6_iaprefix_unittest.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='option6_iaprefix_unittest.cc' object='libdhcp___unittests-option6_iaprefix_unittest.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-option6_iaprefix_unittest.obj `if test -f 'option6_iaprefix_unittest.cc'; then $(CYGPATH_W) 'option6_iaprefix_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/option6_iaprefix_unittest.cc'; fi`
+
+libdhcp___unittests-option6_pdexclude_unittest.o: option6_pdexclude_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-option6_pdexclude_unittest.o -MD -MP -MF $(DEPDIR)/libdhcp___unittests-option6_pdexclude_unittest.Tpo -c -o libdhcp___unittests-option6_pdexclude_unittest.o `test -f 'option6_pdexclude_unittest.cc' || echo '$(srcdir)/'`option6_pdexclude_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-option6_pdexclude_unittest.Tpo $(DEPDIR)/libdhcp___unittests-option6_pdexclude_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='option6_pdexclude_unittest.cc' object='libdhcp___unittests-option6_pdexclude_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-option6_pdexclude_unittest.o `test -f 'option6_pdexclude_unittest.cc' || echo '$(srcdir)/'`option6_pdexclude_unittest.cc
+
+libdhcp___unittests-option6_pdexclude_unittest.obj: option6_pdexclude_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-option6_pdexclude_unittest.obj -MD -MP -MF $(DEPDIR)/libdhcp___unittests-option6_pdexclude_unittest.Tpo -c -o libdhcp___unittests-option6_pdexclude_unittest.obj `if test -f 'option6_pdexclude_unittest.cc'; then $(CYGPATH_W) 'option6_pdexclude_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/option6_pdexclude_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-option6_pdexclude_unittest.Tpo $(DEPDIR)/libdhcp___unittests-option6_pdexclude_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='option6_pdexclude_unittest.cc' object='libdhcp___unittests-option6_pdexclude_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-option6_pdexclude_unittest.obj `if test -f 'option6_pdexclude_unittest.cc'; then $(CYGPATH_W) 'option6_pdexclude_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/option6_pdexclude_unittest.cc'; fi`
 
 libdhcp___unittests-option6_status_code_unittest.o: option6_status_code_unittest.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-option6_status_code_unittest.o -MD -MP -MF $(DEPDIR)/libdhcp___unittests-option6_status_code_unittest.Tpo -c -o libdhcp___unittests-option6_status_code_unittest.o `test -f 'option6_status_code_unittest.cc' || echo '$(srcdir)/'`option6_status_code_unittest.cc

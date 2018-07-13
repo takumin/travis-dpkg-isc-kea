@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2014-2018 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -7,6 +7,7 @@
 #include <config.h>
 
 #include <dhcpsrv/host.h>
+#include <dhcp/option_space.h>
 #include <util/encode/hex.h>
 #include <util/range_utilities.h>
 #include <boost/scoped_ptr.hpp>
@@ -17,6 +18,7 @@
 using namespace isc;
 using namespace isc::dhcp;
 using namespace isc::asiolink;
+using namespace isc::data;
 
 namespace {
 
@@ -181,14 +183,15 @@ TEST_F(HostTest, getIdentifier) {
     EXPECT_EQ(Host::IDENT_DUID, Host::getIdentifierType("duid"));
     EXPECT_EQ(Host::IDENT_CIRCUIT_ID, Host::getIdentifierType("circuit-id"));
     EXPECT_EQ(Host::IDENT_CLIENT_ID, Host::getIdentifierType("client-id"));
+    EXPECT_EQ(Host::IDENT_FLEX, Host::getIdentifierType("flex-id"));
 
-    EXPECT_THROW(Host::getIdentifierType("unuspported"), isc::BadValue);
+    EXPECT_THROW(Host::getIdentifierType("unsupported"), isc::BadValue);
 }
 
-// This test verfies that it is possible to create a Host object
+// This test verifies that it is possible to create a Host object
 // using hardware address in the textual format.
 TEST_F(HostTest, createFromHWAddrString) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     ASSERT_NO_THROW(host.reset(new Host("01:02:03:04:05:06", "hw-address",
                                         SubnetID(1), SubnetID(2),
                                         IOAddress("192.0.2.3"),
@@ -212,6 +215,7 @@ TEST_F(HostTest, createFromHWAddrString) {
     EXPECT_EQ("192.0.0.2", host->getNextServer().toText());
     EXPECT_EQ("server-hostname.example.org", host->getServerHostname());
     EXPECT_EQ("bootfile.efi", host->getBootFileName());
+    EXPECT_FALSE(host->getContext());
 
     // Use invalid identifier name
     EXPECT_THROW(Host("01:02:03:04:05:06", "bogus", SubnetID(1), SubnetID(2),
@@ -227,7 +231,7 @@ TEST_F(HostTest, createFromHWAddrString) {
 // This test verifies that it is possible to create Host object using
 // a DUID in the textual format.
 TEST_F(HostTest, createFromDUIDString) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     ASSERT_NO_THROW(host.reset(new Host("a1:b2:c3:d4:e5:06", "duid",
                                         SubnetID(10), SubnetID(20),
                                         IOAddress("192.0.2.5"),
@@ -246,6 +250,7 @@ TEST_F(HostTest, createFromDUIDString) {
     EXPECT_EQ(20, host->getIPv6SubnetID());
     EXPECT_EQ("192.0.2.5", host->getIPv4Reservation().toText());
     EXPECT_EQ("me.example.org", host->getHostname());
+    EXPECT_FALSE(host->getContext());
 
     // Use invalid DUID.
     EXPECT_THROW(Host("bogus", "duid", SubnetID(1), SubnetID(2),
@@ -261,7 +266,7 @@ TEST_F(HostTest, createFromDUIDString) {
 // This test verifies that it is possible to create Host object using
 // hardware address in the binary format.
 TEST_F(HostTest, createFromHWAddrBinary) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     // Prepare the hardware address in binary format.
     const uint8_t hwaddr_data[] = {
         0xaa, 0xab, 0xca, 0xda, 0xbb, 0xee
@@ -292,12 +297,13 @@ TEST_F(HostTest, createFromHWAddrBinary) {
     EXPECT_EQ("192.0.0.2", host->getNextServer().toText());
     EXPECT_EQ("server-hostname.example.org", host->getServerHostname());
     EXPECT_EQ("bootfile.efi", host->getBootFileName());
+    EXPECT_FALSE(host->getContext());
 }
 
 // This test verifies that it is possible to create a Host object using
 // DUID in the binary format.
 TEST_F(HostTest, createFromDuidBinary) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     // Prepare DUID binary.
     const uint8_t duid_data[] = {
         1, 2, 3, 4, 5, 6
@@ -320,12 +326,13 @@ TEST_F(HostTest, createFromDuidBinary) {
     EXPECT_EQ(20, host->getIPv6SubnetID());
     EXPECT_EQ("192.0.2.5", host->getIPv4Reservation().toText());
     EXPECT_EQ("me.example.org", host->getHostname());
+    EXPECT_FALSE(host->getContext());
 }
 
 // This test verifies that it is possible create Host instance using all
 // supported identifiers in a binary format.
 TEST_F(HostTest, createFromIdentifierBinary) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     // Iterate over all supported identifier types.
     for (unsigned int i = 0; i < identifierTypeUpperBound(); ++i) {
         const Host::IdentifierType type = static_cast<Host::IdentifierType>(i);
@@ -348,13 +355,14 @@ TEST_F(HostTest, createFromIdentifierBinary) {
         EXPECT_EQ(20, host->getIPv6SubnetID());
         EXPECT_EQ("192.0.2.5", host->getIPv4Reservation().toText());
         EXPECT_EQ("me.example.org", host->getHostname());
+        EXPECT_FALSE(host->getContext());
     }
 }
 
 // This test verifies that it is possible to create Host instance using
 // all supported identifiers in hexadecimal format.
 TEST_F(HostTest, createFromIdentifierHex) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     // Iterate over all supported identifiers.
     for (unsigned int i = 0; i < identifierTypeUpperBound(); ++i) {
         const Host::IdentifierType type = static_cast<Host::IdentifierType>(i);
@@ -393,20 +401,21 @@ TEST_F(HostTest, createFromIdentifierHex) {
         EXPECT_EQ(20, host->getIPv6SubnetID());
         EXPECT_EQ("192.0.2.5", host->getIPv4Reservation().toText());
         EXPECT_EQ("me.example.org", host->getHostname());
+        EXPECT_FALSE(host->getContext());
     }
 }
 
 // This test verifies that it is possible to create Host instance using
 // identifiers specified as text in quotes.
 TEST_F(HostTest, createFromIdentifierString) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     // It is not allowed to specify HW address or DUID as a string in quotes.
     for (unsigned int i = 2; i < identifierTypeUpperBound(); ++i) {
         const Host::IdentifierType type = static_cast<Host::IdentifierType>(i);
         const std::string identifier_name = Host::getIdentifierName(type);
 
         // Construct unique identifier for a host. This is a string
-        // consisting of a word "idenetifier", hyphen and the name of
+        // consisting of a word "identifier", hyphen and the name of
         // the identifier, e.g. "identifier-hw-address".
         std::ostringstream identifier_without_quotes;
         identifier_without_quotes << "identifier-" << identifier_name;
@@ -437,6 +446,7 @@ TEST_F(HostTest, createFromIdentifierString) {
         EXPECT_EQ(20, host->getIPv6SubnetID());
         EXPECT_EQ("192.0.2.5", host->getIPv4Reservation().toText());
         EXPECT_EQ("me.example.org", host->getHostname());
+        EXPECT_FALSE(host->getContext());
     }
 }
 
@@ -444,7 +454,7 @@ TEST_F(HostTest, createFromIdentifierString) {
 // using setIdentifier method with an identifier specified in
 // hexadecimal format.
 TEST_F(HostTest, setIdentifierHex) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     // Iterate over all supported identifiers.
     for (unsigned int i = 0; i < identifierTypeUpperBound(); ++i) {
 
@@ -491,6 +501,7 @@ TEST_F(HostTest, setIdentifierHex) {
         EXPECT_EQ(20, host->getIPv6SubnetID());
         EXPECT_EQ("192.0.2.5", host->getIPv4Reservation().toText());
         EXPECT_EQ("me.example.org", host->getHostname());
+        EXPECT_FALSE(host->getContext());
 
         // Now use another identifier.
         type = static_cast<Host::IdentifierType>(i);
@@ -523,6 +534,7 @@ TEST_F(HostTest, setIdentifierHex) {
         EXPECT_EQ(20, host->getIPv6SubnetID());
         EXPECT_EQ("192.0.2.5", host->getIPv4Reservation().toText());
         EXPECT_EQ("me.example.org", host->getHostname());
+        EXPECT_FALSE(host->getContext());
     }
 }
 
@@ -530,7 +542,7 @@ TEST_F(HostTest, setIdentifierHex) {
 // using setIdentifier method with an identifier specified in binary
 // format.
 TEST_F(HostTest, setIdentifierBinary) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     // Iterate over all supported identifier types.
     for (unsigned int i = 0; i < identifierTypeUpperBound(); ++i) {
 
@@ -561,6 +573,7 @@ TEST_F(HostTest, setIdentifierBinary) {
         EXPECT_EQ(20, host->getIPv6SubnetID());
         EXPECT_EQ("192.0.2.5", host->getIPv4Reservation().toText());
         EXPECT_EQ("me.example.org", host->getHostname());
+        EXPECT_FALSE(host->getContext());
 
         type = static_cast<Host::IdentifierType>(i);
         // Create identifier of variable length and fill with random values.
@@ -580,13 +593,14 @@ TEST_F(HostTest, setIdentifierBinary) {
         EXPECT_EQ(20, host->getIPv6SubnetID());
         EXPECT_EQ("192.0.2.5", host->getIPv4Reservation().toText());
         EXPECT_EQ("me.example.org", host->getHostname());
+        EXPECT_FALSE(host->getContext());
     }
 }
 
 // This test verifies that the IPv6 reservations of a different type can
 // be added for the host.
 TEST_F(HostTest, addReservations) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     ASSERT_NO_THROW(host.reset(new Host("01:02:03:04:05:06", "hw-address",
                                         SubnetID(1), SubnetID(2),
                                         IOAddress("192.0.2.3"))));
@@ -644,7 +658,7 @@ TEST_F(HostTest, addReservations) {
 // This test checks that various modifiers may be used to replace the current
 // values of the Host class.
 TEST_F(HostTest, setValues) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     ASSERT_NO_THROW(host.reset(new Host("01:02:03:04:05:06", "hw-address",
                                         SubnetID(1), SubnetID(2),
                                         IOAddress("192.0.2.3"),
@@ -654,6 +668,8 @@ TEST_F(HostTest, setValues) {
     ASSERT_EQ(2, host->getIPv6SubnetID());
     ASSERT_EQ("192.0.2.3", host->getIPv4Reservation().toText());
     ASSERT_EQ("some-host.example.org", host->getHostname());
+    ASSERT_FALSE(host->getContext());
+    ASSERT_FALSE(host->getNegative());
 
     host->setIPv4SubnetID(SubnetID(123));
     host->setIPv6SubnetID(SubnetID(234));
@@ -662,6 +678,9 @@ TEST_F(HostTest, setValues) {
     host->setNextServer(IOAddress("192.0.2.2"));
     host->setServerHostname("server-hostname.example.org");
     host->setBootFileName("bootfile.efi");
+    std::string user_context = "{ \"foo\": \"bar\" }";
+    host->setContext(Element::fromJSON(user_context));
+    host->setNegative(true);
 
     EXPECT_EQ(123, host->getIPv4SubnetID());
     EXPECT_EQ(234, host->getIPv6SubnetID());
@@ -670,6 +689,9 @@ TEST_F(HostTest, setValues) {
     EXPECT_EQ("192.0.2.2", host->getNextServer().toText());
     EXPECT_EQ("server-hostname.example.org", host->getServerHostname());
     EXPECT_EQ("bootfile.efi", host->getBootFileName());
+    ASSERT_TRUE(host->getContext());
+    EXPECT_EQ(user_context, host->getContext()->str());
+    EXPECT_TRUE(host->getNegative());
 
     // Remove IPv4 reservation.
     host->removeIPv4Reservation();
@@ -679,7 +701,7 @@ TEST_F(HostTest, setValues) {
     EXPECT_THROW(host->setIPv4Reservation(IOAddress("2001:db8:1::1")),
                  isc::BadValue);
     // Zero address can't be set, the removeIPv4Reservation should be
-    // used intead.
+    // used instead.
     EXPECT_THROW(host->setIPv4Reservation(IOAddress::IPV4_ZERO_ADDRESS()),
                  isc::BadValue);
     // Broadcast address can't be set.
@@ -695,7 +717,7 @@ TEST_F(HostTest, setValues) {
 
 // Test that Host constructors initialize client classes from string.
 TEST_F(HostTest, clientClassesFromConstructor) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     // Prepare the hardware address in binary format.
     const uint8_t hwaddr_data[] = {
         0xaa, 0xab, 0xca, 0xda, 0xbb, 0xee
@@ -736,7 +758,7 @@ TEST_F(HostTest, clientClassesFromConstructor) {
 
 // Test that new client classes can be added for the Host.
 TEST_F(HostTest, addClientClasses) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     ASSERT_NO_THROW(host.reset(new Host("01:02:03:04:05:06", "hw-address",
                                         SubnetID(1), SubnetID(2),
                                         IOAddress("192.0.2.3"))));
@@ -769,7 +791,7 @@ TEST_F(HostTest, addOptions4) {
     // Differentiate options by their codes (100-109)
     for (uint16_t code = 100; code < 110; ++code) {
         OptionPtr option(new Option(Option::V4, code, OptionBuffer(10, 0xFF)));
-        ASSERT_NO_THROW(host.getCfgOption4()->add(option, false, "dhcp4"));
+        ASSERT_NO_THROW(host.getCfgOption4()->add(option, false, DHCP4_OPTION_SPACE));
     }
 
     // Add 7 options to another option space. The option codes partially overlap
@@ -780,20 +802,20 @@ TEST_F(HostTest, addOptions4) {
     }
 
     // Get options from the Subnet and check if all 10 are there.
-    OptionContainerPtr options = host.getCfgOption4()->getAll("dhcp4");
+    OptionContainerPtr options = host.getCfgOption4()->getAll(DHCP4_OPTION_SPACE);
     ASSERT_TRUE(options);
     ASSERT_EQ(10, options->size());
 
     // It should be possible to retrieve DHCPv6 options but the container
     // should be empty.
-    OptionContainerPtr options6 = host.getCfgOption6()->getAll("dhcp6");
+    OptionContainerPtr options6 = host.getCfgOption6()->getAll(DHCP6_OPTION_SPACE);
     ASSERT_TRUE(options6);
     EXPECT_TRUE(options6->empty());
 
     // Also make sure that for dhcp4 option space no DHCPv6 options are
     // returned. This is to check that containers for DHCPv4 and DHCPv6
     // options do not share information.
-    options6 = host.getCfgOption6()->getAll("dhcp4");
+    options6 = host.getCfgOption6()->getAll(DHCP4_OPTION_SPACE);
     ASSERT_TRUE(options6);
     EXPECT_TRUE(options6->empty());
 
@@ -833,7 +855,7 @@ TEST_F(HostTest, addOptions6) {
     // Differentiate options by their codes (100-109)
     for (uint16_t code = 100; code < 110; ++code) {
         OptionPtr option(new Option(Option::V6, code, OptionBuffer(10, 0xFF)));
-        ASSERT_NO_THROW(host.getCfgOption6()->add(option, false, "dhcp6"));
+        ASSERT_NO_THROW(host.getCfgOption6()->add(option, false, DHCP6_OPTION_SPACE));
     }
 
     // Add 7 options to another option space. The option codes partially overlap
@@ -844,20 +866,20 @@ TEST_F(HostTest, addOptions6) {
     }
 
     // Get options from the Subnet and check if all 10 are there.
-    OptionContainerPtr options = host.getCfgOption6()->getAll("dhcp6");
+    OptionContainerPtr options = host.getCfgOption6()->getAll(DHCP6_OPTION_SPACE);
     ASSERT_TRUE(options);
     ASSERT_EQ(10, options->size());
 
     // It should be possible to retrieve DHCPv4 options but the container
     // should be empty.
-    OptionContainerPtr options4 = host.getCfgOption4()->getAll("dhcp4");
+    OptionContainerPtr options4 = host.getCfgOption4()->getAll(DHCP4_OPTION_SPACE);
     ASSERT_TRUE(options4);
     EXPECT_TRUE(options4->empty());
 
     // Also make sure that for dhcp6 option space no DHCPv4 options are
     // returned. This is to check that containers for DHCPv4 and DHCPv6
     // options do not share information.
-    options4 = host.getCfgOption4()->getAll("dhcp6");
+    options4 = host.getCfgOption4()->getAll(DHCP6_OPTION_SPACE);
     ASSERT_TRUE(options4);
     EXPECT_TRUE(options4->empty());
 
@@ -923,7 +945,7 @@ TEST_F(HostTest, getIdentifierName) {
 // This test checks that Host object is correctly described in the
 // textual format using the toText method.
 TEST_F(HostTest, toText) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     ASSERT_NO_THROW(host.reset(new Host("01:02:03:04:05:06", "hw-address",
                                         SubnetID(1), SubnetID(2),
                                         IOAddress("192.0.2.3"),
@@ -940,6 +962,10 @@ TEST_F(HostTest, toText) {
         host->addReservation(IPv6Resrv(IPv6Resrv::TYPE_NA,
                                        IOAddress("2001:db8:1::1")));
     );
+
+    // Add invisble user context
+    std::string user_context = "{ \"foo\": \"bar\" }";
+    host->setContext(Element::fromJSON(user_context));
 
     // Make sure that the output is correct,
     EXPECT_EQ("hwaddr=010203040506 ipv4_subnet_id=1 ipv6_subnet_id=2"
@@ -958,6 +984,7 @@ TEST_F(HostTest, toText) {
     host->setHostname("");
     host->removeIPv4Reservation();
     host->setIPv4SubnetID(0);
+    host->setNegative(true);
 
     EXPECT_EQ("hwaddr=010203040506 ipv6_subnet_id=2"
               " hostname=(empty) ipv4_reservation=(no)"
@@ -967,7 +994,8 @@ TEST_F(HostTest, toText) {
               " ipv6_reservation0=2001:db8:1::cafe"
               " ipv6_reservation1=2001:db8:1::1"
               " ipv6_reservation2=2001:db8:1:1::/64"
-              " ipv6_reservation3=2001:db8:1:2::/64",
+              " ipv6_reservation3=2001:db8:1:2::/64"
+              " negative cached",
               host->toText());
 
     // Create host identified by DUID, instead of HWADDR, with a very
@@ -998,19 +1026,178 @@ TEST_F(HostTest, toText) {
     host->addClientClass6("hub");
     host->addClientClass6("device");
 
+    // Note that now classes are in insert order.
     EXPECT_EQ("duid=1112131415 hostname=myhost ipv4_reservation=(no)"
               " siaddr=(no)"
               " sname=(empty)"
               " file=(empty)"
               " ipv6_reservations=(none)"
               " dhcp4_class0=modem dhcp4_class1=router"
-              " dhcp6_class0=device dhcp6_class1=hub",
+              " dhcp6_class0=hub dhcp6_class1=device",
               host->toText());
+}
+
+// This test checks that Host object is correctly unparsed,
+TEST_F(HostTest, unparse) {
+    boost::scoped_ptr<Host> host;
+    ASSERT_NO_THROW(host.reset(new Host("01:02:03:04:05:06", "hw-address",
+                                        SubnetID(1), SubnetID(2),
+                                        IOAddress("192.0.2.3"),
+                                        "myhost.example.com")));
+
+    // Add 4 reservations: 2 for NAs, 2 for PDs.
+    ASSERT_NO_THROW(
+        host->addReservation(IPv6Resrv(IPv6Resrv::TYPE_NA,
+                                       IOAddress("2001:db8:1::cafe")));
+        host->addReservation(IPv6Resrv(IPv6Resrv::TYPE_PD,
+                                       IOAddress("2001:db8:1:1::"), 64));
+        host->addReservation(IPv6Resrv(IPv6Resrv::TYPE_PD,
+                                       IOAddress("2001:db8:1:2::"), 64));
+        host->addReservation(IPv6Resrv(IPv6Resrv::TYPE_NA,
+                                       IOAddress("2001:db8:1::1")));
+    );
+
+    // Add user context
+    std::string user_context = "{ \"comment\": \"a host reservation\" }";
+    host->setContext(Element::fromJSON(user_context));
+
+    // Make sure that the output is correct,
+    EXPECT_EQ("{ "
+              "\"boot-file-name\": \"\", "
+              "\"client-classes\": [  ], "
+              "\"comment\": \"a host reservation\", "
+              "\"hostname\": \"myhost.example.com\", "
+              "\"hw-address\": \"01:02:03:04:05:06\", "
+              "\"ip-address\": \"192.0.2.3\", "
+              "\"next-server\": \"0.0.0.0\", "
+              "\"option-data\": [  ], "
+              "\"server-hostname\": \"\" "
+              "}",
+              host->toElement4()->str());
+
+    EXPECT_EQ("{ "
+              "\"client-classes\": [  ], "
+              "\"comment\": \"a host reservation\", "
+              "\"hostname\": \"myhost.example.com\", "
+              "\"hw-address\": \"01:02:03:04:05:06\", "
+              "\"ip-addresses\": [ \"2001:db8:1::cafe\", \"2001:db8:1::1\" ], "
+              "\"option-data\": [  ], "
+              "\"prefixes\": [ \"2001:db8:1:1::/64\", \"2001:db8:1:2::/64\" ] "
+              "}",
+              host->toElement6()->str());
+
+    // Reset some of the data and make sure that the output is affected.
+    host->setHostname("");
+    host->removeIPv4Reservation();
+    host->setIPv4SubnetID(0);
+
+    EXPECT_EQ("{ "
+              "\"boot-file-name\": \"\", "
+              "\"client-classes\": [  ], "
+              "\"comment\": \"a host reservation\", "
+              "\"hostname\": \"\", "
+              "\"hw-address\": \"01:02:03:04:05:06\", "
+              "\"next-server\": \"0.0.0.0\", "
+              "\"option-data\": [  ], "
+              "\"server-hostname\": \"\" "
+              "}",
+              host->toElement4()->str());
+
+    EXPECT_EQ("{ "
+              "\"client-classes\": [  ], "
+              "\"comment\": \"a host reservation\", "
+              "\"hostname\": \"\", "
+              "\"hw-address\": \"01:02:03:04:05:06\", "
+              "\"ip-addresses\": [ \"2001:db8:1::cafe\", \"2001:db8:1::1\" ], "
+              "\"option-data\": [  ], "
+              "\"prefixes\": [ \"2001:db8:1:1::/64\", \"2001:db8:1:2::/64\" ] "
+              "}",
+              host->toElement6()->str());
+
+    // Create host identified by DUID, instead of HWADDR, with a very
+    // basic configuration.
+    ASSERT_NO_THROW(host.reset(new Host("11:12:13:14:15", "duid",
+                                        SubnetID(0), SubnetID(0),
+                                        IOAddress::IPV4_ZERO_ADDRESS(),
+                                        "myhost")));
+
+    EXPECT_EQ("{ "
+              "\"boot-file-name\": \"\", "
+              "\"client-classes\": [  ], "
+              "\"duid\": \"11:12:13:14:15\", "
+              "\"hostname\": \"myhost\", "
+              "\"next-server\": \"0.0.0.0\", "
+              "\"option-data\": [  ], "
+              "\"server-hostname\": \"\" "
+              "}",
+              host->toElement4()->str());
+
+    EXPECT_EQ("{ "
+              "\"client-classes\": [  ], "
+              "\"duid\": \"11:12:13:14:15\", "
+              "\"hostname\": \"myhost\", "
+              "\"ip-addresses\": [  ], "
+              "\"option-data\": [  ], "
+              "\"prefixes\": [  ] "
+              "}",
+              host->toElement6()->str());
+
+    // Add some classes.
+    host->addClientClass4("modem");
+    host->addClientClass4("router");
+    // Set invisible negative cache.
+    host->setNegative(true);
+
+    EXPECT_EQ("{ "
+              "\"boot-file-name\": \"\", "
+              "\"client-classes\": [ \"modem\", \"router\" ], "
+              "\"duid\": \"11:12:13:14:15\", "
+              "\"hostname\": \"myhost\", "
+              "\"next-server\": \"0.0.0.0\", "
+              "\"option-data\": [  ], "
+              "\"server-hostname\": \"\" "
+              "}",
+              host->toElement4()->str());
+
+    EXPECT_EQ("{ "
+              "\"client-classes\": [  ], "
+              "\"duid\": \"11:12:13:14:15\", "
+              "\"hostname\": \"myhost\", "
+              "\"ip-addresses\": [  ], "
+              "\"option-data\": [  ], "
+              "\"prefixes\": [  ] "
+              "}",
+              host->toElement6()->str());
+
+    // Now the classes are in defined order (vs. alphabetical order).
+    host->addClientClass6("hub");
+    host->addClientClass6("device");
+
+    EXPECT_EQ("{ "
+              "\"boot-file-name\": \"\", "
+              "\"client-classes\": [ \"modem\", \"router\" ], "
+              "\"duid\": \"11:12:13:14:15\", "
+              "\"hostname\": \"myhost\", "
+              "\"next-server\": \"0.0.0.0\", "
+              "\"option-data\": [  ], "
+              "\"server-hostname\": \"\" "
+              "}",
+              host->toElement4()->str());
+
+    EXPECT_EQ("{ "
+              "\"client-classes\": [ \"hub\", \"device\" ], "
+              "\"duid\": \"11:12:13:14:15\", "
+              "\"hostname\": \"myhost\", "
+              "\"ip-addresses\": [  ], "
+              "\"option-data\": [  ], "
+              "\"prefixes\": [  ] "
+              "}",
+              host->toElement6()->str());
 }
 
 // Test verifies if the host can store HostId properly.
 TEST_F(HostTest, hostId) {
-    boost::scoped_ptr<Host> host;
+    HostPtr host;
     ASSERT_NO_THROW(host.reset(new Host("01:02:03:04:05:06", "hw-address",
                                         SubnetID(1), SubnetID(2),
                                         IOAddress("192.0.2.3"),
