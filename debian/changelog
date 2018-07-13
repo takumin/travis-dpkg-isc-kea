@@ -1,6 +1,6 @@
 isc-kea (1.4.0-1) experimental; urgency=medium
 
-  * New upstream version 1.4.0
+  * New upstream version 1.4.0 (Closes: #874501, #874501)
   * Rebase patches on top of Kea 1.4
   * Use upstream conffiles
   * Run d/ through wrap-and-sort -a + add dh-autoconf
