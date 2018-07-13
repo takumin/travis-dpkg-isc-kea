@@ -1,4 +1,4 @@
-isc-kea (1.4.0-1) unstable; urgency=medium
+isc-kea (1.4.0-1) experimental; urgency=medium
 
   * New upstream version 1.4.0
   * Rebase patches on top of Kea 1.4
