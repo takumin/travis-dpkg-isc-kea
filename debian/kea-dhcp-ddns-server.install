@@ -1,4 +1,3 @@
 etc/kea/kea-dhcp-ddns.conf
 usr/sbin/kea-dhcp-ddns
-usr/share/kea/dhcp-ddns.spec          usr/share/kea-dhcp-ddns-server
 usr/share/man/man8/kea-dhcp-ddns.8
