@@ -1,8 +1,16 @@
-Index: isc-kea/dns++.pc.in
-===================================================================
---- isc-kea.orig/dns++.pc.in	2016-01-27 19:39:30.021264872 -0600
-+++ isc-kea/dns++.pc.in	2016-01-27 19:39:30.021264872 -0600
-@@ -8,4 +8,4 @@
+From: Adam Majer <adamm@zombino.com>
+Date: Fri, 13 Jul 2018 17:06:51 +0000
+Subject: fix_pc_paths
+
+---
+ dns++.pc.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dns++.pc.in b/dns++.pc.in
+index ef65c7e..399a0eb 100644
+--- a/dns++.pc.in
++++ b/dns++.pc.in
+@@ -8,4 +8,4 @@ Description: BIND 10 DNS library
  Version: @PACKAGE_VERSION@
  Requires: @CRYPTO_PACKAGE@
  Cflags: -I${includedir}/@PACKAGE_NAME@

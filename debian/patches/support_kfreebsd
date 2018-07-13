@@ -1,17 +1,26 @@
-Index: isc-kea/configure
-===================================================================
---- isc-kea.orig/configure	2016-03-01 00:18:59.277551067 -0600
-+++ isc-kea/configure	2016-03-01 00:18:59.273551106 -0600
-@@ -16008,7 +16008,7 @@
+From: Adam Majer <adamm@zombino.com>
+Date: Fri, 13 Jul 2018 17:06:51 +0000
+Subject: support_kfreebsd
+
+---
+ configure    | 4 ++--
+ configure.ac | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/configure b/configure
+index b25623b..155a76e 100755
+--- a/configure
++++ b/configure
+@@ -16588,7 +16588,7 @@ $as_echo "OS X >= 10.9" >&6; }
  fi
  rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
- 	;;
+         ;;
 -*-freebsd*)
 +*-freebsd*|*-kfreebsd*)
- 	# On FreeBSD10.1 pthread_cond_destroy doesn't work as documented, which
- 	# causes the CondVarTest.destroyWhileWait test to fail. According to the
- 	# pthread_cond_destroy documentation for FreeBSD, this function should
-@@ -16707,7 +16707,7 @@
+         # On FreeBSD10.1 pthread_cond_destroy doesn't work as documented, which
+         # causes the CondVarTest.destroyWhileWait test to fail. According to the
+         # pthread_cond_destroy documentation for FreeBSD, this function should
+@@ -17328,7 +17328,7 @@ $as_echo "#define OS_OSX 1" >>confdefs.h
        BSD_TYPE="OSX"
        CPPFLAGS="$CPPFLAGS -DOS_BSD"
        ;;
@@ -20,3 +29,16 @@ Index: isc-kea/configure
  
  $as_echo "#define OS_BSD 1" >>confdefs.h
  
+diff --git a/configure.ac b/configure.ac
+index fb434e9..d607a6c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -396,7 +396,7 @@ case "$host" in
+         [AC_MSG_RESULT([OS X >= 10.9])
+          kea_undefined_pthread_behavior=yes])
+         ;;
+-*-freebsd*)
++*-freebsd*|*-kfreebsd*)
+         # On FreeBSD10.1 pthread_cond_destroy doesn't work as documented, which
+         # causes the CondVarTest.destroyWhileWait test to fail. According to the
+         # pthread_cond_destroy documentation for FreeBSD, this function should
