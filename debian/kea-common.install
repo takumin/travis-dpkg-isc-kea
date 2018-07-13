@@ -1,4 +1,4 @@
-usr/lib/*/libkea-*.so.*
-usr/share/man/man8/kea-lfc.8
-usr/sbin/kea-lfc
 usr/bin/kea-msg-compiler
+usr/lib/*/libkea-*.so.*
+usr/sbin/kea-lfc
+usr/share/man/man8/kea-lfc.8
