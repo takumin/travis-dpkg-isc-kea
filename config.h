@@ -11,10 +11,13 @@
 /* #undef ENABLE_LOGGER_CHECKS */
 
 /* Extended Kea version */
-#define EXTENDED_VERSION "git 8ff2dac485c8762d1b4b3576d806347883937a9e"
+#define EXTENDED_VERSION "git 8d6db9371f6785ff6d05648ade95c8bfb90695f8"
 
 /* Does this platform have some undefined pthreads behavior? */
 /* #undef HAS_UNDEFINED_PTHREAD_BEHAVIOR */
+
+/* Define to 1 if you have the <boost/asio/coroutine.hpp> header file. */
+#define HAVE_BOOST_ASIO_COROUTINE_HPP 1
 
 /* Define to 1 if you have the <boost/asio.hpp> header file. */
 #define HAVE_BOOST_ASIO_HPP 1
@@ -45,20 +48,23 @@
 /* Define to 1 if you have the <boost/system/error_code.hpp> header file. */
 #define HAVE_BOOST_SYSTEM_ERROR_CODE_HPP 1
 
-/* Define to 1 if you have the <botan/botan.h> header file. */
-#define HAVE_BOTAN_BOTAN_H 1
-
 /* Define to 1 if getsockopt(IPV6_USE_MIN_MTU) does not work */
 /* #undef HAVE_BROKEN_GET_IPV6_USE_MIN_MTU */
 
 /* CQL is present */
 /* #undef HAVE_CQL */
 
+/* Define to 1 if gtest defines edit_distance::CreateUnifiedDiff */
+#define HAVE_CREATE_UNIFIED_DIFF 1
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
+
+/* Define to 1 if std::is_base_of is available */
+#define HAVE_IS_BASE_OF 1
 
 /* Define to 1 if you have the <log4cplus/logger.h> header file. */
 #define HAVE_LOG4CPLUS_LOGGER_H 1
@@ -81,6 +87,9 @@
 /* Define to 1 if sockaddr has a sa_len member, and corresponding sin_len and
    sun_len */
 /* #undef HAVE_SA_LEN */
+
+/* Define to 1 if you have the `srandomdev' function. */
+/* #undef HAVE_SRANDOMDEV */
 
 /* Define to 1 if stdbool.h conforms to C99. */
 #define HAVE_STDBOOL_H 1
@@ -159,7 +168,7 @@
 #define PACKAGE_NAME "kea"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "kea 1.1.0"
+#define PACKAGE_STRING "kea 1.4.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "kea"
@@ -168,7 +177,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.1.0"
+#define PACKAGE_VERSION "1.4.0"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -177,7 +186,7 @@
 /* #undef USE_STATIC_LINK */
 
 /* Version number of package */
-#define VERSION "1.1.0"
+#define VERSION "1.4.0"
 
 /* Compile with Botan crypto */
 #define WITH_BOTAN /**/

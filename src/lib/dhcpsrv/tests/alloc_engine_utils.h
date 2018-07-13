@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2015-2018 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -39,10 +39,12 @@ namespace test {
 ///
 /// @param stat_name Statistic name.
 /// @param exp_value Expected value.
+/// @param subnet_id subnet_id of the desired subnet, if not zero
 ///
 /// @return true if the statistic manager holds a particular value,
 /// false otherwise.
-bool testStatistics(const std::string& stat_name, const int64_t exp_value);
+bool testStatistics(const std::string& stat_name, const int64_t exp_value,
+                    const SubnetID subnet_id = 0);
 
 /// @brief Allocation engine with some internal methods exposed
 class NakedAllocEngine : public AllocEngine {
@@ -67,11 +69,12 @@ public:
     public:
 
         /// @brief constructor
-        /// @param type pool types that will be interated
+        /// @param type pool types that will be iterated through
         NakedIterativeAllocator(Lease::Type type)
             :IterativeAllocator(type) {
         }
 
+        using AllocEngine::IterativeAllocator::increaseAddress;
         using AllocEngine::IterativeAllocator::increasePrefix;
     };
 };
@@ -101,9 +104,18 @@ public:
     /// @param subnet Address of a subnet to be configured.
     /// @param pool_start First address in the address pool.
     /// @param pool_end Last address in the address pool.
+    /// @param pd_pool_prefix Prefix for the prefix delegation pool. It
+    /// defaults to 0 which means that PD pool is not specified.
+    /// @param pd_pool_length Length of the PD pool prefix.
+    /// @param pd_delegated_length Delegated prefix length.
     void initSubnet(const asiolink::IOAddress& subnet,
                     const asiolink::IOAddress& pool_start,
-                    const asiolink::IOAddress& pool_end);
+                    const asiolink::IOAddress& pool_end,
+                    const asiolink::IOAddress& pd_pool_prefix =
+                    asiolink::IOAddress::IPV6_ZERO_ADDRESS(),
+                    const uint8_t pd_pool_length = 0,
+                    const uint8_t pd_delegated_length = 0);
+
 
     /// @brief Initializes FQDN data for a test.
     ///
@@ -122,7 +134,7 @@ public:
         fqdn_rev_ = fqdn_rev;
     }
 
-    /// @brief Wrapper around call to AllocEngine6::findRervation
+    /// @brief Wrapper around call to AllocEngine6::findReservation
     ///
     /// If a reservation is found by the engine, the function sets
     /// ctx.hostname_ accordingly.
@@ -151,13 +163,15 @@ public:
 
     /// @brief checks if Lease6 matches expected configuration
     ///
+    /// @param duid pointer to the client's DUID.
     /// @param lease lease to be checked
     /// @param exp_type expected lease type
     /// @param exp_pd_len expected prefix length
     /// @param expected_in_subnet whether the lease is expected to be in subnet
     /// @param expected_in_pool whether the lease is expected to be in dynamic
-    void checkLease6(const Lease6Ptr& lease, Lease::Type exp_type,
-                     uint8_t exp_pd_len = 128, bool expected_in_subnet = true,
+    void checkLease6(const DuidPtr& duid, const Lease6Ptr& lease,
+                     Lease::Type exp_type, uint8_t exp_pd_len = 128,
+                     bool expected_in_subnet = true,
                      bool expected_in_pool = true) {
 
         // that is belongs to the right subnet
@@ -186,7 +200,7 @@ public:
         EXPECT_EQ(fqdn_fwd_, lease->fqdn_fwd_);
         EXPECT_EQ(fqdn_rev_, lease->fqdn_rev_);
         EXPECT_EQ(hostname_, lease->hostname_);
-        EXPECT_TRUE(*lease->duid_ == *duid_);
+        EXPECT_TRUE(*lease->duid_ == *duid);
         /// @todo: check cltt
     }
 
@@ -210,10 +224,10 @@ public:
     /// @param input address to be increased
     /// @param exp_output expected address after increase
     void
-    checkAddrIncrease(NakedAllocEngine::NakedIterativeAllocator&,
+    checkAddrIncrease(NakedAllocEngine::NakedIterativeAllocator& alloc,
                       std::string input, std::string exp_output) {
-        EXPECT_EQ(exp_output, asiolink::IOAddress::increase(
-                      asiolink::IOAddress(input)).toText());
+        EXPECT_EQ(exp_output, alloc.increaseAddress(asiolink::IOAddress(input),
+                                                    false, 0).toText());
     }
 
     /// @brief Checks if increasePrefix() works as expected
@@ -234,7 +248,7 @@ public:
 
     /// @brief Checks if the simple allocation can succeed
     ///
-    /// The type of lease is determined by pool type (pool->getType()
+    /// The type of lease is determined by pool type (pool->getType())
     ///
     /// @param pool pool from which the lease will be allocated from
     /// @param hint address to be used as a hint
@@ -244,6 +258,21 @@ public:
     Lease6Ptr simpleAlloc6Test(const Pool6Ptr& pool,
                                const asiolink::IOAddress& hint,
                                bool fake, bool in_pool = true);
+
+    /// @brief Checks if the simple allocation can succeed for custom DUID.
+    ///
+    /// The type of lease is determined by pool type (pool->getType())
+    ///
+    /// @param pool pool from which the lease will be allocated from
+    /// @param duid pointer to the DUID used for allocation.
+    /// @param hint address to be used as a hint
+    /// @param fake true - this is fake allocation (SOLICIT)
+    /// @param in_pool specifies whether the lease is expected to be in pool
+    /// @return allocated lease (or NULL)
+    Lease6Ptr simpleAlloc6Test(const Pool6Ptr& pool, const DuidPtr& duid,
+                               const asiolink::IOAddress& hint,
+                               bool fake, bool in_pool = true);
+
 
     /// @brief Checks if the allocation can succeed.
     ///
@@ -351,10 +380,24 @@ public:
         host->addReservation(resv);
 
         if (add_to_host_mgr) {
-            CfgMgr::instance().getStagingCfg()->getCfgHosts()->add(host);
-            CfgMgr::instance().commit();
+            addHost(host);
         }
+
         return (host);
+    }
+
+    /// @brief Add a host reservation to the current configuration
+    ///
+    /// Adds the given host reservation to the current configuration by
+    /// casting it to non-const.  We do it this way rather than adding it to
+    /// staging and then committing as that wipes out the current configuration
+    /// such as subnets.
+    ///
+    /// @param host host reservation to add
+    void
+    addHost(HostPtr& host) {
+        SrvConfigPtr cfg = boost::const_pointer_cast<SrvConfig>(CfgMgr::instance().getCurrentCfg());
+        cfg->getCfgHosts()->add(host);
     }
 
     /// @brief Utility function that creates a host reservation (hwaddr)
@@ -384,6 +427,7 @@ public:
     bool fqdn_fwd_;           ///< Perform forward update for a lease.
     bool fqdn_rev_;           ///< Perform reverse update for a lease.
     LeaseMgrFactory factory_; ///< pointer to LeaseMgr factory
+    ClientClasses cc_;        ///< client classes
 };
 
 /// @brief Used in Allocation Engine tests for IPv4
@@ -485,6 +529,7 @@ public:
     Pool4Ptr pool_;             ///< Pool belonging to subnet_
     LeaseMgrFactory factory_;   ///< Pointer to LeaseMgr factory
     AllocEngine::ClientContext4 ctx_; ///< Context information passed to various
+    ClientClasses cc_;          ///< Client classes
                                      ///< allocation engine functions.
 };
 

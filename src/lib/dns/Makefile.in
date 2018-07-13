@@ -86,6 +86,8 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(libdns___include_HEADERS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4macros/ax_boost_for_kea.m4 \
+	$(top_srcdir)/m4macros/ax_cpp11.m4 \
+	$(top_srcdir)/m4macros/ax_crypto.m4 \
 	$(top_srcdir)/m4macros/ax_isc_rpath.m4 \
 	$(top_srcdir)/m4macros/libtool.m4 \
 	$(top_srcdir)/m4macros/ltoptions.m4 \
@@ -300,12 +302,19 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BENCHMARK_CPPFLAGS = @BENCHMARK_CPPFLAGS@
+BENCHMARK_INCLUDES = @BENCHMARK_INCLUDES@
+BENCHMARK_LDADD = @BENCHMARK_LDADD@
+BENCHMARK_LDFLAGS = @BENCHMARK_LDFLAGS@
+BENCHMARK_SOURCE = @BENCHMARK_SOURCE@
 BOOST_INCLUDES = @BOOST_INCLUDES@
 BOOST_LIBS = @BOOST_LIBS@
+BOTAN1_TOOL = @BOTAN1_TOOL@
 BOTAN_TOOL = @BOTAN_TOOL@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CONTRIB_DIR = @CONTRIB_DIR@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CQL_CPPFLAGS = @CQL_CPPFLAGS@
@@ -324,9 +333,14 @@ CYGPATH_W = @CYGPATH_W@
 DBLATEX = @DBLATEX@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DISTCHECK_BENCHMARK_CONFIGURE_FLAG = @DISTCHECK_BENCHMARK_CONFIGURE_FLAG@
 DISTCHECK_BOOST_CONFIGURE_FLAG = @DISTCHECK_BOOST_CONFIGURE_FLAG@
+DISTCHECK_CONTRIB_CONFIGURE_FLAG = @DISTCHECK_CONTRIB_CONFIGURE_FLAG@
 DISTCHECK_CRYPTO_CONFIGURE_FLAG = @DISTCHECK_CRYPTO_CONFIGURE_FLAG@
 DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
+DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
+DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
+DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -386,8 +400,10 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
 PGSQL_CPPFLAGS = @PGSQL_CPPFLAGS@
 PGSQL_LIBS = @PGSQL_LIBS@
+PKGPYTHONDIR = @PKGPYTHONDIR@
 PKG_CONFIG = @PKG_CONFIG@
 PLANTUML = @PLANTUML@
+PREMIUM_DIR = @PREMIUM_DIR@
 PYTHON = @PYTHON@
 PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
@@ -472,6 +488,7 @@ AM_CXXFLAGS = $(KEA_CXXFLAGS)
 # BUILT_SOURCES.
 CLEANFILES = *.gcno *.gcda s-rdatacode python/rrtype_constants_inc.cc \
 	python/rrclass_constants_inc.cc
+DISTCLEANFILES = gen-rdatacode.py
 
 # TODO: double-check that this is the only way
 # NOTE: when an rdata file is added, please also add to this list:
@@ -522,7 +539,7 @@ noinst_SCRIPTS = gen-rdatacode.py
 BUILT_SOURCES = rrclass.h rrtype.h rrparamregistry.cc rdataclass.h \
 	rdataclass.cc
 lib_LTLIBRARIES = libkea-dns++.la
-libkea_dns___la_LDFLAGS = -no-undefined -version-info 2:0:1 \
+libkea_dns___la_LDFLAGS = -no-undefined -version-info 2:1:0 \
 	$(AM_LDFLAGS) $(CRYPTO_LDFLAGS)
 
 # The following files used to be generated, but they are now part of the git tree:
@@ -565,29 +582,42 @@ libkea_dns___la_LIBADD =  \
 # those files, but that step is no longer required for successful compilation.
 
 #rrclass.h rrtype.h rrparamregistry.cc rdataclass.h rdataclass.cc: s-rdatacode
-libdns___includedir = $(includedir)/$(PACKAGE_NAME)/dns
+libdns___includedir = $(pkgincludedir)/dns
 libdns___include_HEADERS = \
+	dns_fwd.h \
 	edns.h \
 	exceptions.h \
-	dns_fwd.h \
 	labelsequence.h \
-	message.h \
-	masterload.h \
 	master_lexer.h \
+	master_lexer_inputsource.h \
+	master_lexer_state.h \
 	master_loader.h \
 	master_loader_callbacks.h \
+	masterload.h \
+	message.h \
 	messagerenderer.h \
 	name.h \
-	question.h \
+	nsec3hash.h \
 	opcode.h \
+	question.h \
 	rcode.h \
 	rdata.h \
+	rdata_pimpl_holder.h \
+	rdataclass.h \
+	rdatafields.h \
+	rrclass.h \
+	rrcollator.h \
 	rrparamregistry.h \
 	rrset.h \
-	rrset_collection_base.h \
 	rrset_collection.h \
+	rrset_collection_base.h \
 	rrttl.h \
+	rrtype.h \
+	serial.h \
+	tsig.h \
+	tsigerror.h \
 	tsigkey.h \
+	tsigrecord.h \
 	zone_checker.h
 
 all: $(BUILT_SOURCES)
@@ -1207,6 +1237,7 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f rdata/generic/detail/$(DEPDIR)/$(am__dirstamp)
 	-rm -f rdata/generic/detail/$(am__dirstamp)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"

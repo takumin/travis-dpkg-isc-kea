@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2016 Internet Systems Consortium, Inc. ("ISC")
+/* Copyright (C) 2015-2018 Internet Systems Consortium, Inc. ("ISC")
 
    This Source Code Form is subject to the terms of the Mozilla Public
    License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
 %require "3.0.0"
 %defines
 %define parser_class_name {EvalParser}
+%define api.prefix {eval}
 %define api.token.constructor
 %define api.value.type variant
 %define api.namespace {isc::eval}
@@ -34,7 +35,7 @@ using namespace isc::eval;
 }
 
 %define api.token.prefix {TOKEN_}
-// Tokens in an order which makes sense and related to the intented use.
+// Tokens in an order which makes sense and related to the intended use.
 %token
   END  0  "end of file"
   LPAREN  "("
@@ -46,6 +47,7 @@ using namespace isc::eval;
   OPTION "option"
   RELAY4 "relay4"
   RELAY6 "relay6"
+  MEMBER "member"
   PEERADDR "peeraddr"
   LINKADDR "linkaddr"
   LBRACKET "["
@@ -71,6 +73,7 @@ using namespace isc::eval;
   ALL "all"
   COMA ","
   CONCAT "concat"
+  IFELSE "ifelse"
   PKT6 "pkt6"
   MSGTYPE "msgtype"
   TRANSID "transid"
@@ -79,6 +82,9 @@ using namespace isc::eval;
   ANY "*"
   DATA "data"
   ENTERPRISE "enterprise"
+
+  TOPLEVEL_BOOL "top-level bool"
+  TOPLEVEL_STRING "top-level string"
 ;
 
 %token <std::string> STRING "constant string"
@@ -92,7 +98,7 @@ using namespace isc::eval;
 %type <uint32_t> integer_expr
 %type <TokenOption::RepresentationType> option_repr_type
 %type <TokenRelay6Field::FieldType> relay6_field
-%type <uint8_t> nest_level
+%type <int8_t> nest_level
 %type <TokenPkt::MetadataType> pkt_metadata
 %type <TokenPkt4::FieldType> pkt4_field
 %type <TokenPkt6::FieldType> pkt6_field
@@ -105,8 +111,14 @@ using namespace isc::eval;
 
 %%
 
-// The whole grammar starts with an expression.
-%start expression;
+// The whole grammar starts with a 'start' symbol...
+%start start;
+
+// ... that expects either TOPLEVEL_BOOL or TOPLEVEL_STRING. Depending on which
+// token appears first, it will determine what is allowed and what it not.
+start: TOPLEVEL_BOOL expression
+     | TOPLEVEL_STRING string_expr
+;
 
 // Expression can either be a single token or a (something == something) expression
 
@@ -201,6 +213,21 @@ bool_expr : "(" bool_expr ")"
                   TokenPtr exist(new TokenVendor(ctx.getUniverse(), $3, TokenOption::EXISTS, $8));
                   ctx.expression.push_back(exist);
                }
+          | MEMBER "(" STRING ")"
+              {
+                  // Expression member('foo')
+                  //
+                  // This token will check if the packet is a member of
+                  // the specified client class.
+                  // To avoid loops at evaluation only already defined and
+                  // built-in classes are allowed.
+                  std::string cc = $3;
+                  if (!ctx.isClientClassDefined(cc)) {
+                      error(@3, "Not defined client class '" + cc + "'");
+                  }
+                  TokenPtr member(new TokenMember(cc));
+                  ctx.expression.push_back(member);
+              }
           ;
 
 string_expr : STRING
@@ -316,6 +343,11 @@ string_expr : STRING
                   {
                       TokenPtr conc(new TokenConcat());
                       ctx.expression.push_back(conc);
+                  }
+            | IFELSE "(" bool_expr "," string_expr "," string_expr ")"
+                  {
+                      TokenPtr cond(new TokenIfElse());
+                      ctx.expression.push_back(cond);
                   }
             | VENDOR "." ENTERPRISE
                 {

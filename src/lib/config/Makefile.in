@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -80,9 +81,11 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = src/lib/config
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/depcomp
+	$(top_srcdir)/depcomp $(libkea_cfgclient_include_HEADERS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4macros/ax_boost_for_kea.m4 \
+	$(top_srcdir)/m4macros/ax_cpp11.m4 \
+	$(top_srcdir)/m4macros/ax_crypto.m4 \
 	$(top_srcdir)/m4macros/ax_isc_rpath.m4 \
 	$(top_srcdir)/m4macros/libtool.m4 \
 	$(top_srcdir)/m4macros/ltoptions.m4 \
@@ -123,7 +126,8 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(libdir)"
+am__installdirs = "$(DESTDIR)$(libdir)" \
+	"$(DESTDIR)$(libkea_cfgclient_includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libkea_cfgclient_la_DEPENDENCIES =  \
@@ -132,14 +136,16 @@ libkea_cfgclient_la_DEPENDENCIES =  \
 	$(top_builddir)/src/lib/cc/libkea-cc.la \
 	$(top_builddir)/src/lib/dns/libkea-dns++.la \
 	$(top_builddir)/src/lib/cryptolink/libkea-cryptolink.la \
+	$(top_builddir)/src/lib/hooks/libkea-hooks.la \
 	$(top_builddir)/src/lib/log/libkea-log.la \
 	$(top_builddir)/src/lib/util/threads/libkea-threads.la \
 	$(top_builddir)/src/lib/util/libkea-util.la \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am_libkea_cfgclient_la_OBJECTS = config_data.lo module_spec.lo \
-	command_mgr.lo command_socket.lo command_socket_factory.lo \
-	config_log.lo
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_libkea_cfgclient_la_OBJECTS = base_command_mgr.lo \
+	client_connection.lo command_mgr.lo config_log.lo \
+	hooked_command_mgr.lo
 nodist_libkea_cfgclient_la_OBJECTS = config_messages.lo
 libkea_cfgclient_la_OBJECTS = $(am_libkea_cfgclient_la_OBJECTS) \
 	$(nodist_libkea_cfgclient_la_OBJECTS)
@@ -219,6 +225,7 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+HEADERS = $(libkea_cfgclient_include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -282,12 +289,19 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BENCHMARK_CPPFLAGS = @BENCHMARK_CPPFLAGS@
+BENCHMARK_INCLUDES = @BENCHMARK_INCLUDES@
+BENCHMARK_LDADD = @BENCHMARK_LDADD@
+BENCHMARK_LDFLAGS = @BENCHMARK_LDFLAGS@
+BENCHMARK_SOURCE = @BENCHMARK_SOURCE@
 BOOST_INCLUDES = @BOOST_INCLUDES@
 BOOST_LIBS = @BOOST_LIBS@
+BOTAN1_TOOL = @BOTAN1_TOOL@
 BOTAN_TOOL = @BOTAN_TOOL@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CONTRIB_DIR = @CONTRIB_DIR@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CQL_CPPFLAGS = @CQL_CPPFLAGS@
@@ -306,9 +320,14 @@ CYGPATH_W = @CYGPATH_W@
 DBLATEX = @DBLATEX@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DISTCHECK_BENCHMARK_CONFIGURE_FLAG = @DISTCHECK_BENCHMARK_CONFIGURE_FLAG@
 DISTCHECK_BOOST_CONFIGURE_FLAG = @DISTCHECK_BOOST_CONFIGURE_FLAG@
+DISTCHECK_CONTRIB_CONFIGURE_FLAG = @DISTCHECK_CONTRIB_CONFIGURE_FLAG@
 DISTCHECK_CRYPTO_CONFIGURE_FLAG = @DISTCHECK_CRYPTO_CONFIGURE_FLAG@
 DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
+DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
+DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
+DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -368,8 +387,10 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
 PGSQL_CPPFLAGS = @PGSQL_CPPFLAGS@
 PGSQL_LIBS = @PGSQL_LIBS@
+PKGPYTHONDIR = @PKGPYTHONDIR@
 PKG_CONFIG = @PKG_CONFIG@
 PLANTUML = @PLANTUML@
+PREMIUM_DIR = @PREMIUM_DIR@
 PYTHON = @PYTHON@
 PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
@@ -448,30 +469,44 @@ top_srcdir = @top_srcdir@
 SUBDIRS = . tests
 AM_CPPFLAGS = -I$(top_srcdir)/src/lib -I$(top_builddir)/src/lib \
 	$(BOOST_INCLUDES)
+AM_CXXFLAGS = $(KEA_CXXFLAGS)
 BUILT_SOURCES = config_messages.h config_messages.cc
 lib_LTLIBRARIES = libkea-cfgclient.la
-libkea_cfgclient_la_SOURCES = config_data.h config_data.cc \
-	module_spec.h module_spec.cc command_mgr.cc command_mgr.h \
-	command_socket.cc command_socket.h command_socket_factory.cc \
-	command_socket_factory.h config_log.h config_log.cc
+libkea_cfgclient_la_SOURCES = cmds_impl.h base_command_mgr.cc \
+	base_command_mgr.h client_connection.cc client_connection.h \
+	command_mgr.cc command_mgr.h config_log.h config_log.cc \
+	hooked_command_mgr.cc hooked_command_mgr.h timeouts.h
 libkea_cfgclient_la_LIBADD =  \
 	$(top_builddir)/src/lib/dhcp/libkea-dhcp++.la \
 	$(top_builddir)/src/lib/asiolink/libkea-asiolink.la \
 	$(top_builddir)/src/lib/cc/libkea-cc.la \
 	$(top_builddir)/src/lib/dns/libkea-dns++.la \
 	$(top_builddir)/src/lib/cryptolink/libkea-cryptolink.la \
+	$(top_builddir)/src/lib/hooks/libkea-hooks.la \
 	$(top_builddir)/src/lib/log/libkea-log.la \
 	$(top_builddir)/src/lib/util/threads/libkea-threads.la \
 	$(top_builddir)/src/lib/util/libkea-util.la \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
-	$(LOG4CPLUS_LIBS) $(CRYPTO_LIBS)
-libkea_cfgclient_la_LDFLAGS = -no-undefined -version-info 2:1:0 \
+	$(LOG4CPLUS_LIBS) $(CRYPTO_LIBS) $(BOOST_LIBS)
+libkea_cfgclient_la_LDFLAGS = -no-undefined -version-info 5:1:0 \
 	$(CRYPTO_LDFLAGS)
 nodist_libkea_cfgclient_la_SOURCES = config_messages.h config_messages.cc
 
 # The message file should be in the distribution.
 EXTRA_DIST = config_messages.mes command-socket.dox
 CLEANFILES = *.gcno *.gcda config_messages.h config_messages.cc s-messages
+
+# Specify the headers for copying into the installation directory tree.
+libkea_cfgclient_includedir = $(pkgincludedir)/config
+libkea_cfgclient_include_HEADERS = \
+	base_command_mgr.h \
+	client_connection.h \
+	cmds_impl.h \
+	command_mgr.h \
+	config_log.h \
+	hooked_command_mgr.h \
+	timeouts.h
+
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -552,13 +587,12 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/base_command_mgr.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client_connection.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command_mgr.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command_socket.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/command_socket_factory.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/config_data.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/config_log.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/config_messages.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/module_spec.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hooked_command_mgr.Plo@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -586,6 +620,27 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
+install-libkea_cfgclient_includeHEADERS: $(libkea_cfgclient_include_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(libkea_cfgclient_include_HEADERS)'; test -n "$(libkea_cfgclient_includedir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(libkea_cfgclient_includedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(libkea_cfgclient_includedir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(libkea_cfgclient_includedir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(libkea_cfgclient_includedir)" || exit $$?; \
+	done
+
+uninstall-libkea_cfgclient_includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(libkea_cfgclient_include_HEADERS)'; test -n "$(libkea_cfgclient_includedir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(libkea_cfgclient_includedir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -744,10 +799,10 @@ distdir: $(DISTFILES)
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(libdir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(libkea_cfgclient_includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: $(BUILT_SOURCES)
@@ -806,7 +861,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am:
+install-data-am: install-libkea_cfgclient_includeHEADERS
 
 install-dvi: install-dvi-recursive
 
@@ -852,7 +907,8 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-libLTLIBRARIES
+uninstall-am: uninstall-libLTLIBRARIES \
+	uninstall-libkea_cfgclient_includeHEADERS
 
 .MAKE: $(am__recursive_targets) all check install install-am \
 	install-strip
@@ -865,12 +921,14 @@ uninstall-am: uninstall-libLTLIBRARIES
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am \
-	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
+	install-libLTLIBRARIES install-libkea_cfgclient_includeHEADERS \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-libLTLIBRARIES
+	tags tags-am uninstall uninstall-am uninstall-libLTLIBRARIES \
+	uninstall-libkea_cfgclient_includeHEADERS
 
 
 # Define rule to build logging source files from message file

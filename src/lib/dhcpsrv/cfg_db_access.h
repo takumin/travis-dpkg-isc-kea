@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2016-2018 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -7,8 +7,12 @@
 #ifndef CFG_DBACCESS_H
 #define CFG_DBACCESS_H
 
+#include <cc/cfg_to_element.h>
+#include <dhcpsrv/database_connection.h>
+
 #include <boost/shared_ptr.hpp>
 #include <string>
+#include <list>
 
 namespace isc {
 namespace dhcp {
@@ -20,7 +24,6 @@ namespace dhcp {
 /// passed to the @ref isc::dhcp::LeaseMgrFactory::create function.
 class CfgDbAccess {
 public:
-
     /// @brief Constructor.
     CfgDbAccess();
 
@@ -55,19 +58,38 @@ public:
     /// @brief Sets host database access string.
     ///
     /// @param host_db_access New host database access string.
-    void setHostDbAccessString(const std::string& host_db_access) {
-        host_db_access_ = host_db_access;
+    /// @param front Add at front if true, at back if false (default).
+    void setHostDbAccessString(const std::string& host_db_access,
+                               bool front = false) {
+        if (front) {
+            host_db_access_.push_front(host_db_access);
+        } else {
+            host_db_access_.push_back(host_db_access);
+        }
     }
 
-    /// @brief Creates instance of lease manager and host data source
+    /// @brief Retrieves host database access string.
+    ///
+    /// @return Database access strings with additional parameters
+    /// specified with @ref CfgDbAccess::setAppendedParameters
+    std::list<std::string> getHostDbAccessStringList() const;
+
+    /// @brief Creates instance of lease manager and host data sources
     /// according to the configuration specified.
     void createManagers() const;
 
-private:
+    /// @brief Unparse an access string
+    ///
+    /// @param dbaccess the database access string
+    /// @return a pointer to configuration
+    static
+    isc::data::ElementPtr toElementDbAccessString(const std::string& dbaccess);
+
+protected:
 
     /// @brief Returns lease or host database access string.
     ///
-    /// @param Access string without additional (appended) parameters.
+    /// @param access_string without additional (appended) parameters.
     std::string getAccessString(const std::string& access_string) const;
 
     /// @brief Parameters to be appended to the database access
@@ -77,8 +99,8 @@ private:
     /// @brief Holds lease database access string.
     std::string lease_db_access_;
 
-    /// @brief Holds host database access string.
-    std::string host_db_access_;
+    /// @brief Holds host database access strings.
+    std::list<std::string> host_db_access_;
 
 };
 
@@ -87,6 +109,43 @@ typedef boost::shared_ptr<CfgDbAccess> CfgDbAccessPtr;
 
 /// @brief A pointer to the const @c CfgDbAccess.
 typedef boost::shared_ptr<const CfgDbAccess> ConstCfgDbAccessPtr;
+
+/// @brief utility class for unparsing
+struct CfgLeaseDbAccess : public CfgDbAccess, public isc::data::CfgToElement {
+    /// @brief Constructor
+    CfgLeaseDbAccess(const CfgDbAccess& super) : CfgDbAccess(super) { }
+
+    /// @brief Unparse
+    ///
+    /// @ref isc::data::CfgToElement::toElement
+    ///
+    /// @result a pointer to a configuration
+    virtual isc::data::ElementPtr toElement() const {
+        return (CfgDbAccess::toElementDbAccessString(lease_db_access_));
+    }
+};
+
+struct CfgHostDbAccess : public CfgDbAccess, public isc::data::CfgToElement {
+    /// @brief Constructor
+    CfgHostDbAccess(const CfgDbAccess& super) : CfgDbAccess(super) { }
+
+    /// @brief Unparse
+    ///
+    /// @ref isc::data::CfgToElement::toElement
+    ///
+    /// @result a pointer to a configuration
+    virtual isc::data::ElementPtr toElement() const {
+        isc::data::ElementPtr result = isc::data::Element::createList();
+        for (const std::string& dbaccess : host_db_access_) {
+            isc::data::ElementPtr entry =
+                CfgDbAccess::toElementDbAccessString(dbaccess);
+            if (entry->size() > 0) {
+                result->add(entry);
+            }
+        }
+        return (result);
+    }
+};
 
 }
 }

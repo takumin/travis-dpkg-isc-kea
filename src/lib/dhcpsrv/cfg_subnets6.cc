@@ -1,32 +1,98 @@
-// Copyright (C) 2014-2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2014-2018 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #include <config.h>
+#include <dhcp/dhcp6.h>
+#include <dhcp/option_custom.h>
 #include <dhcpsrv/cfg_subnets6.h>
 #include <dhcpsrv/dhcpsrv_log.h>
 #include <dhcpsrv/lease_mgr_factory.h>
 #include <dhcpsrv/subnet_id.h>
+#include <dhcpsrv/addr_utilities.h>
 #include <stats/stats_mgr.h>
+#include <boost/foreach.hpp>
+#include <string.h>
+#include <sstream>
 
 using namespace isc::asiolink;
+using namespace isc::data;
 
 namespace isc {
 namespace dhcp {
 
 void
 CfgSubnets6::add(const Subnet6Ptr& subnet) {
-    /// @todo: Check that this new subnet does not cross boundaries of any
-    /// other already defined subnet.
-    if (isDuplicate(*subnet)) {
+    if (getBySubnetId(subnet->getID())) {
         isc_throw(isc::dhcp::DuplicateSubnetID, "ID of the new IPv6 subnet '"
                   << subnet->getID() << "' is already in use");
+
+    } else if (getByPrefix(subnet->toText())) {
+        /// @todo: Check that this new subnet does not cross boundaries of any
+        /// other already defined subnet.
+        isc_throw(isc::dhcp::DuplicateSubnetID, "subnet with the prefix of '"
+                  << subnet->toText() << "' already exists");
     }
+
     LOG_DEBUG(dhcpsrv_logger, DHCPSRV_DBG_TRACE, DHCPSRV_CFGMGR_ADD_SUBNET6)
               .arg(subnet->toText());
     subnets_.push_back(subnet);
+}
+
+void
+CfgSubnets6::del(const ConstSubnet6Ptr& subnet) {
+    auto& index = subnets_.get<SubnetSubnetIdIndexTag>();
+    auto subnet_it = index.find(subnet->getID());
+    if (subnet_it == index.end()) {
+        isc_throw(BadValue, "no subnet with ID of '" << subnet->getID()
+                  << "' found");
+    }
+    index.erase(subnet_it);
+
+    LOG_DEBUG(dhcpsrv_logger, DHCPSRV_DBG_TRACE, DHCPSRV_CFGMGR_DEL_SUBNET6)
+        .arg(subnet->toText());
+}
+
+ConstSubnet6Ptr
+CfgSubnets6::getBySubnetId(const SubnetID& subnet_id) const {
+    const auto& index = subnets_.get<SubnetSubnetIdIndexTag>();
+    auto subnet_it = index.find(subnet_id);
+    return ((subnet_it != index.cend()) ? (*subnet_it) : ConstSubnet6Ptr());
+}
+
+ConstSubnet6Ptr
+CfgSubnets6::getByPrefix(const std::string& subnet_text) const {
+    const auto& index = subnets_.get<SubnetPrefixIndexTag>();
+    auto subnet_it = index.find(subnet_text);
+    return ((subnet_it != index.cend()) ? (*subnet_it) : ConstSubnet6Ptr());
+}
+
+SubnetSelector
+CfgSubnets6::initSelector(const Pkt6Ptr& query) {
+    // Initialize subnet selector with the values used to select the subnet.
+    SubnetSelector selector;
+    selector.iface_name_ = query->getIface();
+    selector.remote_address_ = query->getRemoteAddr();
+    selector.first_relay_linkaddr_ = IOAddress("::");
+    selector.client_classes_ = query->classes_;
+
+    // Initialize fields specific to relayed messages.
+    if (!query->relay_info_.empty()) {
+        BOOST_REVERSE_FOREACH(Pkt6::RelayInfo relay, query->relay_info_) {
+            if (!relay.linkaddr_.isV6Zero() &&
+                !relay.linkaddr_.isV6LinkLocal()) {
+                selector.first_relay_linkaddr_ = relay.linkaddr_;
+                break;
+            }
+        }
+        selector.interface_id_ =
+            query->getAnyRelayOption(D6O_INTERFACE_ID,
+                                     Pkt6::RELAY_GET_FIRST);
+    }
+
+    return (selector);
 }
 
 Subnet6Ptr
@@ -79,16 +145,17 @@ CfgSubnets6::selectSubnet(const asiolink::IOAddress& address,
         for (Subnet6Collection::const_iterator subnet = subnets_.begin();
              subnet != subnets_.end(); ++subnet) {
 
-            // If the specified address matches the relay address, return this
+            // If the specified address matches a relay address, return this
             // subnet.
             if (is_relay_address &&
-                ((*subnet)->getRelayInfo().addr_ == address) &&
+                ((*subnet)->hasRelayAddress(address)) &&
                 (*subnet)->clientSupported(client_classes)) {
                 LOG_DEBUG(dhcpsrv_logger, DHCPSRV_DBG_TRACE,
                           DHCPSRV_CFGMGR_SUBNET6_RELAY)
                     .arg((*subnet)->toText()).arg(address.toText());
                 return (*subnet);
             }
+
         }
     }
 
@@ -162,15 +229,17 @@ CfgSubnets6::selectSubnet(const OptionPtr& interface_id,
     return (Subnet6Ptr());
 }
 
-bool
-CfgSubnets6::isDuplicate(const Subnet6& subnet) const {
-    for (Subnet6Collection::const_iterator subnet_it = subnets_.begin();
-         subnet_it != subnets_.end(); ++subnet_it) {
-        if ((*subnet_it)->getID() == subnet.getID()) {
-            return (true);
+Subnet6Ptr
+CfgSubnets6::getSubnet(const SubnetID id) const {
+
+    /// @todo: Once this code is migrated to multi-index container, use
+    /// an index rather than full scan.
+    for (auto subnet = subnets_.begin(); subnet != subnets_.end(); ++subnet) {
+        if ((*subnet)->getID() == id) {
+            return (*subnet);
         }
     }
-    return (false);
+    return (Subnet6Ptr());
 }
 
 void
@@ -197,6 +266,9 @@ CfgSubnets6::removeStatistics() {
 
         stats_mgr.del(StatsMgr::generateName("subnet", subnet_id,
                                              "declined-reclaimed-addresses"));
+
+        stats_mgr.del(StatsMgr::generateName("subnet", subnet_id,
+                                             "reclaimed-leases"));
     }
 }
 
@@ -225,6 +297,17 @@ CfgSubnets6::updateStatistics() {
     if (subnets_.begin() != subnets_.end()) {
             LeaseMgrFactory::instance().recountLeaseStats6();
     }
+}
+
+ElementPtr
+CfgSubnets6::toElement() const {
+    ElementPtr result = Element::createList();
+    // Iterate subnets
+    for (Subnet6Collection::const_iterator subnet = subnets_.cbegin();
+         subnet != subnets_.cend(); ++subnet) {
+        result->add((*subnet)->toElement());
+    }
+    return (result);
 }
 
 } // end of namespace isc::dhcp

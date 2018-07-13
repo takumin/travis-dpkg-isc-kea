@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2016 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2013-2018 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,6 +26,7 @@
 #include <dhcpsrv/lease_mgr.h>
 #include <dhcpsrv/lease_mgr_factory.h>
 #include <dhcp6/dhcp6_srv.h>
+#include <dhcp6/parser_context.h>
 #include <hooks/hooks_manager.h>
 
 #include <list>
@@ -182,6 +183,76 @@ public:
         isc::dhcp::LeaseMgrFactory::destroy();
     }
 
+    /// @brief Processes incoming Request message.
+    ///
+    /// @param request a message received from client
+    /// @return REPLY message or NULL
+    Pkt6Ptr processRequest(const Pkt6Ptr& request) {
+        AllocEngine::ClientContext6 ctx;
+        bool drop = false;
+        initContext(request, ctx, drop);
+        if (drop) {
+            return (Pkt6Ptr());
+        }
+        return (processRequest(ctx));
+    }
+
+    /// @brief Processes incoming Renew message.
+    ///
+    /// @param renew a message received from client
+    /// @return REPLY message or NULL
+    Pkt6Ptr processRenew(const Pkt6Ptr& renew) {
+        AllocEngine::ClientContext6 ctx;
+        bool drop = false;
+        initContext(renew, ctx, drop);
+        if (drop) {
+            return (Pkt6Ptr());
+        }
+        return (processRenew(ctx));
+    }
+
+    /// @brief Processes incoming Rebind message.
+    ///
+    /// @param rebind a message received from client
+    /// @return REPLY message or NULL
+    Pkt6Ptr processRebind(const Pkt6Ptr& rebind) {
+        AllocEngine::ClientContext6 ctx;
+        bool drop = false;
+        initContext(rebind, ctx, drop);
+        if (drop) {
+            return (Pkt6Ptr());
+        }
+        return (processRebind(ctx));
+    }
+
+    /// @brief Processes incoming Release message.
+    ///
+    /// @param release a message received from client
+    /// @return REPLY message or NULL
+    Pkt6Ptr processRelease(const Pkt6Ptr& release) {
+        AllocEngine::ClientContext6 ctx;
+        bool drop = false;
+        initContext(release, ctx, drop);
+        if (drop) {
+            return (Pkt6Ptr());
+        }
+        return (processRelease(ctx));
+    }
+
+    /// @brief Processes incoming Decline message.
+    ///
+    /// @param decline a message received from client
+    /// @return REPLY message or NULL
+    Pkt6Ptr processDecline(const Pkt6Ptr& decline) {
+        AllocEngine::ClientContext6 ctx;
+        bool drop = false;
+        initContext(decline, ctx, drop);
+        if (drop) {
+            return (Pkt6Ptr());
+        }
+        return (processDecline(ctx));
+    }
+
     using Dhcpv6Srv::processSolicit;
     using Dhcpv6Srv::processRequest;
     using Dhcpv6Srv::processRenew;
@@ -241,6 +312,12 @@ public:
     // Generate client-id option
     isc::dhcp::OptionPtr generateClientId(size_t duid_size = 32) {
 
+        if (duid_size == 0) {
+            return (isc::dhcp::OptionPtr
+                    (new isc::dhcp::Option(isc::dhcp::Option::V6, D6O_CLIENTID)));
+
+        }
+
         isc::dhcp::OptionBuffer clnt_duid(duid_size);
         for (size_t i = 0; i < duid_size; i++) {
             clnt_duid[i] = 100 + i;
@@ -250,6 +327,29 @@ public:
 
         return (isc::dhcp::OptionPtr
                 (new isc::dhcp::Option(isc::dhcp::Option::V6, D6O_CLIENTID,
+                                       clnt_duid.begin(),
+                                       clnt_duid.begin() + duid_size)));
+    }
+
+    /// Generate server-id option
+    /// @param duid_size size of the duid
+    isc::dhcp::OptionPtr generateServerId(size_t duid_size = 32) {
+
+        if (duid_size == 0) {
+            return (isc::dhcp::OptionPtr
+                    (new isc::dhcp::Option(isc::dhcp::Option::V6, D6O_SERVERID)));
+
+        }
+
+        isc::dhcp::OptionBuffer clnt_duid(duid_size);
+        for (size_t i = 0; i < duid_size; i++) {
+            clnt_duid[i] = 100 + i;
+        }
+
+        duid_ = isc::dhcp::DuidPtr(new isc::dhcp::DUID(clnt_duid));
+
+        return (isc::dhcp::OptionPtr
+                (new isc::dhcp::Option(isc::dhcp::Option::V6, D6O_SERVERID,
                                        clnt_duid.begin(),
                                        clnt_duid.begin() + duid_size)));
     }
@@ -375,7 +475,7 @@ public:
 // dependencies, we use forward declaration here.
 class Dhcp6Client;
 
-// Provides suport for tests against a preconfigured subnet6
+// Provides support for tests against a preconfigured subnet6
 // extends upon NakedDhcp6SrvTest
 class Dhcpv6SrvTest : public NakedDhcpv6SrvTest {
 public:
@@ -624,6 +724,7 @@ public:
     /// @param stat_name this statistic is expected to be set to 1
     void testReceiveStats(uint8_t pkt_type, const std::string& stat_name);
 
+
     /// A subnet used in most tests
     isc::dhcp::Subnet6Ptr subnet_;
 
@@ -636,6 +737,77 @@ public:
     /// @brief Server object under test.
     NakedDhcpv6Srv srv_;
 };
+
+/// @brief Patch the server config to add interface-config/re-detect=false
+/// @param json the server config
+inline void
+disableIfacesReDetect(isc::data::ConstElementPtr json) {
+    isc::data::ConstElementPtr ifaces_cfg = json->get("interfaces-config");
+    if (ifaces_cfg) {
+        isc::data::ElementPtr mutable_cfg =
+            boost::const_pointer_cast<isc::data::Element>(ifaces_cfg);
+        mutable_cfg->set("re-detect", isc::data::Element::create(false));
+    }
+}
+
+/// @brief Runs parser in JSON mode, useful for parser testing
+///
+/// @param in string to be parsed
+/// @return ElementPtr structure representing parsed JSON
+inline isc::data::ElementPtr
+parseJSON(const std::string& in)
+{
+    isc::dhcp::Parser6Context ctx;
+    return (ctx.parseString(in, isc::dhcp::Parser6Context::PARSER_JSON));
+}
+
+/// @brief Runs parser in Dhcp6 mode
+///
+/// This is a simplified Dhcp6 mode, so no outer { } and "Dhcp6" is
+/// needed. This format is used by most of the tests.
+///
+/// @param in string to be parsed
+/// @param verbose display the exception message when it fails
+/// @return ElementPtr structure representing parsed JSON
+inline isc::data::ElementPtr
+parseDHCP6(const std::string& in, bool verbose = false)
+{
+    try {
+        isc::dhcp::Parser6Context ctx;
+        isc::data::ElementPtr json;
+        json = ctx.parseString(in, isc::dhcp::Parser6Context::SUBPARSER_DHCP6);
+        disableIfacesReDetect(json);
+        return (json);
+    }
+    catch (const std::exception& ex) {
+        if (verbose) {
+            std::cout << "EXCEPTION: " << ex.what() << std::endl;
+        }
+        throw;
+    }
+}
+
+/// @brief Runs parser in option definition mode
+///
+/// This function parses specified text as JSON that defines option definitions.
+///
+/// @param in string to be parsed
+/// @param verbose display the exception message when it fails
+/// @return ElementPtr structure representing parsed JSON
+inline isc::data::ElementPtr
+parseOPTION_DEFS(const std::string& in, bool verbose = false)
+{
+    try {
+        isc::dhcp::Parser6Context ctx;
+        return (ctx.parseString(in, isc::dhcp::Parser6Context::PARSER_OPTION_DEFS));
+    }
+    catch (const std::exception& ex) {
+        if (verbose) {
+            std::cout << "EXCEPTION: " << ex.what() << std::endl;
+        }
+        throw;
+    }
+}
 
 }; // end of isc::dhcp::test namespace
 }; // end of isc::dhcp namespace
