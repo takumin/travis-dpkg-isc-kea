@@ -1,3 +1,11 @@
+isc-kea (1.4.0.P1-1) unstable; urgency=medium
+
+  * New upstream version 1.4.0.P1
+   + [CVE-2018-5739]: failure to release memory may exhaust system
+     resources (Closes: #903729)
+
+ -- Ondřej Surý <ondrej@debian.org>  Sat, 14 Jul 2018 08:51:37 +0000
+
 isc-kea (1.4.0-2) experimental; urgency=medium
 
   * New upstream version 1.4.0 (Closes: #874501, #874501)
@@ -5,7 +13,8 @@ isc-kea (1.4.0-2) experimental; urgency=medium
   * Use --fail-missing to catch files not installed which should be
   * Update bug numbers in d/changelog
   * Add kea-admin binary into kea-admin package (Closes: #851712)
-  * Install hooks in kea-common package and kea-ctrl-agent into kea-utils package
+  * Install hooks in kea-common package and kea-ctrl-agent into kea-utils
+    package
   * Move kea-ctrl-agent to kea-admin package
 
  -- Ondřej Surý <ondrej@debian.org>  Fri, 13 Jul 2018 20:00:33 +0000
