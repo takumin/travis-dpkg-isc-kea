@@ -4,8 +4,12 @@ Documentation=man:kea-ctrl-agent(8)
 After=network-online.target time-sync.target
 
 [Service]
-Environment="KEA_PIDFILE_DIR=/var/run/"
-Environment="KEA_LOCKFILE_DIR=/var/run/lock/kea/"
+Environment="KEA_PIDFILE_DIR=/run/"
+Environment="KEA_LOCKFILE_DIR=/run/lock/kea/"
+RuntimeDirectory=lock/kea
+RuntimeDirectoryMode=0750
+LogsDirectory=kea
+LogsDirectoryMode=0750
 ExecStart=/usr/sbin/kea-ctrl-agent -c /etc/kea/kea-ctrl-agent.conf
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
