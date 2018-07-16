@@ -1,7 +1,7 @@
+etc/kea/keactrl.conf
 usr/bin/kea-msg-compiler
 usr/lib/*/hooks/
 usr/lib/*/libkea-*.so.*
 usr/sbin/kea-lfc
+usr/sbin/keactrl
 usr/share/man/man8/kea-lfc.8
-usr/sbin/keactrl 
-etc/kea/keactrl.conf 
