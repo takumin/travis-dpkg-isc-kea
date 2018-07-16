@@ -1,4 +1,3 @@
-etc/kea/kea-ctrl-agent.conf
 usr/sbin/kea-admin
 usr/sbin/perfdhcp
 usr/share/kea/scripts
