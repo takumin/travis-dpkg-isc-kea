@@ -1,3 +1,24 @@
+isc-kea (1.4.0.P1-3) unstable; urgency=medium
+
+  [ Ondřej Surý ]
+  * Install keactrl binary and manpage to kea-common package
+  * Make package backportable to Ubuntu Trusty that doesn't have
+    debian/not-installed support yet
+  * Tighten the permissions on the /run/lock/kea, /var/log/kea and
+    /var/lib/kea directory
+  * Merge little bits from Jason in d/control and d/rules
+  * Cleanup install files
+
+  [ Jason Guy ]
+  * Added missing files.
+  * Minor fixes to the lockfile paths.
+
+  [ Adam Majer ]
+  * Update ISC signing key for 2017-2018
+  * Add python3-kea-connector and kea-ctrl-agent files
+
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 16 Jul 2018 15:53:56 +0000
+
 isc-kea (1.4.0.P1-2) unstable; urgency=medium
 
   * Add alternative dependency for default-libmysqlclient-dev to make
