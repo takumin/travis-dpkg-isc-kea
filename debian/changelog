@@ -1,4 +1,4 @@
-isc-kea (1.4.0.P1-6) UNRELEASED; urgency=medium
+isc-kea (1.4.0.P1-5) UNRELEASED; urgency=medium
 
   * Non-maintainer upload.
   * Added a missing python3 dependency (Closes: #905977)
