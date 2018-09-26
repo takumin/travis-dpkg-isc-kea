@@ -1,6 +1,6 @@
                        Kea Administrator Reference Manual
 
-   This is the reference guide for Kea version 1.4.0-P1.
+   This is the reference guide for Kea version 1.4.0.
 
    Copyright (c) 2010-2018 Internet Systems Consortium, Inc. ("ISC")
 
@@ -10,7 +10,7 @@
    Protocol (DHCP) servers, developed and maintained by Internet Systems
    Consortium (ISC).
 
-   This is the reference guide for Kea version 1.4.0-P1. The most up-to-date
+   This is the reference guide for Kea version 1.4.0. The most up-to-date
    version of this document (in PDF, HTML, and plain text formats), along
    with other documents for Kea, can be found at http://kea.isc.org/docs.
 
@@ -592,7 +592,7 @@
    2014, ISC made the decision to discontinue active development of BIND 10
    and continue development of Kea as standalone DHCP software.
 
-   This guide covers Kea version 1.4.0-P1.
+   This guide covers Kea version 1.4.0.
 
 1.1. Supported Platforms
 
@@ -687,11 +687,11 @@
 
     3. Extract the tarball. For example:
 
- $ tar xvzf kea-1.4.0-P1.tar.gz
+ $ tar xvzf kea-1.4.0.tar.gz
 
     4. Go into the source directory and run the configure script:
 
- $ cd kea-1.4.0-P1
+ $ cd kea-1.4.0
  $ ./configure [your extra parameters]
 
     5. Build it:

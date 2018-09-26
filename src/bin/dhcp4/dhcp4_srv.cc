@@ -369,11 +369,8 @@ Dhcpv4Exchange::setHostIdentifiers() {
                 Host::IdentifierType type = Host::IDENT_FLEX;
                 std::vector<uint8_t> id;
 
-                // Use the RAII wrapper to make sure that the callout handle state is
-                // reset when this object goes out of scope. All hook points must do
-                // it to prevent possible circular dependency between the callout
-                // handle and its arguments.
-                ScopedCalloutHandleState callout_handle_state(callout_handle);
+                // Delete previously set arguments
+                callout_handle->deleteAllArguments();
 
                 // Pass incoming packet as argument
                 callout_handle->setArgument("query4", context_->query_);
@@ -533,11 +530,8 @@ Dhcpv4Srv::selectSubnet(const Pkt4Ptr& query, bool& drop,
         HooksManager::calloutsPresent(Hooks.hook_index_subnet4_select_)) {
         CalloutHandlePtr callout_handle = getCalloutHandle(query);
 
-        // Use the RAII wrapper to make sure that the callout handle state is
-        // reset when this object goes out of scope. All hook points must do
-        // it to prevent possible circular dependency between the callout
-        // handle and its arguments.
-        ScopedCalloutHandleState callout_handle_state(callout_handle);
+        // We're reusing callout_handle from previous calls
+        callout_handle->deleteAllArguments();
 
         // Enable copying options from the packet within hook library.
         ScopedEnableOptionsCopy<Pkt4> query4_options_copy(query);
@@ -654,11 +648,8 @@ Dhcpv4Srv::selectSubnet4o6(const Pkt4Ptr& query, bool& drop,
         HooksManager::calloutsPresent(Hooks.hook_index_subnet4_select_)) {
         CalloutHandlePtr callout_handle = getCalloutHandle(query);
 
-        // Use the RAII wrapper to make sure that the callout handle state is
-        // reset when this object goes out of scope. All hook points must do
-        // it to prevent possible circular dependency between the callout
-        // handle and its arguments.
-        ScopedCalloutHandleState callout_handle_state(callout_handle);
+        // We're reusing callout_handle from previous calls
+        callout_handle->deleteAllArguments();
 
         // Set new arguments
         callout_handle->setArgument("query4", query);
@@ -854,11 +845,8 @@ Dhcpv4Srv::processPacket(Pkt4Ptr& query, Pkt4Ptr& rsp, bool allow_packet_park) {
     if (HooksManager::calloutsPresent(Hooks.hook_index_buffer4_receive_)) {
         CalloutHandlePtr callout_handle = getCalloutHandle(query);
 
-        // Use the RAII wrapper to make sure that the callout handle state is
-        // reset when this object goes out of scope. All hook points must do
-        // it to prevent possible circular dependency between the callout
-        // handle and its arguments.
-        ScopedCalloutHandleState callout_handle_state(callout_handle);
+        // Delete previously set arguments
+        callout_handle->deleteAllArguments();
 
         // Enable copying options from the packet within hook library.
         ScopedEnableOptionsCopy<Pkt4> query4_options_copy(query);
@@ -969,11 +957,8 @@ Dhcpv4Srv::processPacket(Pkt4Ptr& query, Pkt4Ptr& rsp, bool allow_packet_park) {
     if (HooksManager::calloutsPresent(Hooks.hook_index_pkt4_receive_)) {
         CalloutHandlePtr callout_handle = getCalloutHandle(query);
 
-        // Use the RAII wrapper to make sure that the callout handle state is
-        // reset when this object goes out of scope. All hook points must do
-        // it to prevent possible circular dependency between the callout
-        // handle and its arguments.
-        ScopedCalloutHandleState callout_handle_state(callout_handle);
+        // Delete previously set arguments
+        callout_handle->deleteAllArguments();
 
         // Enable copying options from the packet within hook library.
         ScopedEnableOptionsCopy<Pkt4> query4_options_copy(query);
@@ -1056,11 +1041,11 @@ Dhcpv4Srv::processPacket(Pkt4Ptr& query, Pkt4Ptr& rsp, bool allow_packet_park) {
     if (ctx && HooksManager::calloutsPresent(Hooks.hook_index_leases4_committed_)) {
         CalloutHandlePtr callout_handle = getCalloutHandle(query);
 
-        // Use the RAII wrapper to make sure that the callout handle state is
-        // reset when this object goes out of scope. All hook points must do
-        // it to prevent possible circular dependency between the callout
-        // handle and its arguments.
-        ScopedCalloutHandleState callout_handle_state(callout_handle);
+        // Delete all previous arguments
+        callout_handle->deleteAllArguments();
+
+        // Clear skip flag if it was set in previous callouts
+        callout_handle->setStatus(CalloutHandle::NEXT_STEP_CONTINUE);
 
         ScopedEnableOptionsCopy<Pkt4> query4_options_copy(query);
 
@@ -1139,11 +1124,11 @@ Dhcpv4Srv::processPacketPktSend(hooks::CalloutHandlePtr& callout_handle,
     // Execute all callouts registered for pkt4_send
     if (HooksManager::calloutsPresent(Hooks.hook_index_pkt4_send_)) {
 
-        // Use the RAII wrapper to make sure that the callout handle state is
-        // reset when this object goes out of scope. All hook points must do
-        // it to prevent possible circular dependency between the callout
-        // handle and its arguments.
-        ScopedCalloutHandleState callout_handle_state(callout_handle);
+        // Delete all previous arguments
+        callout_handle->deleteAllArguments();
+
+        // Clear skip flag if it was set in previous callouts
+        callout_handle->setStatus(CalloutHandle::NEXT_STEP_CONTINUE);
 
         // Enable copying options from the query and response packets within
         // hook library.
@@ -1198,11 +1183,8 @@ Dhcpv4Srv::processPacketBufferSend(CalloutHandlePtr& callout_handle,
         // Let's execute all callouts registered for buffer4_send
         if (HooksManager::calloutsPresent(Hooks.hook_index_buffer4_send_)) {
 
-            // Use the RAII wrapper to make sure that the callout handle state is
-            // reset when this object goes out of scope. All hook points must do
-            // it to prevent possible circular dependency between the callout
-            // handle and its arguments.
-            ScopedCalloutHandleState callout_handle_state(callout_handle);
+            // Delete previously set arguments
+            callout_handle->deleteAllArguments();
 
             // Enable copying options from the packet within hook library.
             ScopedEnableOptionsCopy<Pkt4> resp4_options_copy(rsp);
@@ -2692,11 +2674,8 @@ Dhcpv4Srv::processRelease(Pkt4Ptr& release, AllocEngine::ClientContext4Ptr& cont
         if (HooksManager::calloutsPresent(Hooks.hook_index_lease4_release_)) {
             CalloutHandlePtr callout_handle = getCalloutHandle(release);
 
-            // Use the RAII wrapper to make sure that the callout handle state is
-            // reset when this object goes out of scope. All hook points must do
-            // it to prevent possible circular dependency between the callout
-            // handle and its arguments.
-            ScopedCalloutHandleState callout_handle_state(callout_handle);
+            // Delete all previous arguments
+            callout_handle->deleteAllArguments();
 
             // Enable copying options from the packet within hook library.
             ScopedEnableOptionsCopy<Pkt4> query4_options_copy(release);
@@ -2845,11 +2824,8 @@ Dhcpv4Srv::declineLease(const Lease4Ptr& lease, const Pkt4Ptr& decline,
     if (HooksManager::calloutsPresent(Hooks.hook_index_lease4_decline_)) {
         CalloutHandlePtr callout_handle = getCalloutHandle(decline);
 
-        // Use the RAII wrapper to make sure that the callout handle state is
-        // reset when this object goes out of scope. All hook points must do
-        // it to prevent possible circular dependency between the callout
-        // handle and its arguments.
-        ScopedCalloutHandleState callout_handle_state(callout_handle);
+        // Delete previously set arguments
+        callout_handle->deleteAllArguments();
 
         // Enable copying options from the packet within hook library.
         ScopedEnableOptionsCopy<Pkt4> query4_options_copy(decline);

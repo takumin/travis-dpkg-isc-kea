@@ -11,7 +11,7 @@
 /* #undef ENABLE_LOGGER_CHECKS */
 
 /* Extended Kea version */
-#define EXTENDED_VERSION "git 68ebf634db17fc4dfda000648afaed706fed9669"
+#define EXTENDED_VERSION "git 8d6db9371f6785ff6d05648ade95c8bfb90695f8"
 
 /* Does this platform have some undefined pthreads behavior? */
 /* #undef HAS_UNDEFINED_PTHREAD_BEHAVIOR */
@@ -92,7 +92,7 @@
 /* #undef HAVE_SRANDOMDEV */
 
 /* Define to 1 if stdbool.h conforms to C99. */
-/* #undef HAVE_STDBOOL_H */
+#define HAVE_STDBOOL_H 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -125,15 +125,16 @@
 /* #undef HAVE_UTILS_ERRCODES_H */
 
 /* Check valgrind headers */
-/* #undef HAVE_VALGRIND_HEADERS */
+#define HAVE_VALGRIND_HEADERS 1
 
 /* Define to 1 if you have the <valgrind/valgrind.h> header file. */
-/* #undef HAVE_VALGRIND_VALGRIND_H */
+#define HAVE_VALGRIND_VALGRIND_H 1
 
 /* Define to 1 if the system has the type `_Bool'. */
 /* #undef HAVE__BOOL */
 
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
 #define LT_OBJDIR ".libs/"
 
 /* Running on BSD? */
@@ -167,7 +168,7 @@
 #define PACKAGE_NAME "kea"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "kea 1.4.0-P1"
+#define PACKAGE_STRING "kea 1.4.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "kea"
@@ -176,7 +177,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.4.0-P1"
+#define PACKAGE_VERSION "1.4.0"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -185,13 +186,13 @@
 /* #undef USE_STATIC_LINK */
 
 /* Version number of package */
-#define VERSION "1.4.0-P1"
+#define VERSION "1.4.0"
 
 /* Compile with Botan crypto */
-/* #undef WITH_BOTAN */
+#define WITH_BOTAN /**/
 
 /* Compile with OpenSSL crypto */
-#define WITH_OPENSSL /**/
+/* #undef WITH_OPENSSL */
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */

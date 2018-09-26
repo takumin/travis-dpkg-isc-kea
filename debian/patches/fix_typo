@@ -6,11 +6,9 @@ Subject: fix_typo
  src/bin/keactrl/keactrl.in | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/src/bin/keactrl/keactrl.in b/src/bin/keactrl/keactrl.in
-index 3510282..6474910 100644
 --- a/src/bin/keactrl/keactrl.in
 +++ b/src/bin/keactrl/keactrl.in
-@@ -461,4 +461,3 @@ ${args}" 1
+@@ -461,4 +461,3 @@
          log_error "Invalid command:  ${command}."
          exit 1 ;;
  esac

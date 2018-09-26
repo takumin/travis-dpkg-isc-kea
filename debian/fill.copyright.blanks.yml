@@ -1,0 +1,13 @@
+---
+debian/* :
+  copyright: 2016-2017, Adam Majer <adamm@zombino.com> / 2017-2018, Jason Guy (jguy@cumulusnetworks.com) / 2017-2018, Internet Systems Consortium, Inc.  
+doc/* :
+  copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
+  license: MPL-2.0
+ext/* :
+  copyright: 1994-2013, Free Software Foundation, Inc.
+  license: MPL-2.0
+m4macros/* :
+  copyright: 1994-2013, Free Software Foundation, Inc.
+  license: MPL-2.0
+

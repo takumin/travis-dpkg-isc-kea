@@ -9,11 +9,9 @@ Subject: path_fixes
  src/lib/log/interprocess/interprocess_sync_file.cc | 2 +-
  4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/src/lib/dhcpsrv/Makefile.in b/src/lib/dhcpsrv/Makefile.in
-index d58f48f..ef8c1f6 100644
 --- a/src/lib/dhcpsrv/Makefile.in
 +++ b/src/lib/dhcpsrv/Makefile.in
-@@ -657,7 +657,7 @@ top_builddir = @top_builddir@
+@@ -657,7 +657,7 @@
  top_srcdir = @top_srcdir@
  AUTOMAKE_OPTIONS = subdir-objects
  SUBDIRS = . testutils tests benchmarks
@@ -22,11 +20,9 @@ index d58f48f..ef8c1f6 100644
  kea_lfc_location = @prefix@/sbin/kea-lfc
  # Set location of the kea-lfc binary.
  AM_CPPFLAGS = -I$(top_builddir)/src/lib -I$(top_srcdir)/src/lib \
-diff --git a/src/lib/dhcpsrv/daemon.cc b/src/lib/dhcpsrv/daemon.cc
-index fd06e8b..c621479 100644
 --- a/src/lib/dhcpsrv/daemon.cc
 +++ b/src/lib/dhcpsrv/daemon.cc
-@@ -29,7 +29,7 @@ namespace dhcp {
+@@ -29,7 +29,7 @@
  
  Daemon::Daemon()
      : signal_set_(), signal_handler_(), config_file_(""), proc_name_(""),
@@ -35,11 +31,9 @@ index fd06e8b..c621479 100644
  
      // The pid_file_dir can be overridden via environment variable
      // This is primarily intended to simplify testing
-diff --git a/src/lib/log/interprocess/Makefile.in b/src/lib/log/interprocess/Makefile.in
-index 1fe5608..fc9e30b 100644
 --- a/src/lib/log/interprocess/Makefile.in
 +++ b/src/lib/log/interprocess/Makefile.in
-@@ -418,7 +418,7 @@ top_builddir = @top_builddir@
+@@ -418,7 +418,7 @@
  top_srcdir = @top_srcdir@
  SUBDIRS = . tests
  AM_CPPFLAGS = -I$(top_srcdir)/src/lib -I$(top_builddir)/src/lib \
@@ -48,11 +42,9 @@ index 1fe5608..fc9e30b 100644
  	$(BOOST_INCLUDES)
  AM_CXXFLAGS = $(KEA_CXXFLAGS)
  CLEANFILES = *.gcno *.gcda
-diff --git a/src/lib/log/interprocess/interprocess_sync_file.cc b/src/lib/log/interprocess/interprocess_sync_file.cc
-index ed6a5b7..b89cc3a 100644
 --- a/src/lib/log/interprocess/interprocess_sync_file.cc
 +++ b/src/lib/log/interprocess/interprocess_sync_file.cc
-@@ -50,7 +50,7 @@ InterprocessSyncFile::do_lock(int cmd, short l_type) {
+@@ -50,7 +50,7 @@
              lockfile_path = env;
          }
  

@@ -761,7 +761,6 @@ private:
     ///        available
     /// @param prefix_len length of the prefix (for PD only)
     ///        should be 128 for other lease types
-    /// @param [out] callout_status callout returned by the lease6_select
     ///
     /// The following fields of the ctx structure are used:
     /// @ref ClientContext6::subnet_ subnet the lease is allocated from
@@ -785,8 +784,7 @@ private:
     ///         became unavailable)
     Lease6Ptr createLease6(ClientContext6& ctx,
                            const isc::asiolink::IOAddress& addr,
-                           const uint8_t prefix_len,
-                           hooks::CalloutHandle::CalloutNextStep& callout_status);
+                           const uint8_t prefix_len);
 
     /// @brief Allocates a normal, in-pool, unreserved lease from the pool.
     ///
@@ -861,7 +859,6 @@ private:
     /// @param ctx client context that contains all details.
     /// @param prefix_len prefix length (for PD leases)
     ///        Should be 128 for other lease types
-    /// @param [out] callout_status callout returned by the lease6_select
     ///
     /// The following parameters are used from the ctx structure:
     /// @ref ClientContext6::subnet_ subnet the lease is allocated from
@@ -882,11 +879,9 @@ private:
     ///
     /// @return refreshed lease
     /// @throw BadValue if trying to recycle lease that is still valid
-    Lease6Ptr
-    reuseExpiredLease(Lease6Ptr& expired,
-                      ClientContext6& ctx,
-                      uint8_t prefix_len,
-                      hooks::CalloutHandle::CalloutNextStep& callout_status);
+    Lease6Ptr reuseExpiredLease(Lease6Ptr& expired,
+                                ClientContext6& ctx,
+                                uint8_t prefix_len);
 
     /// @brief Updates FQDN and Client's Last Transmission Time
     /// for a collection of leases.
@@ -1380,7 +1375,6 @@ private:
     ///
     /// @param ctx client context that contains additional parameters.
     /// @param addr An address that was selected and is confirmed to be available
-    /// @param [out] callout_status callout returned by the lease6_select
     ///
     /// In particular, the following fields from Client context are used:
     /// - @ref ClientContext4::subnet_ Subnet the lease is allocated from
@@ -1401,8 +1395,7 @@ private:
     /// @return allocated lease (or NULL in the unlikely case of the lease just
     ///        become unavailable)
     Lease4Ptr createLease4(const ClientContext4& ctx,
-                           const isc::asiolink::IOAddress& addr,
-                           hooks::CalloutHandle::CalloutNextStep& callout_status);
+                           const isc::asiolink::IOAddress& addr);
 
     /// @brief Renews a DHCPv4 lease.
     ///
@@ -1429,14 +1422,11 @@ private:
     /// @param expired An old, expired lease.
     /// @param ctx Message processing context. It holds various information
     /// extracted from the client's message and required to allocate a lease.
-    /// @param [out] callout_status callout returned by the lease4_select
     ///
     /// @return Updated lease instance.
     /// @throw BadValue if trying to reuse a lease which is still valid or
     /// when the provided parameters are invalid.
-    Lease4Ptr
-    reuseExpiredLease4(Lease4Ptr& expired, ClientContext4& ctx,
-                       hooks::CalloutHandle::CalloutNextStep& callout_status);
+    Lease4Ptr reuseExpiredLease4(Lease4Ptr& expired, ClientContext4& ctx);
 
     /// @brief Allocates the lease by replacing an existing lease.
     ///
@@ -1449,14 +1439,11 @@ private:
     /// allocated.
     /// @param ctx Client context holding the data extracted from the
     /// client's message.
-    /// @param [out] callout_status callout returned by the lease4_select
     ///
     /// @return A pointer to the allocated lease or NULL if the allocation
     /// was not successful.
-    Lease4Ptr
-    allocateOrReuseLease4(const asiolink::IOAddress& address,
-                          ClientContext4& ctx,
-                          hooks::CalloutHandle::CalloutNextStep& callout_status);
+    Lease4Ptr allocateOrReuseLease4(const asiolink::IOAddress& address,
+                                    ClientContext4& ctx);
 
     /// @brief Allocates the lease from the dynamic pool.
     ///

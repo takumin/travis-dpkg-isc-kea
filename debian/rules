@@ -13,10 +13,13 @@ export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
 %:
-	dh $@  --with autotools-dev,autoreconf --parallel --fail-missing -X.la -B
+	dh $@  --with autotools-dev,autoreconf,python3 --parallel --fail-missing -X.la -B
 
 override_dh_auto_configure:
 	dh_auto_configure $@ -- \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var/lib \
 		--with-openssl \
 		--with-mysql \
 		--with-pgsql \

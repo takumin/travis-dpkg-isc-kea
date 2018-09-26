@@ -6,11 +6,9 @@ Subject: fix_pc_paths
  dns++.pc.in | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/dns++.pc.in b/dns++.pc.in
-index ef65c7e..399a0eb 100644
 --- a/dns++.pc.in
 +++ b/dns++.pc.in
-@@ -8,4 +8,4 @@ Description: BIND 10 DNS library
+@@ -8,4 +8,4 @@
  Version: @PACKAGE_VERSION@
  Requires: @CRYPTO_PACKAGE@
  Cflags: -I${includedir}/@PACKAGE_NAME@

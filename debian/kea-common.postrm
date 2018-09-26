@@ -22,7 +22,7 @@ set -e
 case "$1" in
     purge)
         dpkg-statoverride --force --remove /var/log/kea
-	dpkg-statoverride --force --remote /var/lib/kea
+				dpkg-statoverride --force --remove /var/lib/kea
     ;;
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
     ;;

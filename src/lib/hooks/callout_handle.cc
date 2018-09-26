@@ -158,27 +158,5 @@ CalloutHandle::getHookName() const {
     return (hook);
 }
 
-ScopedCalloutHandleState::
-ScopedCalloutHandleState(const CalloutHandlePtr& callout_handle)
-    : callout_handle_(callout_handle) {
-    if (!callout_handle_) {
-        isc_throw(BadValue, "callout_handle argument must not be null");
-    }
-
-    resetState();
-}
-
-ScopedCalloutHandleState::~ScopedCalloutHandleState() {
-    resetState();
-}
-
-void
-ScopedCalloutHandleState::resetState() {
-    // No need to check if the handle is null because the constructor
-    // already checked that.
-    callout_handle_->deleteAllArguments();
-    callout_handle_->setStatus(CalloutHandle::NEXT_STEP_CONTINUE);
-}
-
-} // namespace hooks
+} // namespace util
 } // namespace isc

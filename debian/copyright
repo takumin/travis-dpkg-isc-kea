@@ -2,24 +2,125 @@ Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: isc-kea-dhcp-server
 Source: http://kea.isc.org
 
+Files: *
+Copyright: 1996-2013, Free Software Foundation, Inc.
+License: GPL-2+
+
+Files: configure
+Copyright: 1992-1996, 1998-2012, Free Software Foundation, Inc.
+License: FSF or Unlimited
+
 Files: debian/*
 Copyright: 2016 Adam Majer <adamm@zombino.com>
 License: MPL-2.0
 
-Files: *
+Files: doc/*
+Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
+License: MPL-2.0
+
+Files: doc/design/*
+Copyright: 1994-2013, Free Software Foundation, Inc.
+License: MPL-2.0
+
+Files: doc/guide/kea-guide.html
+  doc/guide/kea-messages.html
+Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")</p></div><div><div class="abstract"><p class="title"><b>Abstract</b></p><p>
+License: MPL-2.0
+
+Files: ext/*
+Copyright: 1994-2013, Free Software Foundation, Inc.
+License: MPL-2.0
+
+Files: install-sh
+Copyright: 1994, X Consortium
+License: Expat
+
+Files: m4macros/*
+Copyright: 1994-2013, Free Software Foundation, Inc.
+License: MPL-2.0
+
+Files: m4macros/libtool.m4
+Copyright: 1996-2001, 2003-2011, Free Software
+License: GPL-2+
+
+Files: m4macros/ltoptions.m4
+Copyright: 2004, 2005, 2007-2009, Free Software Foundation
+License: MPL-2.0
+
+Files: src/bin/*
+Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
+License: MPL-2.0
+
+Files: src/bin/admin/tests/data/*
 Copyright: 2014-2015 Internet Systems Consortium, Inc.
 License: MPL-2.0
 
-Files: src/lib/util/encode/base16_from_binary.h
-       src/lib/util/encode/base32hex_from_binary.h
-       src/lib/util/encode/binary_from_base32hex.h
-       src/lib/util/encode/binary_from_base16.h
-Copyright: Copyright 2002 Robert Ramey
+Files: src/bin/agent/tests/testdata/*
+Copyright: 2014-2015 Internet Systems Consortium, Inc.
+License: MPL-2.0
+
+Files: src/bin/d2/images/*
+Copyright: 2014-2015 Internet Systems Consortium, Inc.
+License: MPL-2.0
+
+Files: src/bin/d2/tests/testdata/*
+Copyright: 2014-2015 Internet Systems Consortium, Inc.
+License: MPL-2.0
+
+Files: src/bin/keactrl/*
+Copyright: 2014-2015 Internet Systems Consortium, Inc.
+License: MPL-2.0
+
+Files: src/bin/perfdhcp/tests/testdata/*
+Copyright: 2014-2015 Internet Systems Consortium, Inc.
+License: MPL-2.0
+
+Files: src/hooks/dhcp/*
+Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
+License: MPL-2.0
+
+Files: src/lib/*
+Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
+License: MPL-2.0
+
+Files: src/lib/config/tests/testdata/*
+Copyright: 2014-2015 Internet Systems Consortium, Inc.
+License: MPL-2.0
+
+Files: src/lib/dhcpsrv/benchmarks/*
+Copyright: 2016-2018, Internet Systems Consortium, Inc. ("ISC")
+  2015-2017, Deutsche Telekom AG.
+License: Apache-2.0
+
+Files: src/lib/dhcpsrv/images/*
+Copyright: 2014-2015 Internet Systems Consortium, Inc.
+License: MPL-2.0
+
+Files: src/lib/dns/tests/testdata/*
+Copyright: 2014-2015 Internet Systems Consortium, Inc.
+License: MPL-2.0
+
+Files: src/lib/log/compiler/*
+Copyright: 2014-2015 Internet Systems Consortium, Inc.
+License: MPL-2.0
+
+Files: src/lib/util/encode/*
+Copyright: 2002, Robert Ramey - http:www.rrsd.com .
 License: BSL-1.0
 
-Files: ext/coroutine/coroutine.h
-Copyright: 2003-2010 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-License: BSL-1.0
+License: Apache-2.0
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS"BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ .
+ On Debian systems, the complete text of the Apache License,
+ Version 2.0 can be found in '/usr/share/common-licenses/Apache-2.0'.
 
 License: BSL-1.0
  Boost Software License - Version 1.0 - August 17th, 2003
@@ -45,6 +146,46 @@ License: BSL-1.0
  FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  DEALINGS IN THE SOFTWARE.
+
+License: Expat
+ The MIT License
+ .
+ Permission is hereby granted, free of charge, to any person
+ obtaining a copy of this software and associated
+ documentation files (the "Software"), to deal in the Software
+ without restriction, including without limitation the rights to
+ use, copy, modify, merge, publish, distribute, sublicense,
+ and/or sell copies of the Software, and to permit persons to
+ whom the Software is furnished to do so, subject to the
+ following conditions:
+ .
+ The above copyright notice and this permission notice shall
+ be included in all copies or substantial portions of the
+ Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT
+ WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+ SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ CONNECTION WITH THE SOFTWARE OR THE USE OR
+ OTHER DEALINGS IN THE SOFTWARE.
+
+License: FSF
+ Please fill license FSF or Unlimited from header of configure
+
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; version 2 dated June, 1991, or (at
+ your option) any later version.
+ .
+ On Debian systems, the complete text of version 2 of the GNU General
+ Public License can be found in '/usr/share/common-licenses/GPL-2'.
 
 License: MPL-2.0
  Mozilla Public License Version 2.0
@@ -374,3 +515,6 @@ License: MPL-2.0
  .
  This Source Code Form is "Incompatible With Secondary Licenses", as
  defined by the Mozilla Public License, v. 2.0.
+
+License: Unlimited
+ Please fill license FSF or Unlimited from header of configure

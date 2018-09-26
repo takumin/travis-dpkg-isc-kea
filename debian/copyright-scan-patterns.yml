@@ -1,0 +1,23 @@
+---
+ignore :
+  suffixes :
+    - yml
+    - png
+    - dia
+    - o
+    - in
+    - am
+  pattern :
+    - /compatcheck/
+    - /AUTHORS
+    - /README
+    - /ChangeLog
+    - /INSTALL
+    - /dns++.pc.in
+    - /src/
+    - /tools/ 
+    - configure.ac
+    - config.h
+    - aclocal.m4
+    - config.guess
+    - config.sub
