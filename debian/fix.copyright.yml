@@ -1,8 +1,0 @@
----
-! copyright Files:'*/Makefile.in' Copyright="Copyright: 1994-2013, Free Software Foundation, Inc." License short_name=MPL-2.0
-! copyright Files:'*/Makefile.am' Copyright="Copyright: 1994-2013, Free Software Foundation, Inc." License short_name=MPL-2.0
-# defeat spammer by replacing all '@' in emails of 3rdparty files
-# the operation :~/^3party/ loops over all Files entries that match ^3rdparty
-# and modify the copyright entry with a Perl substitution
-! Files:~/^3rdparty/ Copyright=~s/@/(at)/
-

@@ -1,23 +1,33 @@
 ---
-ignore :
-  suffixes :
-    - yml
-    - png
-    - dia
-    - o
-    - in
-    - am
-  pattern :
-    - /compatcheck/
-    - /AUTHORS
-    - /README
-    - /ChangeLog
-    - /INSTALL
-    - /dns++.pc.in
-    - /src/
-    - /tools/ 
-    - configure.ac
-    - config.h
-    - aclocal.m4
-    - config.guess
-    - config.sub
+check:
+  suffixes:
+  - asm
+  - lua
+  - nqp
+  - s
+  - template
+ignore:
+  pattern:
+  - /debian/
+  - Makefile
+  - AUTHORS
+  - README
+  - ChangeLog
+  - INSTALL
+  - MANIFEST
+  - /config(.guess|ure|ure.ac|.h.in|.sub)
+  suffixes:
+  - generic
+  - rst
+  - jpg
+  - yml
+  - png
+  - dia
+  - o
+  - htm
+  - html
+  - txt
+  - install
+  - M
+  - in
+
