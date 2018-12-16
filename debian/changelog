@@ -1,9 +1,10 @@
-isc-kea (1.4.0.P1-5) UNRELEASED; urgency=medium
+isc-kea (1.4.0.P1-5) unstable; urgency=medium
 
   * Non-maintainer upload.
   * Added a missing python3 dependency (Closes: #905977)
   * Fixed kea-ctrl-agent dependency (Closes: #908491)
   * Fixed kea-common postrm script (Closes: #905421)
+  * Fixed state directories (Closes: #910671)
   * Fixed copyright (Closes: #905214)
   * Cleaned up quilt patches.
 

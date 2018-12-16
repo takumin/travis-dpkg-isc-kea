@@ -7,10 +7,7 @@ AC_PREREQ([2.69])
 # For GIT versions, this is x.y.z-git, where x.y.z denotes the software
 # version that was used as a base + changes that were made later, but
 # are not released yet.
-# For patch releases, this is x.y.x-Pn, where x.y.z denotes the release
-# that was used as the base and n is the patch number. Patchlevel
-# counts from 1.
-AC_INIT(kea,1.4.0-P1, kea-dev@lists.isc.org)
+AC_INIT(kea,1.4.0, kea-dev@lists.isc.org)
 AC_CONFIG_SRCDIR(README)
 
 # serial-tests is not available in automake version before 1.13, so
@@ -399,7 +396,7 @@ case "$host" in
         [AC_MSG_RESULT([OS X >= 10.9])
          kea_undefined_pthread_behavior=yes])
         ;;
-*-freebsd*|*-kfreebsd*)
+*-freebsd*)
         # On FreeBSD10.1 pthread_cond_destroy doesn't work as documented, which
         # causes the CondVarTest.destroyWhileWait test to fail. According to the
         # pthread_cond_destroy documentation for FreeBSD, this function should
@@ -522,7 +519,7 @@ case $host in
       BSD_TYPE="OSX"
       CPPFLAGS="$CPPFLAGS -DOS_BSD"
       ;;
-    *-freebsd*|*-kfreebsd*)
+    *-freebsd*)
       AC_DEFINE([OS_BSD], [1], [Running on BSD?])
       AC_DEFINE([OS_FREEBSD], [1], [Running on FreeBSD?])
       OS_TYPE="BSD"
