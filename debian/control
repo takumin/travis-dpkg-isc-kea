@@ -3,7 +3,8 @@ Section: net
 Priority: optional
 Maintainer: Kea <isc-kea@packages.debian.org>
 Uploaders: Adam Majer <adamm@zombino.com>,
-           Ondřej Surý <ondrej@debian.org>
+           Ondřej Surý <ondrej@debian.org>,
+           Jason Guy <jason.e.guy@gmail.com>
 Build-Depends: autotools-dev,
                bison,
                debhelper (>= 9),
@@ -71,7 +72,8 @@ Architecture: any
 Depends: kea-common (= ${binary:Version}),
          lsb-base,
          ${misc:Depends},
-         ${shlibs:Depends}
+         ${shlibs:Depends},
+	 ${python:Depends}
 Suggests: kea-doc
 Description: ISC KEA DHCP server REST API service
  KEA is an IPv4 and IPv6 DHCP server developed by Internet Systems Consortium.
