@@ -8,7 +8,7 @@ isc-kea (1.4.0.P1-5) unstable; urgency=medium
   * Fixed copyright (Closes: #905214)
   * Cleaned up quilt patches.
 
- -- Jason Guy <jason.e.guy@gmail.com>  Wed, 26 Sep 2018 08:19:55 -0400
+ -- Jason Guy <jason.e.guy@gmail.com>  Sun, 16 Dec 2018 19:31:18 -0500
 
 isc-kea (1.4.0.P1-3) unstable; urgency=medium
 
