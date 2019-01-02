@@ -1,3 +1,19 @@
+isc-kea (1.4.0.P1-6) UNRELEASED; urgency=medium
+
+  * Non-maintainer upload.
+
+  [ Yuval Freund ]
+  * Fix python dep issue.
+
+  [ Badreddin Aboubakr ]
+  * Fix systemd Unit Files
+  ** Change lock directory (systemd nesting issue)
+  ** Quote RuntimeDirectory
+  ** Remove "LogsDirectory" and "LogsDirectoryMode" (they are not
+     supported in systemd 232)
+
+ -- Badreddin Aboubakr <badreddin.aboubakr@cloud.ionos.com>  Tue, 08 Jan 2019 17:14:15 +0100
+
 isc-kea (1.4.0.P1-5) unstable; urgency=medium
 
   * Non-maintainer upload.

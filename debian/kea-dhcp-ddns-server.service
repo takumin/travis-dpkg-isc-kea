@@ -7,12 +7,10 @@ After=time-sync.target
 
 [Service]
 Environment="KEA_PIDFILE_DIR=/run/"
-Environment="KEA_LOCKFILE_DIR=/run/lock/kea/"
-Environment="KEA_LOGGER_DESTINATION=/var/log/kea/"
-RuntimeDirectory=lock/kea
+Environment="KEA_LOCKFILE_DIR=/run/kea-ddns"
+Environment="KEA_LOGGER_DESTINATION=/var/log/kea-ddns"
+RuntimeDirectory=kea-ddns
 RuntimeDirectoryMode=0750
-LogsDirectory=kea
-LogsDirectoryMode=0750
 ExecStart=/usr/sbin/kea-dhcp-ddns -c /etc/kea/kea-dhcp-ddns.conf
 
 [Install]
