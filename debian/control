@@ -5,11 +5,9 @@ Maintainer: Kea <isc-kea@packages.debian.org>
 Uploaders: Adam Majer <adamm@zombino.com>,
            Ondřej Surý <ondrej@debian.org>,
            Jason Guy <jason.e.guy@gmail.com>
-Build-Depends: autotools-dev,
-               bison,
-               debhelper (>= 9),
+Build-Depends: bison,
+               debhelper-compat (= 12),
                default-libmysqlclient-dev | libmysqlclient-dev,
-               dh-autoreconf,
                dh-python,
                docbook,
                docbook-xsl,

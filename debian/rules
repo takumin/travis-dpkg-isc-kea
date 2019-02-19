@@ -13,7 +13,7 @@ export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
 %:
-	dh $@  --with autotools-dev,autoreconf,python3 --parallel --fail-missing -X.la -B
+	dh $@  --with python3 --parallel -X.la -B
 
 override_dh_auto_configure:
 	dh_auto_configure $@ -- \
@@ -52,6 +52,9 @@ override_dh_auto_install:
 	    debian/tmp/usr/lib/python3.*/site-packages/kea/__pycache__/*.pyc \
 	    debian/tmp/usr/lib/python3.*/site-packages/kea/__pycache__/*.pyo \
 	    debian/tmp/usr/lib/python3.*/site-packages/kea/kea_connector2.py
+
+override_dh_missing:
+	dh_missing --fail-missing
 
 override_dh_clean:
 	dh_clean
