@@ -1,5 +1,8 @@
-# Compulsory line, this is a version 3 file
-version=3
-
-opts=dirversionmangle=s/-/~/,pgpsigurlmangle=s/$/.sha512.asc/   \
-ftp://ftp.isc.org/isc/kea/(\d+\.\d+\.\d+.*)/kea-(.*)\.tar\.gz
+version=4
+opts=\
+compression=xz,\
+uversionmangle=s/((rc|b)\d+)$/~$1/;s/-P(\d+)$/.P$1/,\
+dirversionmangle=s/((rc|b)\d+)$/~$1/;s/-P(\d+)$/.P$1/,\
+dversionmangle=s/\.dfsg\./-/;s/[\.\+]dfsg$//,\
+pgpsigurlmangle=s/$/.asc/ \
+ https://ftp.isc.org/isc/kea/(\d+\.\d+\.\d+.*)/kea-(.*)\.tar\.gz
