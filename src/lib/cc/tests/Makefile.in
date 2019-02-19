@@ -116,12 +116,15 @@ PROGRAMS = $(noinst_PROGRAMS)
 am__run_unittests_SOURCES_DIST = command_interpreter_unittests.cc \
 	data_unittests.cc data_file_unittests.cc \
 	json_feed_unittests.cc simple_parser_unittest.cc \
+	stamped_element_unittest.cc stamped_value_unittest.cc \
 	user_context_unittests.cc run_unittests.cc
 @HAVE_GTEST_TRUE@am_run_unittests_OBJECTS = run_unittests-command_interpreter_unittests.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	run_unittests-data_unittests.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	run_unittests-data_file_unittests.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	run_unittests-json_feed_unittests.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	run_unittests-simple_parser_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	run_unittests-stamped_element_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	run_unittests-stamped_value_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	run_unittests-user_context_unittests.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	run_unittests-run_unittests.$(OBJEXT)
 run_unittests_OBJECTS = $(am_run_unittests_OBJECTS)
@@ -276,6 +279,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -299,6 +303,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -351,6 +356,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -429,6 +437,8 @@ TESTS_ENVIRONMENT = \
 @HAVE_GTEST_TRUE@	data_unittests.cc data_file_unittests.cc \
 @HAVE_GTEST_TRUE@	json_feed_unittests.cc \
 @HAVE_GTEST_TRUE@	simple_parser_unittest.cc \
+@HAVE_GTEST_TRUE@	stamped_element_unittest.cc \
+@HAVE_GTEST_TRUE@	stamped_value_unittest.cc \
 @HAVE_GTEST_TRUE@	user_context_unittests.cc run_unittests.cc
 @HAVE_GTEST_TRUE@run_unittests_CPPFLAGS = $(AM_CPPFLAGS) $(GTEST_INCLUDES)
 @HAVE_GTEST_TRUE@run_unittests_LDFLAGS = $(AM_LDFLAGS) $(GTEST_LDFLAGS)
@@ -501,6 +511,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run_unittests-json_feed_unittests.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run_unittests-run_unittests.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run_unittests-simple_parser_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run_unittests-stamped_element_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run_unittests-stamped_value_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run_unittests-user_context_unittests.Po@am__quote@
 
 .cc.o:
@@ -593,6 +605,34 @@ run_unittests-simple_parser_unittest.obj: simple_parser_unittest.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='simple_parser_unittest.cc' object='run_unittests-simple_parser_unittest.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o run_unittests-simple_parser_unittest.obj `if test -f 'simple_parser_unittest.cc'; then $(CYGPATH_W) 'simple_parser_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/simple_parser_unittest.cc'; fi`
+
+run_unittests-stamped_element_unittest.o: stamped_element_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT run_unittests-stamped_element_unittest.o -MD -MP -MF $(DEPDIR)/run_unittests-stamped_element_unittest.Tpo -c -o run_unittests-stamped_element_unittest.o `test -f 'stamped_element_unittest.cc' || echo '$(srcdir)/'`stamped_element_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/run_unittests-stamped_element_unittest.Tpo $(DEPDIR)/run_unittests-stamped_element_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='stamped_element_unittest.cc' object='run_unittests-stamped_element_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o run_unittests-stamped_element_unittest.o `test -f 'stamped_element_unittest.cc' || echo '$(srcdir)/'`stamped_element_unittest.cc
+
+run_unittests-stamped_element_unittest.obj: stamped_element_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT run_unittests-stamped_element_unittest.obj -MD -MP -MF $(DEPDIR)/run_unittests-stamped_element_unittest.Tpo -c -o run_unittests-stamped_element_unittest.obj `if test -f 'stamped_element_unittest.cc'; then $(CYGPATH_W) 'stamped_element_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/stamped_element_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/run_unittests-stamped_element_unittest.Tpo $(DEPDIR)/run_unittests-stamped_element_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='stamped_element_unittest.cc' object='run_unittests-stamped_element_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o run_unittests-stamped_element_unittest.obj `if test -f 'stamped_element_unittest.cc'; then $(CYGPATH_W) 'stamped_element_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/stamped_element_unittest.cc'; fi`
+
+run_unittests-stamped_value_unittest.o: stamped_value_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT run_unittests-stamped_value_unittest.o -MD -MP -MF $(DEPDIR)/run_unittests-stamped_value_unittest.Tpo -c -o run_unittests-stamped_value_unittest.o `test -f 'stamped_value_unittest.cc' || echo '$(srcdir)/'`stamped_value_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/run_unittests-stamped_value_unittest.Tpo $(DEPDIR)/run_unittests-stamped_value_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='stamped_value_unittest.cc' object='run_unittests-stamped_value_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o run_unittests-stamped_value_unittest.o `test -f 'stamped_value_unittest.cc' || echo '$(srcdir)/'`stamped_value_unittest.cc
+
+run_unittests-stamped_value_unittest.obj: stamped_value_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT run_unittests-stamped_value_unittest.obj -MD -MP -MF $(DEPDIR)/run_unittests-stamped_value_unittest.Tpo -c -o run_unittests-stamped_value_unittest.obj `if test -f 'stamped_value_unittest.cc'; then $(CYGPATH_W) 'stamped_value_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/stamped_value_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/run_unittests-stamped_value_unittest.Tpo $(DEPDIR)/run_unittests-stamped_value_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='stamped_value_unittest.cc' object='run_unittests-stamped_value_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o run_unittests-stamped_value_unittest.obj `if test -f 'stamped_value_unittest.cc'; then $(CYGPATH_W) 'stamped_value_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/stamped_value_unittest.cc'; fi`
 
 run_unittests-user_context_unittests.o: user_context_unittests.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT run_unittests-user_context_unittests.o -MD -MP -MF $(DEPDIR)/run_unittests-user_context_unittests.Tpo -c -o run_unittests-user_context_unittests.o `test -f 'user_context_unittests.cc' || echo '$(srcdir)/'`user_context_unittests.cc

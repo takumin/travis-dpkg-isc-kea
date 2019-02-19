@@ -137,8 +137,9 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libkea_threads_la_DEPENDENCIES =  \
+	$(top_builddir)/src/lib/util/libkea-util.la \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la
-am_libkea_threads_la_OBJECTS = sync.lo thread.lo
+am_libkea_threads_la_OBJECTS = sync.lo thread.lo watched_thread.lo
 libkea_threads_la_OBJECTS = $(am_libkea_threads_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -318,6 +319,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -341,6 +343,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -393,6 +396,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -463,9 +469,12 @@ AM_CXXFLAGS = $(KEA_CXXFLAGS)
 AM_CPPFLAGS = -I$(top_srcdir)/src/lib -I$(top_builddir)/src/lib \
 	$(BOOST_INCLUDES)
 lib_LTLIBRARIES = libkea-threads.la
-libkea_threads_la_SOURCES = sync.h sync.cc thread.h thread.cc
-libkea_threads_la_LIBADD = $(top_builddir)/src/lib/exceptions/libkea-exceptions.la
-libkea_threads_la_LDFLAGS = -no-undefined -version-info 1:0:0
+libkea_threads_la_SOURCES = sync.h sync.cc thread.h thread.cc \
+	watched_thread.h watched_thread.cc
+libkea_threads_la_LIBADD =  \
+	$(top_builddir)/src/lib/util/libkea-util.la \
+	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la
+libkea_threads_la_LDFLAGS = -no-undefined -version-info 2:0:0
 CLEANFILES = *.gcno *.gcda
 all: all-recursive
 
@@ -547,6 +556,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sync.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thread.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/watched_thread.Plo@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

@@ -88,9 +88,14 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@HAVE_MYSQL_TRUE@am__append_1 = $(MYSQL_CPPFLAGS)
+@HAVE_PGSQL_TRUE@am__append_2 = $(PGSQL_CPPFLAGS)
+@HAVE_CQL_TRUE@am__append_3 = $(CQL_CPPFLAGS)
 TESTS = $(am__EXEEXT_1)
-@HAVE_GTEST_TRUE@am__append_1 = stat_cmds_unittests
-@HAVE_CQL_TRUE@@HAVE_GTEST_TRUE@am__append_2 = $(CQL_LIBS)
+@HAVE_GTEST_TRUE@am__append_4 = stat_cmds_unittests
+@HAVE_GTEST_TRUE@@HAVE_MYSQL_TRUE@am__append_5 = $(MYSQL_LIBS)
+@HAVE_GTEST_TRUE@@HAVE_PGSQL_TRUE@am__append_6 = $(PGSQL_LIBS)
+@HAVE_CQL_TRUE@@HAVE_GTEST_TRUE@am__append_7 = $(CQL_LIBS)
 noinst_PROGRAMS = $(am__EXEEXT_2)
 subdir = src/hooks/dhcp/stat_cmds/tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -122,6 +127,7 @@ am__stat_cmds_unittests_SOURCES_DIST = run_unittests.cc \
 stat_cmds_unittests_OBJECTS = $(am_stat_cmds_unittests_OBJECTS)
 am__DEPENDENCIES_1 =
 @HAVE_GTEST_TRUE@stat_cmds_unittests_DEPENDENCIES = $(top_builddir)/src/lib/dhcpsrv/libkea-dhcpsrv.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/process/libkea-process.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/config/libkea-cfgclient.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/asiolink/libkea-asiolink.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/dns/libkea-dns++.la \
@@ -320,6 +326,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -343,6 +350,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -395,6 +403,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -465,7 +476,8 @@ AM_CPPFLAGS = -I$(top_builddir)/src/lib -I$(top_srcdir)/src/lib \
 	-I$(top_builddir)/src/hooks/dhcp/stat_cmds \
 	-I$(top_srcdir)/src/hooks/dhcp/stat_cmds $(BOOST_INCLUDES) \
 	-DSTAT_CMDS_LIB_SO=\"$(abs_top_builddir)/src/hooks/dhcp/stat_cmds/.libs/libdhcp_stat_cmds.so\" \
-	-DINSTALL_PROG=\"$(abs_top_srcdir)/install-sh\"
+	-DINSTALL_PROG=\"$(abs_top_srcdir)/install-sh\" \
+	$(am__append_1) $(am__append_2) $(am__append_3)
 AM_CXXFLAGS = $(KEA_CXXFLAGS)
 @USE_STATIC_LINK_TRUE@AM_LDFLAGS = -static
 
@@ -481,9 +493,11 @@ AM_LOG_FLAGS = --mode=execute
 @HAVE_GTEST_TRUE@stat_cmds_unittests_CPPFLAGS = $(AM_CPPFLAGS) $(GTEST_INCLUDES) $(LOG4CPLUS_INCLUDES)
 @HAVE_GTEST_TRUE@stat_cmds_unittests_LDFLAGS = $(AM_LDFLAGS) \
 @HAVE_GTEST_TRUE@	$(CRYPTO_LDFLAGS) $(GTEST_LDFLAGS) \
-@HAVE_GTEST_TRUE@	$(am__append_2)
+@HAVE_GTEST_TRUE@	$(am__append_5) $(am__append_6) \
+@HAVE_GTEST_TRUE@	$(am__append_7)
 @HAVE_GTEST_TRUE@stat_cmds_unittests_CXXFLAGS = $(AM_CXXFLAGS)
 @HAVE_GTEST_TRUE@stat_cmds_unittests_LDADD = $(top_builddir)/src/lib/dhcpsrv/libkea-dhcpsrv.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/process/libkea-process.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/config/libkea-cfgclient.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/asiolink/libkea-asiolink.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/dns/libkea-dns++.la \

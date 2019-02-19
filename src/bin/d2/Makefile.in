@@ -89,13 +89,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@HAVE_MYSQL_TRUE@am__append_1 = $(MYSQL_CPPFLAGS)
-@HAVE_PGSQL_TRUE@am__append_2 = $(PGSQL_CPPFLAGS)
-@HAVE_CQL_TRUE@am__append_3 = $(CQL_CPPFLAGS)
 sbin_PROGRAMS = kea-dhcp-ddns$(EXEEXT)
-@HAVE_MYSQL_TRUE@am__append_4 = $(MYSQL_LIBS)
-@HAVE_PGSQL_TRUE@am__append_5 = $(PGSQL_LIBS)
-@HAVE_CQL_TRUE@am__append_6 = $(CQL_LIBS)
 subdir = src/bin/d2
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4macros/ax_boost_for_kea.m4 \
@@ -136,13 +130,13 @@ am__DEPENDENCIES_1 =
 kea_dhcp_ddns_DEPENDENCIES = libd2.la \
 	$(top_builddir)/src/lib/cfgrpt/libcfgrpt.la \
 	$(top_builddir)/src/lib/process/libkea-process.la \
-	$(top_builddir)/src/lib/dhcpsrv/libkea-dhcpsrv.la \
 	$(top_builddir)/src/lib/eval/libkea-eval.la \
 	$(top_builddir)/src/lib/dhcp_ddns/libkea-dhcp_ddns.la \
 	$(top_builddir)/src/lib/asiodns/libkea-asiodns.la \
 	$(top_builddir)/src/lib/stats/libkea-stats.la \
 	$(top_builddir)/src/lib/config/libkea-cfgclient.la \
 	$(top_builddir)/src/lib/dhcp/libkea-dhcp++.la \
+	$(top_builddir)/src/lib/database/libkea-database.la \
 	$(top_builddir)/src/lib/asiolink/libkea-asiolink.la \
 	$(top_builddir)/src/lib/cc/libkea-cc.la \
 	$(top_builddir)/src/lib/dns/libkea-dns++.la \
@@ -368,6 +362,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -391,6 +386,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -443,6 +439,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -511,8 +510,7 @@ top_srcdir = @top_srcdir@
 SUBDIRS = . tests
 AM_CPPFLAGS = -I$(top_srcdir)/src/lib -I$(top_builddir)/src/lib \
 	-I$(top_srcdir)/src/bin -I$(top_builddir)/src/bin \
-	$(BOOST_INCLUDES) $(am__append_1) $(am__append_2) \
-	$(am__append_3)
+	$(BOOST_INCLUDES)
 AM_CXXFLAGS = $(KEA_CXXFLAGS)
 @USE_STATIC_LINK_TRUE@AM_LDFLAGS = -static
 CLEANFILES = *.gcno *.gcda d2_messages.h d2_messages.cc s-messages
@@ -547,13 +545,13 @@ kea_dhcp_ddns_SOURCES = main.cc
 kea_dhcp_ddns_LDADD = libd2.la \
 	$(top_builddir)/src/lib/cfgrpt/libcfgrpt.la \
 	$(top_builddir)/src/lib/process/libkea-process.la \
-	$(top_builddir)/src/lib/dhcpsrv/libkea-dhcpsrv.la \
 	$(top_builddir)/src/lib/eval/libkea-eval.la \
 	$(top_builddir)/src/lib/dhcp_ddns/libkea-dhcp_ddns.la \
 	$(top_builddir)/src/lib/asiodns/libkea-asiodns.la \
 	$(top_builddir)/src/lib/stats/libkea-stats.la \
 	$(top_builddir)/src/lib/config/libkea-cfgclient.la \
 	$(top_builddir)/src/lib/dhcp/libkea-dhcp++.la \
+	$(top_builddir)/src/lib/database/libkea-database.la \
 	$(top_builddir)/src/lib/asiolink/libkea-asiolink.la \
 	$(top_builddir)/src/lib/cc/libkea-cc.la \
 	$(top_builddir)/src/lib/dns/libkea-dns++.la \
@@ -564,8 +562,7 @@ kea_dhcp_ddns_LDADD = libd2.la \
 	$(top_builddir)/src/lib/util/libkea-util.la \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
 	$(LOG4CPLUS_LIBS) $(CRYPTO_LIBS) $(BOOST_LIBS)
-kea_dhcp_ddns_LDFLAGS = $(AM_LDFLAGS) $(CRYPTO_LDFLAGS) \
-	$(am__append_4) $(am__append_5) $(am__append_6)
+kea_dhcp_ddns_LDFLAGS = $(AM_LDFLAGS) $(CRYPTO_LDFLAGS)
 kea_dhcp_ddnsdir = $(pkgdatadir)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

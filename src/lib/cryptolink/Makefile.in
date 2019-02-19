@@ -163,10 +163,10 @@ libkea_cryptolink_la_DEPENDENCIES =  \
 	$(am__DEPENDENCIES_1)
 am__libkea_cryptolink_la_SOURCES_DIST = cryptolink.h cryptolink.cc \
 	crypto_hash.h crypto_hash.cc crypto_hmac.h crypto_hmac.cc \
-	botan1_link.cc botan_common.h botan1_hash.cc botan1_hmac.cc \
-	botan_link.cc botan_hash.cc botan_hmac.cc openssl_link.cc \
-	openssl_common.h openssl_hash.cc openssl_compat.h \
-	openssl_hmac.cc
+	crypto_rng.h crypto_rng.cc botan1_link.cc botan_common.h \
+	botan1_hash.cc botan1_hmac.cc botan_link.cc botan_hash.cc \
+	botan_hmac.cc openssl_link.cc openssl_common.h openssl_hash.cc \
+	openssl_compat.h openssl_hmac.cc
 @HAVE_BOTAN1_TRUE@am__objects_1 = botan1_link.lo botan1_hash.lo \
 @HAVE_BOTAN1_TRUE@	botan1_hmac.lo
 @HAVE_BOTAN_TRUE@am__objects_2 = botan_link.lo botan_hash.lo \
@@ -174,7 +174,7 @@ am__libkea_cryptolink_la_SOURCES_DIST = cryptolink.h cryptolink.cc \
 @HAVE_OPENSSL_TRUE@am__objects_3 = openssl_link.lo openssl_hash.lo \
 @HAVE_OPENSSL_TRUE@	openssl_hmac.lo
 am_libkea_cryptolink_la_OBJECTS = cryptolink.lo crypto_hash.lo \
-	crypto_hmac.lo $(am__objects_1) $(am__objects_2) \
+	crypto_hmac.lo crypto_rng.lo $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3)
 libkea_cryptolink_la_OBJECTS = $(am_libkea_cryptolink_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -253,8 +253,8 @@ am__can_run_installinfo = \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 am__libkea_cryptolink_include_HEADERS_DIST = crypto_hash.h \
-	crypto_hmac.h cryptolink.h botan_common.h openssl_common.h \
-	openssl_compat.h
+	crypto_hmac.h crypto_rng.h cryptolink.h botan_common.h \
+	openssl_common.h openssl_compat.h
 HEADERS = $(libkea_cryptolink_include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -359,6 +359,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -382,6 +383,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -434,6 +436,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -507,9 +512,10 @@ CLEANFILES = *.gcno *.gcda
 lib_LTLIBRARIES = libkea-cryptolink.la
 libkea_cryptolink_la_SOURCES = cryptolink.h cryptolink.cc \
 	crypto_hash.h crypto_hash.cc crypto_hmac.h crypto_hmac.cc \
-	$(am__append_1) $(am__append_2) $(am__append_3)
+	crypto_rng.h crypto_rng.cc $(am__append_1) $(am__append_2) \
+	$(am__append_3)
 libkea_cryptolink_la_LDFLAGS = $(CRYPTO_LDFLAGS) -no-undefined \
-	-version-info 3:0:0
+	-version-info 4:0:0
 libkea_cryptolink_la_LIBADD =  \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
 	$(CRYPTO_LIBS)
@@ -517,7 +523,8 @@ libkea_cryptolink_la_LIBADD =  \
 # Specify the headers for copying into the installation directory tree.
 libkea_cryptolink_includedir = $(pkgincludedir)/cryptolink
 libkea_cryptolink_include_HEADERS = crypto_hash.h crypto_hmac.h \
-	cryptolink.h $(am__append_4) $(am__append_5) $(am__append_6)
+	crypto_rng.h cryptolink.h $(am__append_4) $(am__append_5) \
+	$(am__append_6)
 all: all-recursive
 
 .SUFFIXES:
@@ -604,6 +611,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/botan_link.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crypto_hash.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crypto_hmac.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/crypto_rng.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cryptolink.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openssl_hash.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openssl_hmac.Plo@am__quote@

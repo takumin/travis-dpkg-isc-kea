@@ -9,9 +9,6 @@
 /* Check logger messages? */
 #undef ENABLE_LOGGER_CHECKS
 
-/* Extended Kea version */
-#undef EXTENDED_VERSION
-
 /* Does this platform have some undefined pthreads behavior? */
 #undef HAS_UNDEFINED_PTHREAD_BEHAVIOR
 
@@ -80,6 +77,9 @@
 /* PostgreSQL is present */
 #undef HAVE_PGSQL
 
+/* Using sysrepo < 0.7.6 */
+#undef HAVE_PRE_0_7_6_SYSREPO
+
 /* Define to 1 if you have the `pselect' function. */
 #undef HAVE_PSELECT
 
@@ -104,6 +104,9 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
+
+/* SYSREPO is present */
+#undef HAVE_SYSREPO
 
 /* Define to 1 if you have the <sys/devpoll.h> header file. */
 #undef HAVE_SYS_DEVPOLL_H
@@ -179,6 +182,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Define to 1 if C++11 regex is usable */
+#undef USE_REGEX
 
 /* Was Kea statically linked? */
 #undef USE_STATIC_LINK

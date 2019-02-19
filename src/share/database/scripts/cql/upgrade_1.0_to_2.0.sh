@@ -6,7 +6,7 @@ prefix=/usr/local
 if [ -e ${prefix}/share/kea/scripts/admin-utils.sh ]; then
     . ${prefix}/share/kea/scripts/admin-utils.sh
 else
-    . /home/stephen/kea/src/bin/admin/admin-utils.sh
+    . /home/wlodek/dev/kea/src/bin/admin/admin-utils.sh
 fi
 
 version=$(cql_version "$@")

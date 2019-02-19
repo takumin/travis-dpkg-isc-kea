@@ -170,24 +170,27 @@ am__libkea_dhcp___la_SOURCES_DIST = classify.cc classify.h dhcp6.h \
 	iface_mgr_linux.cc iface_mgr_sun.cc libdhcp++.cc libdhcp++.h \
 	opaque_data_tuple.cc opaque_data_tuple.h option4_addrlst.cc \
 	option4_addrlst.h option4_client_fqdn.cc option4_client_fqdn.h \
-	option6_addrlst.cc option6_addrlst.h option6_client_fqdn.cc \
-	option6_client_fqdn.h option6_ia.cc option6_ia.h \
-	option6_iaaddr.cc option6_iaaddr.h option6_iaprefix.cc \
-	option6_iaprefix.h option6_pdexclude.cc option6_pdexclude.h \
-	option6_status_code.cc option6_status_code.h option.cc \
-	option.h option_custom.cc option_custom.h option_data_types.cc \
-	option_data_types.h option_definition.cc option_definition.h \
-	option_int.h option_int_array.h option_opaque_data_tuples.cc \
+	option6_addrlst.cc option6_addrlst.h option6_auth.cc \
+	option6_auth.h option6_client_fqdn.cc option6_client_fqdn.h \
+	option6_ia.cc option6_ia.h option6_iaaddr.cc option6_iaaddr.h \
+	option6_iaprefix.cc option6_iaprefix.h option6_pdexclude.cc \
+	option6_pdexclude.h option6_status_code.cc \
+	option6_status_code.h option.cc option.h option_custom.cc \
+	option_custom.h option_data_types.cc option_data_types.h \
+	option_definition.cc option_definition.h option_int.h \
+	option_int_array.h option_opaque_data_tuples.cc \
 	option_opaque_data_tuples.h option_space.cc option_space.h \
 	option_space_container.h option_string.cc option_string.h \
 	option_vendor.cc option_vendor.h option_vendor_class.cc \
-	option_vendor_class.h pkt.cc pkt.h pkt4.cc pkt4.h pkt4o6.cc \
-	pkt4o6.h pkt6.cc pkt6.h pkt_filter.h pkt_filter.cc \
-	pkt_filter6.h pkt_filter6.cc pkt_filter_inet.cc \
+	option_vendor_class.h packet_queue.h packet_queue_mgr.h \
+	packet_queue_mgr4.cc packet_queue_mgr4.h packet_queue_mgr6.cc \
+	packet_queue_mgr6.h packet_queue_ring.h pkt.cc pkt.h pkt4.cc \
+	pkt4.h pkt4o6.cc pkt4o6.h pkt6.cc pkt6.h pkt_filter.h \
+	pkt_filter.cc pkt_filter6.h pkt_filter6.cc pkt_filter_inet.cc \
 	pkt_filter_inet.h pkt_filter_inet6.cc pkt_filter_inet6.h \
-	pkt_filter_lpf.cc pkt_filter_lpf.h pkt_filter_bpf.cc \
-	pkt_filter_bpf.h protocol_util.cc protocol_util.h \
-	std_option_defs.h
+	socket_info.h pkt_filter_lpf.cc pkt_filter_lpf.h \
+	pkt_filter_bpf.cc pkt_filter_bpf.h protocol_util.cc \
+	protocol_util.h std_option_defs.h
 @OS_LINUX_TRUE@am__objects_1 = libkea_dhcp___la-pkt_filter_lpf.lo
 @OS_BSD_TRUE@am__objects_2 = libkea_dhcp___la-pkt_filter_bpf.lo
 am_libkea_dhcp___la_OBJECTS = libkea_dhcp___la-classify.lo \
@@ -201,6 +204,7 @@ am_libkea_dhcp___la_OBJECTS = libkea_dhcp___la-classify.lo \
 	libkea_dhcp___la-option4_addrlst.lo \
 	libkea_dhcp___la-option4_client_fqdn.lo \
 	libkea_dhcp___la-option6_addrlst.lo \
+	libkea_dhcp___la-option6_auth.lo \
 	libkea_dhcp___la-option6_client_fqdn.lo \
 	libkea_dhcp___la-option6_ia.lo \
 	libkea_dhcp___la-option6_iaaddr.lo \
@@ -215,9 +219,11 @@ am_libkea_dhcp___la_OBJECTS = libkea_dhcp___la-classify.lo \
 	libkea_dhcp___la-option_string.lo \
 	libkea_dhcp___la-option_vendor.lo \
 	libkea_dhcp___la-option_vendor_class.lo \
-	libkea_dhcp___la-pkt.lo libkea_dhcp___la-pkt4.lo \
-	libkea_dhcp___la-pkt4o6.lo libkea_dhcp___la-pkt6.lo \
-	libkea_dhcp___la-pkt_filter.lo libkea_dhcp___la-pkt_filter6.lo \
+	libkea_dhcp___la-packet_queue_mgr4.lo \
+	libkea_dhcp___la-packet_queue_mgr6.lo libkea_dhcp___la-pkt.lo \
+	libkea_dhcp___la-pkt4.lo libkea_dhcp___la-pkt4o6.lo \
+	libkea_dhcp___la-pkt6.lo libkea_dhcp___la-pkt_filter.lo \
+	libkea_dhcp___la-pkt_filter6.lo \
 	libkea_dhcp___la-pkt_filter_inet.lo \
 	libkea_dhcp___la-pkt_filter_inet6.lo $(am__objects_1) \
 	$(am__objects_2) libkea_dhcp___la-protocol_util.lo
@@ -301,15 +307,17 @@ am__libkea_dhcp___include_HEADERS_DIST = classify.h dhcp4.h dhcp6.h \
 	docsis3_option_defs.h duid.h duid_factory.h hwaddr.h \
 	iface_mgr.h iface_mgr_error_handler.h libdhcp++.h \
 	opaque_data_tuple.h option.h option4_addrlst.h \
-	option4_client_fqdn.h option6_addrlst.h option6_client_fqdn.h \
-	option6_ia.h option6_iaaddr.h option6_iaprefix.h \
-	option6_pdexclude.h option6_status_code.h option_custom.h \
-	option_data_types.h option_definition.h option_int.h \
-	option_int_array.h option_opaque_data_tuples.h option_space.h \
-	option_space_container.h option_string.h option_vendor.h \
-	option_vendor_class.h pkt.h pkt4.h pkt4o6.h pkt6.h \
-	pkt_filter.h pkt_filter6.h pkt_filter_inet.h \
-	pkt_filter_inet6.h protocol_util.h std_option_defs.h \
+	option4_client_fqdn.h option6_addrlst.h option6_auth.h \
+	option6_client_fqdn.h option6_ia.h option6_iaaddr.h \
+	option6_iaprefix.h option6_pdexclude.h option6_status_code.h \
+	option_custom.h option_data_types.h option_definition.h \
+	option_int.h option_int_array.h option_opaque_data_tuples.h \
+	option_space.h option_space_container.h option_string.h \
+	option_vendor.h option_vendor_class.h packet_queue.h \
+	packet_queue_mgr.h packet_queue_mgr4.h packet_queue_mgr6.h \
+	packet_queue_ring.h pkt.h pkt4.h pkt4o6.h pkt6.h pkt_filter.h \
+	pkt_filter6.h pkt_filter_inet.h pkt_filter_inet6.h \
+	protocol_util.h socket_info.h std_option_defs.h \
 	pkt_filter_lpf.h pkt_filter_bpf.h
 HEADERS = $(libkea_dhcp___include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
@@ -415,6 +423,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -438,6 +447,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -490,6 +500,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -568,22 +581,25 @@ libkea_dhcp___la_SOURCES = classify.cc classify.h dhcp6.h dhcp4.h \
 	iface_mgr_linux.cc iface_mgr_sun.cc libdhcp++.cc libdhcp++.h \
 	opaque_data_tuple.cc opaque_data_tuple.h option4_addrlst.cc \
 	option4_addrlst.h option4_client_fqdn.cc option4_client_fqdn.h \
-	option6_addrlst.cc option6_addrlst.h option6_client_fqdn.cc \
-	option6_client_fqdn.h option6_ia.cc option6_ia.h \
-	option6_iaaddr.cc option6_iaaddr.h option6_iaprefix.cc \
-	option6_iaprefix.h option6_pdexclude.cc option6_pdexclude.h \
-	option6_status_code.cc option6_status_code.h option.cc \
-	option.h option_custom.cc option_custom.h option_data_types.cc \
-	option_data_types.h option_definition.cc option_definition.h \
-	option_int.h option_int_array.h option_opaque_data_tuples.cc \
+	option6_addrlst.cc option6_addrlst.h option6_auth.cc \
+	option6_auth.h option6_client_fqdn.cc option6_client_fqdn.h \
+	option6_ia.cc option6_ia.h option6_iaaddr.cc option6_iaaddr.h \
+	option6_iaprefix.cc option6_iaprefix.h option6_pdexclude.cc \
+	option6_pdexclude.h option6_status_code.cc \
+	option6_status_code.h option.cc option.h option_custom.cc \
+	option_custom.h option_data_types.cc option_data_types.h \
+	option_definition.cc option_definition.h option_int.h \
+	option_int_array.h option_opaque_data_tuples.cc \
 	option_opaque_data_tuples.h option_space.cc option_space.h \
 	option_space_container.h option_string.cc option_string.h \
 	option_vendor.cc option_vendor.h option_vendor_class.cc \
-	option_vendor_class.h pkt.cc pkt.h pkt4.cc pkt4.h pkt4o6.cc \
-	pkt4o6.h pkt6.cc pkt6.h pkt_filter.h pkt_filter.cc \
-	pkt_filter6.h pkt_filter6.cc pkt_filter_inet.cc \
+	option_vendor_class.h packet_queue.h packet_queue_mgr.h \
+	packet_queue_mgr4.cc packet_queue_mgr4.h packet_queue_mgr6.cc \
+	packet_queue_mgr6.h packet_queue_ring.h pkt.cc pkt.h pkt4.cc \
+	pkt4.h pkt4o6.cc pkt4o6.h pkt6.cc pkt6.h pkt_filter.h \
+	pkt_filter.cc pkt_filter6.h pkt_filter6.cc pkt_filter_inet.cc \
 	pkt_filter_inet.h pkt_filter_inet6.cc pkt_filter_inet6.h \
-	$(am__append_1) $(am__append_2) protocol_util.cc \
+	socket_info.h $(am__append_1) $(am__append_2) protocol_util.cc \
 	protocol_util.h std_option_defs.h
 libkea_dhcp___la_CXXFLAGS = $(AM_CXXFLAGS)
 libkea_dhcp___la_CPPFLAGS = $(AM_CPPFLAGS)
@@ -598,7 +614,7 @@ libkea_dhcp___la_LIBADD =  \
 	$(top_builddir)/src/lib/cc/libkea-cc.la \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
 	$(BOOST_LIBS) $(CRYPTO_LIBS)
-libkea_dhcp___la_LDFLAGS = -no-undefined -version-info 8:0:0 \
+libkea_dhcp___la_LDFLAGS = -no-undefined -version-info 11:0:0 \
 	$(CRYPTO_LDFLAGS)
 EXTRA_DIST = README libdhcp++.dox
 
@@ -609,15 +625,17 @@ libkea_dhcp___include_HEADERS = classify.h dhcp4.h dhcp6.h \
 	docsis3_option_defs.h duid.h duid_factory.h hwaddr.h \
 	iface_mgr.h iface_mgr_error_handler.h libdhcp++.h \
 	opaque_data_tuple.h option.h option4_addrlst.h \
-	option4_client_fqdn.h option6_addrlst.h option6_client_fqdn.h \
-	option6_ia.h option6_iaaddr.h option6_iaprefix.h \
-	option6_pdexclude.h option6_status_code.h option_custom.h \
-	option_data_types.h option_definition.h option_int.h \
-	option_int_array.h option_opaque_data_tuples.h option_space.h \
-	option_space_container.h option_string.h option_vendor.h \
-	option_vendor_class.h pkt.h pkt4.h pkt4o6.h pkt6.h \
-	pkt_filter.h pkt_filter6.h pkt_filter_inet.h \
-	pkt_filter_inet6.h protocol_util.h std_option_defs.h \
+	option4_client_fqdn.h option6_addrlst.h option6_auth.h \
+	option6_client_fqdn.h option6_ia.h option6_iaaddr.h \
+	option6_iaprefix.h option6_pdexclude.h option6_status_code.h \
+	option_custom.h option_data_types.h option_definition.h \
+	option_int.h option_int_array.h option_opaque_data_tuples.h \
+	option_space.h option_space_container.h option_string.h \
+	option_vendor.h option_vendor_class.h packet_queue.h \
+	packet_queue_mgr.h packet_queue_mgr4.h packet_queue_mgr6.h \
+	packet_queue_ring.h pkt.h pkt4.h pkt4o6.h pkt6.h pkt_filter.h \
+	pkt_filter6.h pkt_filter_inet.h pkt_filter_inet6.h \
+	protocol_util.h socket_info.h std_option_defs.h \
 	$(am__append_3) $(am__append_4)
 all: all-recursive
 
@@ -711,6 +729,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-option4_addrlst.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-option4_client_fqdn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-option6_addrlst.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-option6_auth.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-option6_client_fqdn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-option6_ia.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-option6_iaaddr.Plo@am__quote@
@@ -725,6 +744,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-option_string.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-option_vendor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-option_vendor_class.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-packet_queue_mgr4.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-packet_queue_mgr6.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-pkt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-pkt4.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_dhcp___la-pkt4o6.Plo@am__quote@
@@ -849,6 +870,13 @@ libkea_dhcp___la-option6_addrlst.lo: option6_addrlst.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_dhcp___la_CPPFLAGS) $(CPPFLAGS) $(libkea_dhcp___la_CXXFLAGS) $(CXXFLAGS) -c -o libkea_dhcp___la-option6_addrlst.lo `test -f 'option6_addrlst.cc' || echo '$(srcdir)/'`option6_addrlst.cc
 
+libkea_dhcp___la-option6_auth.lo: option6_auth.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_dhcp___la_CPPFLAGS) $(CPPFLAGS) $(libkea_dhcp___la_CXXFLAGS) $(CXXFLAGS) -MT libkea_dhcp___la-option6_auth.lo -MD -MP -MF $(DEPDIR)/libkea_dhcp___la-option6_auth.Tpo -c -o libkea_dhcp___la-option6_auth.lo `test -f 'option6_auth.cc' || echo '$(srcdir)/'`option6_auth.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkea_dhcp___la-option6_auth.Tpo $(DEPDIR)/libkea_dhcp___la-option6_auth.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='option6_auth.cc' object='libkea_dhcp___la-option6_auth.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_dhcp___la_CPPFLAGS) $(CPPFLAGS) $(libkea_dhcp___la_CXXFLAGS) $(CXXFLAGS) -c -o libkea_dhcp___la-option6_auth.lo `test -f 'option6_auth.cc' || echo '$(srcdir)/'`option6_auth.cc
+
 libkea_dhcp___la-option6_client_fqdn.lo: option6_client_fqdn.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_dhcp___la_CPPFLAGS) $(CPPFLAGS) $(libkea_dhcp___la_CXXFLAGS) $(CXXFLAGS) -MT libkea_dhcp___la-option6_client_fqdn.lo -MD -MP -MF $(DEPDIR)/libkea_dhcp___la-option6_client_fqdn.Tpo -c -o libkea_dhcp___la-option6_client_fqdn.lo `test -f 'option6_client_fqdn.cc' || echo '$(srcdir)/'`option6_client_fqdn.cc
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkea_dhcp___la-option6_client_fqdn.Tpo $(DEPDIR)/libkea_dhcp___la-option6_client_fqdn.Plo
@@ -953,6 +981,20 @@ libkea_dhcp___la-option_vendor_class.lo: option_vendor_class.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='option_vendor_class.cc' object='libkea_dhcp___la-option_vendor_class.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_dhcp___la_CPPFLAGS) $(CPPFLAGS) $(libkea_dhcp___la_CXXFLAGS) $(CXXFLAGS) -c -o libkea_dhcp___la-option_vendor_class.lo `test -f 'option_vendor_class.cc' || echo '$(srcdir)/'`option_vendor_class.cc
+
+libkea_dhcp___la-packet_queue_mgr4.lo: packet_queue_mgr4.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_dhcp___la_CPPFLAGS) $(CPPFLAGS) $(libkea_dhcp___la_CXXFLAGS) $(CXXFLAGS) -MT libkea_dhcp___la-packet_queue_mgr4.lo -MD -MP -MF $(DEPDIR)/libkea_dhcp___la-packet_queue_mgr4.Tpo -c -o libkea_dhcp___la-packet_queue_mgr4.lo `test -f 'packet_queue_mgr4.cc' || echo '$(srcdir)/'`packet_queue_mgr4.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkea_dhcp___la-packet_queue_mgr4.Tpo $(DEPDIR)/libkea_dhcp___la-packet_queue_mgr4.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='packet_queue_mgr4.cc' object='libkea_dhcp___la-packet_queue_mgr4.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_dhcp___la_CPPFLAGS) $(CPPFLAGS) $(libkea_dhcp___la_CXXFLAGS) $(CXXFLAGS) -c -o libkea_dhcp___la-packet_queue_mgr4.lo `test -f 'packet_queue_mgr4.cc' || echo '$(srcdir)/'`packet_queue_mgr4.cc
+
+libkea_dhcp___la-packet_queue_mgr6.lo: packet_queue_mgr6.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_dhcp___la_CPPFLAGS) $(CPPFLAGS) $(libkea_dhcp___la_CXXFLAGS) $(CXXFLAGS) -MT libkea_dhcp___la-packet_queue_mgr6.lo -MD -MP -MF $(DEPDIR)/libkea_dhcp___la-packet_queue_mgr6.Tpo -c -o libkea_dhcp___la-packet_queue_mgr6.lo `test -f 'packet_queue_mgr6.cc' || echo '$(srcdir)/'`packet_queue_mgr6.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkea_dhcp___la-packet_queue_mgr6.Tpo $(DEPDIR)/libkea_dhcp___la-packet_queue_mgr6.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='packet_queue_mgr6.cc' object='libkea_dhcp___la-packet_queue_mgr6.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_dhcp___la_CPPFLAGS) $(CPPFLAGS) $(libkea_dhcp___la_CXXFLAGS) $(CXXFLAGS) -c -o libkea_dhcp___la-packet_queue_mgr6.lo `test -f 'packet_queue_mgr6.cc' || echo '$(srcdir)/'`packet_queue_mgr6.cc
 
 libkea_dhcp___la-pkt.lo: pkt.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_dhcp___la_CPPFLAGS) $(CPPFLAGS) $(libkea_dhcp___la_CXXFLAGS) $(CXXFLAGS) -MT libkea_dhcp___la-pkt.lo -MD -MP -MF $(DEPDIR)/libkea_dhcp___la-pkt.Tpo -c -o libkea_dhcp___la-pkt.lo `test -f 'pkt.cc' || echo '$(srcdir)/'`pkt.cc

@@ -10,9 +10,6 @@
 /* Check logger messages? */
 /* #undef ENABLE_LOGGER_CHECKS */
 
-/* Extended Kea version */
-#define EXTENDED_VERSION "git 68ebf634db17fc4dfda000648afaed706fed9669"
-
 /* Does this platform have some undefined pthreads behavior? */
 /* #undef HAS_UNDEFINED_PTHREAD_BEHAVIOR */
 
@@ -81,6 +78,9 @@
 /* PostgreSQL is present */
 /* #undef HAVE_PGSQL */
 
+/* Using sysrepo < 0.7.6 */
+/* #undef HAVE_PRE_0_7_6_SYSREPO */
+
 /* Define to 1 if you have the `pselect' function. */
 #define HAVE_PSELECT 1
 
@@ -106,6 +106,9 @@
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
 
+/* SYSREPO is present */
+/* #undef HAVE_SYSREPO */
+
 /* Define to 1 if you have the <sys/devpoll.h> header file. */
 /* #undef HAVE_SYS_DEVPOLL_H */
 
@@ -125,10 +128,10 @@
 /* #undef HAVE_UTILS_ERRCODES_H */
 
 /* Check valgrind headers */
-/* #undef HAVE_VALGRIND_HEADERS */
+#define HAVE_VALGRIND_HEADERS 1
 
 /* Define to 1 if you have the <valgrind/valgrind.h> header file. */
-/* #undef HAVE_VALGRIND_VALGRIND_H */
+#define HAVE_VALGRIND_VALGRIND_H 1
 
 /* Define to 1 if the system has the type `_Bool'. */
 /* #undef HAVE__BOOL */
@@ -167,7 +170,7 @@
 #define PACKAGE_NAME "kea"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "kea 1.4.0-P1"
+#define PACKAGE_STRING "kea 1.5.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "kea"
@@ -176,22 +179,25 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.4.0-P1"
+#define PACKAGE_VERSION "1.5.0"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
+
+/* Define to 1 if C++11 regex is usable */
+#define USE_REGEX 1
 
 /* Was Kea statically linked? */
 /* #undef USE_STATIC_LINK */
 
 /* Version number of package */
-#define VERSION "1.4.0-P1"
+#define VERSION "1.5.0"
 
 /* Compile with Botan crypto */
-/* #undef WITH_BOTAN */
+#define WITH_BOTAN /**/
 
 /* Compile with OpenSSL crypto */
-#define WITH_OPENSSL /**/
+/* #undef WITH_OPENSSL */
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */

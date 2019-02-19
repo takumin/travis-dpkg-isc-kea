@@ -90,7 +90,7 @@ build_triplet = @build@
 host_triplet = @host@
 TESTS = $(am__EXEEXT_1)
 @HAVE_GTEST_TRUE@am__append_1 = run_unittests
-@HAVE_GTEST_TRUE@@USE_GXX_TRUE@am__append_2 = -Wno-unused-parameter
+@HAVE_GTEST_TRUE@@USE_GXX_TRUE@am__append_2 = -Wno-unused-parameter -Wno-unused-private-field
 noinst_PROGRAMS = $(am__EXEEXT_2)
 subdir = src/lib/asiolink/tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -115,14 +115,16 @@ CONFIG_CLEAN_VPATH_FILES =
 am__EXEEXT_2 = $(am__EXEEXT_1)
 PROGRAMS = $(noinst_PROGRAMS)
 am__run_unittests_SOURCES_DIST = run_unittests.cc \
-	io_address_unittest.cc io_endpoint_unittest.cc \
-	io_socket_unittest.cc interval_timer_unittest.cc \
-	tcp_endpoint_unittest.cc tcp_socket_unittest.cc \
-	udp_endpoint_unittest.cc udp_socket_unittest.cc \
-	io_service_unittest.cc dummy_io_callback_unittest.cc \
-	tcp_acceptor_unittest.cc unix_domain_socket_unittest.cc
+	addr_utilities_unittest.cc io_address_unittest.cc \
+	io_endpoint_unittest.cc io_socket_unittest.cc \
+	interval_timer_unittest.cc tcp_endpoint_unittest.cc \
+	tcp_socket_unittest.cc udp_endpoint_unittest.cc \
+	udp_socket_unittest.cc io_service_unittest.cc \
+	dummy_io_callback_unittest.cc tcp_acceptor_unittest.cc \
+	unix_domain_socket_unittest.cc
 @HAVE_GTEST_TRUE@am_run_unittests_OBJECTS =  \
 @HAVE_GTEST_TRUE@	run_unittests-run_unittests.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	run_unittests-addr_utilities_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	run_unittests-io_address_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	run_unittests-io_endpoint_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	run_unittests-io_socket_unittest.$(OBJEXT) \
@@ -286,6 +288,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -309,6 +312,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -361,6 +365,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -436,6 +443,7 @@ TESTS_ENVIRONMENT = \
 	$(LIBTOOL) --mode=execute $(VALGRIND_COMMAND)
 
 @HAVE_GTEST_TRUE@run_unittests_SOURCES = run_unittests.cc \
+@HAVE_GTEST_TRUE@	addr_utilities_unittest.cc \
 @HAVE_GTEST_TRUE@	io_address_unittest.cc \
 @HAVE_GTEST_TRUE@	io_endpoint_unittest.cc io_socket_unittest.cc \
 @HAVE_GTEST_TRUE@	interval_timer_unittest.cc \
@@ -515,6 +523,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run_unittests-addr_utilities_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run_unittests-dummy_io_callback_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run_unittests-interval_timer_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/run_unittests-io_address_unittest.Po@am__quote@
@@ -563,6 +572,20 @@ run_unittests-run_unittests.obj: run_unittests.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='run_unittests.cc' object='run_unittests-run_unittests.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(run_unittests_CXXFLAGS) $(CXXFLAGS) -c -o run_unittests-run_unittests.obj `if test -f 'run_unittests.cc'; then $(CYGPATH_W) 'run_unittests.cc'; else $(CYGPATH_W) '$(srcdir)/run_unittests.cc'; fi`
+
+run_unittests-addr_utilities_unittest.o: addr_utilities_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(run_unittests_CXXFLAGS) $(CXXFLAGS) -MT run_unittests-addr_utilities_unittest.o -MD -MP -MF $(DEPDIR)/run_unittests-addr_utilities_unittest.Tpo -c -o run_unittests-addr_utilities_unittest.o `test -f 'addr_utilities_unittest.cc' || echo '$(srcdir)/'`addr_utilities_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/run_unittests-addr_utilities_unittest.Tpo $(DEPDIR)/run_unittests-addr_utilities_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='addr_utilities_unittest.cc' object='run_unittests-addr_utilities_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(run_unittests_CXXFLAGS) $(CXXFLAGS) -c -o run_unittests-addr_utilities_unittest.o `test -f 'addr_utilities_unittest.cc' || echo '$(srcdir)/'`addr_utilities_unittest.cc
+
+run_unittests-addr_utilities_unittest.obj: addr_utilities_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(run_unittests_CXXFLAGS) $(CXXFLAGS) -MT run_unittests-addr_utilities_unittest.obj -MD -MP -MF $(DEPDIR)/run_unittests-addr_utilities_unittest.Tpo -c -o run_unittests-addr_utilities_unittest.obj `if test -f 'addr_utilities_unittest.cc'; then $(CYGPATH_W) 'addr_utilities_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/addr_utilities_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/run_unittests-addr_utilities_unittest.Tpo $(DEPDIR)/run_unittests-addr_utilities_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='addr_utilities_unittest.cc' object='run_unittests-addr_utilities_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(run_unittests_CXXFLAGS) $(CXXFLAGS) -c -o run_unittests-addr_utilities_unittest.obj `if test -f 'addr_utilities_unittest.cc'; then $(CYGPATH_W) 'addr_utilities_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/addr_utilities_unittest.cc'; fi`
 
 run_unittests-io_address_unittest.o: io_address_unittest.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(run_unittests_CPPFLAGS) $(CPPFLAGS) $(run_unittests_CXXFLAGS) $(CXXFLAGS) -MT run_unittests-io_address_unittest.o -MD -MP -MF $(DEPDIR)/run_unittests-io_address_unittest.Tpo -c -o run_unittests-io_address_unittest.o `test -f 'io_address_unittest.cc' || echo '$(srcdir)/'`io_address_unittest.cc

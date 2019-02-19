@@ -87,6 +87,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@HAVE_MYSQL_TRUE@am__append_1 = mysql
+@HAVE_PGSQL_TRUE@am__append_2 = pgsql
+@HAVE_CQL_TRUE@am__append_3 = cql
+@HAVE_SYSREPO_TRUE@am__append_4 = yang
 subdir = src/lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4macros/ax_boost_for_kea.m4 \
@@ -160,7 +164,9 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = exceptions util log cryptolink dns asiolink cc database \
+	mysql pgsql cql config_backend testutils hooks dhcp config \
+	stats yang asiodns dhcp_ddns eval cfgrpt process dhcpsrv http
 am__DIST_COMMON = $(srcdir)/Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
@@ -236,6 +242,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -259,6 +266,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -311,6 +319,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -378,9 +389,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 # The following build order must be maintained.
-SUBDIRS = exceptions util log cryptolink dns asiolink cc testutils hooks dhcp \
-          config stats asiodns dhcp_ddns eval dhcpsrv cfgrpt process http
-
+SUBDIRS = exceptions util log cryptolink dns asiolink cc database \
+	$(am__append_1) $(am__append_2) $(am__append_3) config_backend \
+	testutils hooks dhcp config stats $(am__append_4) asiodns \
+	dhcp_ddns eval cfgrpt process dhcpsrv http
 all: all-recursive
 
 .SUFFIXES:

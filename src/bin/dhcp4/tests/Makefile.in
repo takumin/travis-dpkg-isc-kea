@@ -95,6 +95,12 @@ TESTS = $(am__EXEEXT_1)
 @HAVE_GTEST_TRUE@@HAVE_MYSQL_TRUE@am__append_2 = $(MYSQL_LIBS)
 @HAVE_GTEST_TRUE@@HAVE_PGSQL_TRUE@am__append_3 = $(PGSQL_LIBS)
 @HAVE_CQL_TRUE@@HAVE_GTEST_TRUE@am__append_4 = $(CQL_LIBS)
+@HAVE_GTEST_TRUE@@HAVE_MYSQL_TRUE@am__append_5 = $(top_builddir)/src/lib/mysql/testutils/libmysqltest.la \
+@HAVE_GTEST_TRUE@@HAVE_MYSQL_TRUE@	$(top_builddir)/src/lib/mysql/libkea-mysql.la
+@HAVE_GTEST_TRUE@@HAVE_PGSQL_TRUE@am__append_6 = $(top_builddir)/src/lib/pgsql/testutils/libpgsqltest.la \
+@HAVE_GTEST_TRUE@@HAVE_PGSQL_TRUE@	$(top_builddir)/src/lib/pgsql/libkea-pgsql.la
+@HAVE_CQL_TRUE@@HAVE_GTEST_TRUE@am__append_7 = $(top_builddir)/src/lib/cql/testutils/libcqltest.la \
+@HAVE_CQL_TRUE@@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/cql/libkea-cql.la
 noinst_PROGRAMS = $(am__EXEEXT_2)
 subdir = src/bin/dhcp4/tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -165,7 +171,8 @@ am__dhcp4_unittests_SOURCES_DIST = d2_unittest.h d2_unittest.cc \
 	out_of_range_unittest.cc decline_unittest.cc \
 	kea_controller_unittest.cc dhcp4to6_ipc_unittest.cc \
 	simple_parser4_unittest.cc get_config_unittest.cc \
-	get_config_unittest.h shared_network_unittest.cc
+	get_config_unittest.h shared_network_unittest.cc \
+	host_unittest.cc
 @HAVE_GTEST_TRUE@am_dhcp4_unittests_OBJECTS =  \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-d2_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-dhcp4_unittests.$(OBJEXT) \
@@ -190,7 +197,8 @@ am__dhcp4_unittests_SOURCES_DIST = d2_unittest.h d2_unittest.cc \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-dhcp4to6_ipc_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-simple_parser4_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	dhcp4_unittests-get_config_unittest.$(OBJEXT) \
-@HAVE_GTEST_TRUE@	dhcp4_unittests-shared_network_unittest.$(OBJEXT)
+@HAVE_GTEST_TRUE@	dhcp4_unittests-shared_network_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	dhcp4_unittests-host_unittest.$(OBJEXT)
 nodist_dhcp4_unittests_OBJECTS =
 dhcp4_unittests_OBJECTS = $(am_dhcp4_unittests_OBJECTS) \
 	$(nodist_dhcp4_unittests_OBJECTS)
@@ -207,11 +215,17 @@ am__DEPENDENCIES_1 =
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/config/libkea-cfgclient.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/dhcp/libkea-dhcp++.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/dhcp/tests/libdhcptest.la \
+@HAVE_GTEST_TRUE@	$(am__append_5) $(am__append_6) \
+@HAVE_GTEST_TRUE@	$(am__append_7) \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/database/testutils/libdatabasetest.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/database/libkea-database.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/asiolink/libkea-asiolink.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/cc/libkea-cc.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/dns/libkea-dns++.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/process/libkea-process.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/cryptolink/libkea-cryptolink.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/hooks/libkea-hooks.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/database/libkea-database.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/log/libkea-log.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/util/threads/libkea-threads.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/util/libkea-util.la \
@@ -380,6 +394,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -403,6 +418,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -455,6 +471,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -586,7 +605,7 @@ TESTS_ENVIRONMENT = \
 @HAVE_GTEST_TRUE@	dhcp4to6_ipc_unittest.cc \
 @HAVE_GTEST_TRUE@	simple_parser4_unittest.cc \
 @HAVE_GTEST_TRUE@	get_config_unittest.cc get_config_unittest.h \
-@HAVE_GTEST_TRUE@	shared_network_unittest.cc
+@HAVE_GTEST_TRUE@	shared_network_unittest.cc host_unittest.cc
 @HAVE_GTEST_TRUE@nodist_dhcp4_unittests_SOURCES = marker_file.h test_libraries.h
 @HAVE_GTEST_TRUE@dhcp4_unittests_CPPFLAGS = $(AM_CPPFLAGS) $(GTEST_INCLUDES)
 @HAVE_GTEST_TRUE@dhcp4_unittests_LDFLAGS = $(AM_LDFLAGS) \
@@ -605,11 +624,17 @@ TESTS_ENVIRONMENT = \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/config/libkea-cfgclient.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/dhcp/libkea-dhcp++.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/dhcp/tests/libdhcptest.la \
+@HAVE_GTEST_TRUE@	$(am__append_5) $(am__append_6) \
+@HAVE_GTEST_TRUE@	$(am__append_7) \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/database/testutils/libdatabasetest.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/database/libkea-database.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/asiolink/libkea-asiolink.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/cc/libkea-cc.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/dns/libkea-dns++.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/process/libkea-process.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/cryptolink/libkea-cryptolink.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/hooks/libkea-hooks.la \
+@HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/database/libkea-database.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/log/libkea-log.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/util/threads/libkea-threads.la \
 @HAVE_GTEST_TRUE@	$(top_builddir)/src/lib/util/libkea-util.la \
@@ -714,6 +739,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-get_config_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-hooks_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-host_options_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-host_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-inform_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-kea_controller_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcp4_unittests-marker_file.Po@am__quote@
@@ -1104,6 +1130,20 @@ dhcp4_unittests-shared_network_unittest.obj: shared_network_unittest.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-shared_network_unittest.obj `if test -f 'shared_network_unittest.cc'; then $(CYGPATH_W) 'shared_network_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/shared_network_unittest.cc'; fi`
 
+dhcp4_unittests-host_unittest.o: host_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-host_unittest.o -MD -MP -MF $(DEPDIR)/dhcp4_unittests-host_unittest.Tpo -c -o dhcp4_unittests-host_unittest.o `test -f 'host_unittest.cc' || echo '$(srcdir)/'`host_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-host_unittest.Tpo $(DEPDIR)/dhcp4_unittests-host_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='host_unittest.cc' object='dhcp4_unittests-host_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-host_unittest.o `test -f 'host_unittest.cc' || echo '$(srcdir)/'`host_unittest.cc
+
+dhcp4_unittests-host_unittest.obj: host_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dhcp4_unittests-host_unittest.obj -MD -MP -MF $(DEPDIR)/dhcp4_unittests-host_unittest.Tpo -c -o dhcp4_unittests-host_unittest.obj `if test -f 'host_unittest.cc'; then $(CYGPATH_W) 'host_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/host_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dhcp4_unittests-host_unittest.Tpo $(DEPDIR)/dhcp4_unittests-host_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='host_unittest.cc' object='dhcp4_unittests-host_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dhcp4_unittests_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dhcp4_unittests-host_unittest.obj `if test -f 'host_unittest.cc'; then $(CYGPATH_W) 'host_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/host_unittest.cc'; fi`
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -1421,6 +1461,24 @@ check-local:
 	export KEA_PIDFILE_DIR=$(abs_top_builddir); \
 	${SHELL} $(abs_builddir)/$$shtest || exit ; \
 	done
+
+# Use this target if you want to rebuild the get-config unit-tests.
+#
+# TODO: We could also automate the replacement step with some variation
+# of this: https://stackoverflow.com/questions/6790631
+rebuild-tests:
+	rm -f x u get_config_unittest.cc
+	cp -f get_config_unittest.cc.skel get_config_unittest.cc
+	$(MAKE) CXXFLAGS=-DEXTRACT_CONFIG V=1
+	./dhcp4_unittests --gtest_filter="Dhcp4Parser*" > /dev/null 2> x
+	echo "Please copy content of x file into EXTRACTED_CONFIGS in get_config_unittest.cc"
+	read -p "Press ENTER when ready"
+	$(MAKE) CXXFLAGS=-DGENERATE_ACTION V=1
+	./dhcp4_unittests --gtest_filter="Dhcp4GetConfig*" > /dev/null 2> u
+	echo "Please copy content of u file into UNPARSED_CONFIGS in get_config_unittest.cc"
+	read -p "Press ENTER when ready"
+	touch get_config_unittest.cc
+	$(MAKE)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

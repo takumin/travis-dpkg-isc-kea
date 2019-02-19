@@ -10,6 +10,7 @@
 #include <asiolink/io_address.h>
 #include <cc/cfg_to_element.h>
 #include <cc/data.h>
+#include <cc/stamped_element.h>
 #include <cc/user_context.h>
 #include <dhcp/classify.h>
 #include <dhcp/option.h>
@@ -45,7 +46,9 @@ typedef std::vector<isc::asiolink::IOAddress> IOAddressList;
 /// class provides an abstract interface that must be implemented by derived
 /// classes and, where appropriate, implements common methods used by the
 /// derived classes.
-class Network : public virtual UserContext, public data::CfgToElement {
+class Network : public virtual isc::data::StampedElement,
+                public virtual isc::data::UserContext,
+                public isc::data::CfgToElement {
 public:
     /// @brief Holds optional information about relay.
     ///
@@ -96,11 +99,16 @@ public:
         /// dealing with with addresses that are in pool.
         HR_OUT_OF_POOL,
 
+        /// Only global reservations are allowed. This mode
+        /// instructs AllocEngine to only look at global reservations.
+        HR_GLOBAL,
+
         /// Both out-of-pool and in-pool reservations are allowed. This is the
         /// most flexible mode, where sysadmin have biggest liberty. However,
         /// there is a non-trivial performance penalty for it, as the
         /// AllocEngine code has to check whether there are reservations, even
         /// when dealing with reservations from within the dynamic pools.
+        /// @todo - should ALL include global?
         HR_ALL
     } HRMode;
 
@@ -360,7 +368,7 @@ public:
 
     /// @brief Constructor.
     Network4()
-        : Network(), match_client_id_(true) {
+        : Network(), match_client_id_(true), authoritative_(false) {
     }
 
     /// @brief Returns the flag indicating if the client identifiers should
@@ -380,6 +388,24 @@ public:
         match_client_id_ = match;
     }
 
+    /// @brief Returns the flag indicating if requests for unknown IP addresses
+    /// should be rejected with DHCPNAK instead of ignored.
+    ///
+    /// @return true if requests for unknown IP addresses should be rejected,
+    /// false otherwise.
+    bool getAuthoritative() const {
+        return (authoritative_);
+    }
+
+    /// @brief Sets the flag indicating if requests for unknown IP addresses
+    /// should be rejected with DHCPNAK instead of ignored.
+    ///
+    /// @param authoritative If this value is true, the requests for unknown IP
+    /// addresses will be rejected with DHCPNAK messages
+    void setAuthoritative(const bool authoritative) {
+        authoritative_ = authoritative;
+    }
+
     /// @brief Unparses network object.
     ///
     /// @return A pointer to unparsed network configuration.
@@ -396,6 +422,9 @@ private:
     /// @brief Should server use client identifiers for client lease
     /// lookup.
     bool match_client_id_;
+
+    /// @brief Should requests for unknown IP addresses be rejected.
+    bool authoritative_;
 };
 
 /// @brief Specialization of the @ref Network object for DHCPv6 case.

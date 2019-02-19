@@ -146,7 +146,8 @@ libkea_cc_la_DEPENDENCIES =  \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
 	$(am__DEPENDENCIES_1)
 am_libkea_cc_la_OBJECTS = data.lo command_interpreter.lo json_feed.lo \
-	simple_parser.lo user_context.lo
+	simple_parser.lo stamped_element.lo stamped_value.lo \
+	user_context.lo
 libkea_cc_la_OBJECTS = $(am_libkea_cc_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -326,6 +327,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -349,6 +351,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -401,6 +404,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -474,13 +480,14 @@ lib_LTLIBRARIES = libkea-cc.la
 libkea_cc_la_SOURCES = data.cc data.h cfg_to_element.h \
 	dhcp_config_error.h command_interpreter.cc \
 	command_interpreter.h json_feed.cc json_feed.h \
-	simple_parser.cc simple_parser.h user_context.cc \
-	user_context.h
+	simple_parser.cc simple_parser.h stamped_element.cc \
+	stamped_element.h stamped_value.cc stamped_value.h \
+	user_context.cc user_context.h
 libkea_cc_la_LIBADD = $(top_builddir)/src/lib/util/libkea-util.la \
 	$(top_builddir)/src/lib/asiolink/libkea-asiolink.la \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
 	$(BOOST_LIBS)
-libkea_cc_la_LDFLAGS = -no-undefined -version-info 5:0:0
+libkea_cc_la_LDFLAGS = -no-undefined -version-info 7:0:0
 
 # Specify the headers for copying into the installation directory tree.
 libkea_cc_includedir = $(pkgincludedir)/cc
@@ -491,6 +498,8 @@ libkea_cc_include_HEADERS = \
 	dhcp_config_error.h \
 	json_feed.h \
 	simple_parser.h \
+	stamped_element.h \
+	stamped_value.h \
 	user_context.h
 
 EXTRA_DIST = cc.dox
@@ -577,6 +586,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/data.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/json_feed.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_parser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stamped_element.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stamped_value.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/user_context.Plo@am__quote@
 
 .cc.o:

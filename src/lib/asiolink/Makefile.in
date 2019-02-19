@@ -143,7 +143,8 @@ am__DEPENDENCIES_1 =
 libkea_asiolink_la_DEPENDENCIES =  \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
 	$(am__DEPENDENCIES_1)
-am_libkea_asiolink_la_OBJECTS = libkea_asiolink_la-interval_timer.lo \
+am_libkea_asiolink_la_OBJECTS = libkea_asiolink_la-addr_utilities.lo \
+	libkea_asiolink_la-interval_timer.lo \
 	libkea_asiolink_la-io_address.lo \
 	libkea_asiolink_la-io_endpoint.lo \
 	libkea_asiolink_la-io_service.lo \
@@ -329,6 +330,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -352,6 +354,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -404,6 +407,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -481,8 +487,9 @@ CLEANFILES = *.gcno *.gcda
 # gcc's unused-parameter warning, which would make the build fail
 # with -Werror (our default setting).
 lib_LTLIBRARIES = libkea-asiolink.la
-libkea_asiolink_la_LDFLAGS = -no-undefined -version-info 6:1:0
-libkea_asiolink_la_SOURCES = asiolink.h asio_wrapper.h dummy_io_cb.h \
+libkea_asiolink_la_LDFLAGS = -no-undefined -version-info 7:0:0
+libkea_asiolink_la_SOURCES = asiolink.h asio_wrapper.h \
+	addr_utilities.cc addr_utilities.h dummy_io_cb.h \
 	interval_timer.cc interval_timer.h io_acceptor.h io_address.cc \
 	io_address.h io_asio_socket.h io_endpoint.cc io_endpoint.h \
 	io_error.h io_service.h io_service.cc io_socket.h io_socket.cc \
@@ -501,6 +508,7 @@ libkea_asiolink_la_LIBADD =  \
 # Specify the headers for copying into the installation directory tree.
 libkea_asiolink_includedir = $(pkgincludedir)/asiolink
 libkea_asiolink_include_HEADERS = \
+	addr_utilities.h \
 	asio_wrapper.h \
 	asiolink.h \
 	dummy_io_cb.h \
@@ -599,6 +607,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_asiolink_la-addr_utilities.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_asiolink_la-interval_timer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_asiolink_la-io_address.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_asiolink_la-io_endpoint.Plo@am__quote@
@@ -626,6 +635,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
+libkea_asiolink_la-addr_utilities.lo: addr_utilities.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_asiolink_la_CPPFLAGS) $(CPPFLAGS) $(libkea_asiolink_la_CXXFLAGS) $(CXXFLAGS) -MT libkea_asiolink_la-addr_utilities.lo -MD -MP -MF $(DEPDIR)/libkea_asiolink_la-addr_utilities.Tpo -c -o libkea_asiolink_la-addr_utilities.lo `test -f 'addr_utilities.cc' || echo '$(srcdir)/'`addr_utilities.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkea_asiolink_la-addr_utilities.Tpo $(DEPDIR)/libkea_asiolink_la-addr_utilities.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='addr_utilities.cc' object='libkea_asiolink_la-addr_utilities.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_asiolink_la_CPPFLAGS) $(CPPFLAGS) $(libkea_asiolink_la_CXXFLAGS) $(CXXFLAGS) -c -o libkea_asiolink_la-addr_utilities.lo `test -f 'addr_utilities.cc' || echo '$(srcdir)/'`addr_utilities.cc
 
 libkea_asiolink_la-interval_timer.lo: interval_timer.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_asiolink_la_CPPFLAGS) $(CPPFLAGS) $(libkea_asiolink_la_CXXFLAGS) $(CXXFLAGS) -MT libkea_asiolink_la-interval_timer.lo -MD -MP -MF $(DEPDIR)/libkea_asiolink_la-interval_timer.Tpo -c -o libkea_asiolink_la-interval_timer.lo `test -f 'interval_timer.cc' || echo '$(srcdir)/'`interval_timer.cc

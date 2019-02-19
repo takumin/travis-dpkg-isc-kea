@@ -123,7 +123,7 @@ am__libdhcptest_la_SOURCES_DIST = iface_mgr_test_config.cc \
 	iface_mgr_test_config.h pkt_filter_test_stub.cc \
 	pkt_filter_test_stub.h pkt_filter6_test_stub.cc \
 	pkt_filter6_test_stub.h pkt_captures4.cc pkt_captures6.cc \
-	pkt_captures.h
+	pkt_captures.h packet_queue_testutils.h
 @HAVE_GTEST_TRUE@am_libdhcptest_la_OBJECTS =  \
 @HAVE_GTEST_TRUE@	libdhcptest_la-iface_mgr_test_config.lo \
 @HAVE_GTEST_TRUE@	libdhcptest_la-pkt_filter_test_stub.lo \
@@ -150,24 +150,27 @@ am__libdhcp___unittests_SOURCES_DIST = run_unittests.cc \
 	libdhcp++_unittest.cc opaque_data_tuple_unittest.cc \
 	option4_addrlst_unittest.cc option4_client_fqdn_unittest.cc \
 	option6_addrlst_unittest.cc option6_client_fqdn_unittest.cc \
-	option6_ia_unittest.cc option6_iaaddr_unittest.cc \
-	option6_iaprefix_unittest.cc option6_pdexclude_unittest.cc \
-	option6_status_code_unittest.cc option_int_unittest.cc \
-	option_int_array_unittest.cc option_data_types_unittest.cc \
-	option_definition_unittest.cc option_copy_unittest.cc \
-	option_custom_unittest.cc \
+	option6_auth_unittest.cc option6_ia_unittest.cc \
+	option6_iaaddr_unittest.cc option6_iaprefix_unittest.cc \
+	option6_pdexclude_unittest.cc option6_status_code_unittest.cc \
+	option_int_unittest.cc option_int_array_unittest.cc \
+	option_data_types_unittest.cc option_definition_unittest.cc \
+	option_copy_unittest.cc option_custom_unittest.cc \
 	option_opaque_data_tuples_unittest.cc option_unittest.cc \
 	option_space_unittest.cc option_string_unittest.cc \
 	option_vendor_unittest.cc option_vendor_class_unittest.cc \
 	pkt_captures4.cc pkt_captures6.cc pkt_captures.h \
-	pkt4_unittest.cc pkt6_unittest.cc pkt4o6_unittest.cc \
-	pkt_filter_unittest.cc pkt_filter_inet_unittest.cc \
-	pkt_filter_inet6_unittest.cc pkt_filter_test_stub.cc \
-	pkt_filter_test_stub.h pkt_filter6_test_stub.cc \
-	pkt_filter_test_utils.h pkt_filter_test_utils.cc \
-	pkt_filter6_test_utils.h pkt_filter6_test_utils.cc \
-	pkt_filter_lpf_unittest.cc pkt_filter_bpf_unittest.cc \
-	protocol_util_unittest.cc duid_unittest.cc
+	packet_queue4_unittest.cc packet_queue6_unittest.cc \
+	packet_queue_mgr4_unittest.cc packet_queue_mgr6_unittest.cc \
+	packet_queue_testutils.h pkt4_unittest.cc pkt6_unittest.cc \
+	pkt4o6_unittest.cc pkt_filter_unittest.cc \
+	pkt_filter_inet_unittest.cc pkt_filter_inet6_unittest.cc \
+	pkt_filter_test_stub.cc pkt_filter_test_stub.h \
+	pkt_filter6_test_stub.cc pkt_filter_test_utils.h \
+	pkt_filter_test_utils.cc pkt_filter6_test_utils.h \
+	pkt_filter6_test_utils.cc pkt_filter_lpf_unittest.cc \
+	pkt_filter_bpf_unittest.cc protocol_util_unittest.cc \
+	duid_unittest.cc
 @HAVE_GTEST_TRUE@@OS_LINUX_TRUE@am__objects_1 = libdhcp___unittests-pkt_filter_lpf_unittest.$(OBJEXT)
 @HAVE_GTEST_TRUE@@OS_BSD_TRUE@am__objects_2 = libdhcp___unittests-pkt_filter_bpf_unittest.$(OBJEXT)
 @HAVE_GTEST_TRUE@am_libdhcp___unittests_OBJECTS =  \
@@ -183,6 +186,7 @@ am__libdhcp___unittests_SOURCES_DIST = run_unittests.cc \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option4_client_fqdn_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option6_addrlst_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option6_client_fqdn_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	libdhcp___unittests-option6_auth_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option6_ia_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option6_iaaddr_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option6_iaprefix_unittest.$(OBJEXT) \
@@ -202,6 +206,10 @@ am__libdhcp___unittests_SOURCES_DIST = run_unittests.cc \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-option_vendor_class_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-pkt_captures4.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-pkt_captures6.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	libdhcp___unittests-packet_queue4_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	libdhcp___unittests-packet_queue6_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	libdhcp___unittests-packet_queue_mgr4_unittest.$(OBJEXT) \
+@HAVE_GTEST_TRUE@	libdhcp___unittests-packet_queue_mgr6_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-pkt4_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-pkt6_unittest.$(OBJEXT) \
 @HAVE_GTEST_TRUE@	libdhcp___unittests-pkt4o6_unittest.$(OBJEXT) \
@@ -427,6 +435,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -450,6 +459,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -502,6 +512,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -593,7 +606,8 @@ TESTS_ENVIRONMENT = \
 @HAVE_GTEST_TRUE@	pkt_filter_test_stub.h \
 @HAVE_GTEST_TRUE@	pkt_filter6_test_stub.cc \
 @HAVE_GTEST_TRUE@	pkt_filter6_test_stub.h pkt_captures4.cc \
-@HAVE_GTEST_TRUE@	pkt_captures6.cc pkt_captures.h
+@HAVE_GTEST_TRUE@	pkt_captures6.cc pkt_captures.h \
+@HAVE_GTEST_TRUE@	packet_queue_testutils.h
 @HAVE_GTEST_TRUE@libdhcptest_la_CXXFLAGS = $(AM_CXXFLAGS)
 @HAVE_GTEST_TRUE@libdhcptest_la_CPPFLAGS = $(AM_CPPFLAGS)
 @HAVE_GTEST_TRUE@libdhcptest_la_LDFLAGS = $(AM_LDFLAGS)
@@ -608,6 +622,7 @@ TESTS_ENVIRONMENT = \
 @HAVE_GTEST_TRUE@	option4_client_fqdn_unittest.cc \
 @HAVE_GTEST_TRUE@	option6_addrlst_unittest.cc \
 @HAVE_GTEST_TRUE@	option6_client_fqdn_unittest.cc \
+@HAVE_GTEST_TRUE@	option6_auth_unittest.cc \
 @HAVE_GTEST_TRUE@	option6_ia_unittest.cc \
 @HAVE_GTEST_TRUE@	option6_iaaddr_unittest.cc \
 @HAVE_GTEST_TRUE@	option6_iaprefix_unittest.cc \
@@ -625,7 +640,11 @@ TESTS_ENVIRONMENT = \
 @HAVE_GTEST_TRUE@	option_vendor_unittest.cc \
 @HAVE_GTEST_TRUE@	option_vendor_class_unittest.cc \
 @HAVE_GTEST_TRUE@	pkt_captures4.cc pkt_captures6.cc \
-@HAVE_GTEST_TRUE@	pkt_captures.h pkt4_unittest.cc \
+@HAVE_GTEST_TRUE@	pkt_captures.h packet_queue4_unittest.cc \
+@HAVE_GTEST_TRUE@	packet_queue6_unittest.cc \
+@HAVE_GTEST_TRUE@	packet_queue_mgr4_unittest.cc \
+@HAVE_GTEST_TRUE@	packet_queue_mgr6_unittest.cc \
+@HAVE_GTEST_TRUE@	packet_queue_testutils.h pkt4_unittest.cc \
 @HAVE_GTEST_TRUE@	pkt6_unittest.cc pkt4o6_unittest.cc \
 @HAVE_GTEST_TRUE@	pkt_filter_unittest.cc \
 @HAVE_GTEST_TRUE@	pkt_filter_inet_unittest.cc \
@@ -734,6 +753,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option4_addrlst_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option4_client_fqdn_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option6_addrlst_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option6_auth_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option6_client_fqdn_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option6_ia_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option6_iaaddr_unittest.Po@am__quote@
@@ -752,6 +772,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option_vendor_class_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-option_vendor_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-packet_queue4_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-packet_queue6_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-packet_queue_mgr4_unittest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-packet_queue_mgr6_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-pkt4_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-pkt4o6_unittest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdhcp___unittests-pkt6_unittest.Po@am__quote@
@@ -997,6 +1021,20 @@ libdhcp___unittests-option6_client_fqdn_unittest.obj: option6_client_fqdn_unitte
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='option6_client_fqdn_unittest.cc' object='libdhcp___unittests-option6_client_fqdn_unittest.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-option6_client_fqdn_unittest.obj `if test -f 'option6_client_fqdn_unittest.cc'; then $(CYGPATH_W) 'option6_client_fqdn_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/option6_client_fqdn_unittest.cc'; fi`
+
+libdhcp___unittests-option6_auth_unittest.o: option6_auth_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-option6_auth_unittest.o -MD -MP -MF $(DEPDIR)/libdhcp___unittests-option6_auth_unittest.Tpo -c -o libdhcp___unittests-option6_auth_unittest.o `test -f 'option6_auth_unittest.cc' || echo '$(srcdir)/'`option6_auth_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-option6_auth_unittest.Tpo $(DEPDIR)/libdhcp___unittests-option6_auth_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='option6_auth_unittest.cc' object='libdhcp___unittests-option6_auth_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-option6_auth_unittest.o `test -f 'option6_auth_unittest.cc' || echo '$(srcdir)/'`option6_auth_unittest.cc
+
+libdhcp___unittests-option6_auth_unittest.obj: option6_auth_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-option6_auth_unittest.obj -MD -MP -MF $(DEPDIR)/libdhcp___unittests-option6_auth_unittest.Tpo -c -o libdhcp___unittests-option6_auth_unittest.obj `if test -f 'option6_auth_unittest.cc'; then $(CYGPATH_W) 'option6_auth_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/option6_auth_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-option6_auth_unittest.Tpo $(DEPDIR)/libdhcp___unittests-option6_auth_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='option6_auth_unittest.cc' object='libdhcp___unittests-option6_auth_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-option6_auth_unittest.obj `if test -f 'option6_auth_unittest.cc'; then $(CYGPATH_W) 'option6_auth_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/option6_auth_unittest.cc'; fi`
 
 libdhcp___unittests-option6_ia_unittest.o: option6_ia_unittest.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-option6_ia_unittest.o -MD -MP -MF $(DEPDIR)/libdhcp___unittests-option6_ia_unittest.Tpo -c -o libdhcp___unittests-option6_ia_unittest.o `test -f 'option6_ia_unittest.cc' || echo '$(srcdir)/'`option6_ia_unittest.cc
@@ -1263,6 +1301,62 @@ libdhcp___unittests-pkt_captures6.obj: pkt_captures6.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pkt_captures6.cc' object='libdhcp___unittests-pkt_captures6.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-pkt_captures6.obj `if test -f 'pkt_captures6.cc'; then $(CYGPATH_W) 'pkt_captures6.cc'; else $(CYGPATH_W) '$(srcdir)/pkt_captures6.cc'; fi`
+
+libdhcp___unittests-packet_queue4_unittest.o: packet_queue4_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-packet_queue4_unittest.o -MD -MP -MF $(DEPDIR)/libdhcp___unittests-packet_queue4_unittest.Tpo -c -o libdhcp___unittests-packet_queue4_unittest.o `test -f 'packet_queue4_unittest.cc' || echo '$(srcdir)/'`packet_queue4_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-packet_queue4_unittest.Tpo $(DEPDIR)/libdhcp___unittests-packet_queue4_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='packet_queue4_unittest.cc' object='libdhcp___unittests-packet_queue4_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-packet_queue4_unittest.o `test -f 'packet_queue4_unittest.cc' || echo '$(srcdir)/'`packet_queue4_unittest.cc
+
+libdhcp___unittests-packet_queue4_unittest.obj: packet_queue4_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-packet_queue4_unittest.obj -MD -MP -MF $(DEPDIR)/libdhcp___unittests-packet_queue4_unittest.Tpo -c -o libdhcp___unittests-packet_queue4_unittest.obj `if test -f 'packet_queue4_unittest.cc'; then $(CYGPATH_W) 'packet_queue4_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/packet_queue4_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-packet_queue4_unittest.Tpo $(DEPDIR)/libdhcp___unittests-packet_queue4_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='packet_queue4_unittest.cc' object='libdhcp___unittests-packet_queue4_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-packet_queue4_unittest.obj `if test -f 'packet_queue4_unittest.cc'; then $(CYGPATH_W) 'packet_queue4_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/packet_queue4_unittest.cc'; fi`
+
+libdhcp___unittests-packet_queue6_unittest.o: packet_queue6_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-packet_queue6_unittest.o -MD -MP -MF $(DEPDIR)/libdhcp___unittests-packet_queue6_unittest.Tpo -c -o libdhcp___unittests-packet_queue6_unittest.o `test -f 'packet_queue6_unittest.cc' || echo '$(srcdir)/'`packet_queue6_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-packet_queue6_unittest.Tpo $(DEPDIR)/libdhcp___unittests-packet_queue6_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='packet_queue6_unittest.cc' object='libdhcp___unittests-packet_queue6_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-packet_queue6_unittest.o `test -f 'packet_queue6_unittest.cc' || echo '$(srcdir)/'`packet_queue6_unittest.cc
+
+libdhcp___unittests-packet_queue6_unittest.obj: packet_queue6_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-packet_queue6_unittest.obj -MD -MP -MF $(DEPDIR)/libdhcp___unittests-packet_queue6_unittest.Tpo -c -o libdhcp___unittests-packet_queue6_unittest.obj `if test -f 'packet_queue6_unittest.cc'; then $(CYGPATH_W) 'packet_queue6_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/packet_queue6_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-packet_queue6_unittest.Tpo $(DEPDIR)/libdhcp___unittests-packet_queue6_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='packet_queue6_unittest.cc' object='libdhcp___unittests-packet_queue6_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-packet_queue6_unittest.obj `if test -f 'packet_queue6_unittest.cc'; then $(CYGPATH_W) 'packet_queue6_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/packet_queue6_unittest.cc'; fi`
+
+libdhcp___unittests-packet_queue_mgr4_unittest.o: packet_queue_mgr4_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-packet_queue_mgr4_unittest.o -MD -MP -MF $(DEPDIR)/libdhcp___unittests-packet_queue_mgr4_unittest.Tpo -c -o libdhcp___unittests-packet_queue_mgr4_unittest.o `test -f 'packet_queue_mgr4_unittest.cc' || echo '$(srcdir)/'`packet_queue_mgr4_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-packet_queue_mgr4_unittest.Tpo $(DEPDIR)/libdhcp___unittests-packet_queue_mgr4_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='packet_queue_mgr4_unittest.cc' object='libdhcp___unittests-packet_queue_mgr4_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-packet_queue_mgr4_unittest.o `test -f 'packet_queue_mgr4_unittest.cc' || echo '$(srcdir)/'`packet_queue_mgr4_unittest.cc
+
+libdhcp___unittests-packet_queue_mgr4_unittest.obj: packet_queue_mgr4_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-packet_queue_mgr4_unittest.obj -MD -MP -MF $(DEPDIR)/libdhcp___unittests-packet_queue_mgr4_unittest.Tpo -c -o libdhcp___unittests-packet_queue_mgr4_unittest.obj `if test -f 'packet_queue_mgr4_unittest.cc'; then $(CYGPATH_W) 'packet_queue_mgr4_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/packet_queue_mgr4_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-packet_queue_mgr4_unittest.Tpo $(DEPDIR)/libdhcp___unittests-packet_queue_mgr4_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='packet_queue_mgr4_unittest.cc' object='libdhcp___unittests-packet_queue_mgr4_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-packet_queue_mgr4_unittest.obj `if test -f 'packet_queue_mgr4_unittest.cc'; then $(CYGPATH_W) 'packet_queue_mgr4_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/packet_queue_mgr4_unittest.cc'; fi`
+
+libdhcp___unittests-packet_queue_mgr6_unittest.o: packet_queue_mgr6_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-packet_queue_mgr6_unittest.o -MD -MP -MF $(DEPDIR)/libdhcp___unittests-packet_queue_mgr6_unittest.Tpo -c -o libdhcp___unittests-packet_queue_mgr6_unittest.o `test -f 'packet_queue_mgr6_unittest.cc' || echo '$(srcdir)/'`packet_queue_mgr6_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-packet_queue_mgr6_unittest.Tpo $(DEPDIR)/libdhcp___unittests-packet_queue_mgr6_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='packet_queue_mgr6_unittest.cc' object='libdhcp___unittests-packet_queue_mgr6_unittest.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-packet_queue_mgr6_unittest.o `test -f 'packet_queue_mgr6_unittest.cc' || echo '$(srcdir)/'`packet_queue_mgr6_unittest.cc
+
+libdhcp___unittests-packet_queue_mgr6_unittest.obj: packet_queue_mgr6_unittest.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-packet_queue_mgr6_unittest.obj -MD -MP -MF $(DEPDIR)/libdhcp___unittests-packet_queue_mgr6_unittest.Tpo -c -o libdhcp___unittests-packet_queue_mgr6_unittest.obj `if test -f 'packet_queue_mgr6_unittest.cc'; then $(CYGPATH_W) 'packet_queue_mgr6_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/packet_queue_mgr6_unittest.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdhcp___unittests-packet_queue_mgr6_unittest.Tpo $(DEPDIR)/libdhcp___unittests-packet_queue_mgr6_unittest.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='packet_queue_mgr6_unittest.cc' object='libdhcp___unittests-packet_queue_mgr6_unittest.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -c -o libdhcp___unittests-packet_queue_mgr6_unittest.obj `if test -f 'packet_queue_mgr6_unittest.cc'; then $(CYGPATH_W) 'packet_queue_mgr6_unittest.cc'; else $(CYGPATH_W) '$(srcdir)/packet_queue_mgr6_unittest.cc'; fi`
 
 libdhcp___unittests-pkt4_unittest.o: pkt4_unittest.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdhcp___unittests_CPPFLAGS) $(CPPFLAGS) $(libdhcp___unittests_CXXFLAGS) $(CXXFLAGS) -MT libdhcp___unittests-pkt4_unittest.o -MD -MP -MF $(DEPDIR)/libdhcp___unittests-pkt4_unittest.Tpo -c -o libdhcp___unittests-pkt4_unittest.o `test -f 'pkt4_unittest.cc' || echo '$(srcdir)/'`pkt4_unittest.cc

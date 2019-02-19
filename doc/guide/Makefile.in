@@ -207,6 +207,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -230,6 +231,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -282,6 +284,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -356,9 +361,11 @@ dist_html_DATA = $(HTMLDOCS) kea-guide.css kea-logo-100x70.png
 DOCBOOK = kea-guide.xml intro.xml quickstart.xml install.xml admin.xml \
 	config.xml keactrl.xml dhcp4-srv.xml dhcp6-srv.xml \
 	lease-expiration.xml logging.xml ddns.xml hooks.xml \
-	hooks-ha.xml hooks-host-cache.xml hooks-radius.xml \
-	hooks-stat-cmds.xml libdhcp.xml lfc.xml stats.xml \
-	ctrl-channel.xml faq.xml classify.xml shell.xml agent.xml
+	hooks-class-cmds.xml hooks-ha.xml hooks-host-cache.xml \
+	hooks-lease-cmds.xml hooks-radius.xml hooks-stat-cmds.xml \
+	libdhcp.xml lfc.xml stats.xml ctrl-channel.xml classify.xml \
+	shell.xml agent.xml netconf.xml api.xml \
+	congestion-handling.xml
 EXTRA_DIST = $(DOCBOOK)
 DISTCLEANFILES = $(HTMLDOCS) $(DOCS) kea-messages.xml
 @HAVE_DBLATEX_TRUE@CLEANFILES = kea-guide.pdf kea-messages.pdf

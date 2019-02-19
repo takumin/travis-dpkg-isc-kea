@@ -152,10 +152,10 @@ libkea_eval_la_DEPENDENCIES =  \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
-am_libkea_eval_la_OBJECTS = libkea_eval_la-eval_log.lo \
-	libkea_eval_la-evaluate.lo libkea_eval_la-token.lo \
-	libkea_eval_la-parser.lo libkea_eval_la-lexer.lo \
-	libkea_eval_la-eval_context.lo
+am_libkea_eval_la_OBJECTS = libkea_eval_la-dependency.lo \
+	libkea_eval_la-eval_log.lo libkea_eval_la-evaluate.lo \
+	libkea_eval_la-token.lo libkea_eval_la-parser.lo \
+	libkea_eval_la-lexer.lo libkea_eval_la-eval_context.lo
 nodist_libkea_eval_la_OBJECTS = libkea_eval_la-eval_messages.lo
 libkea_eval_la_OBJECTS = $(am_libkea_eval_la_OBJECTS) \
 	$(nodist_libkea_eval_la_OBJECTS)
@@ -338,6 +338,7 @@ DISTCHECK_GTEST_CONFIGURE_FLAG = @DISTCHECK_GTEST_CONFIGURE_FLAG@
 DISTCHECK_KEA_SHELL_CONFIGURE_FLAG = @DISTCHECK_KEA_SHELL_CONFIGURE_FLAG@
 DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG = @DISTCHECK_LOG4CPLUS_CONFIGURE_FLAG@
 DISTCHECK_PREMIUM_CONFIGURE_FLAG = @DISTCHECK_PREMIUM_CONFIGURE_FLAG@
+DISTCHECK_SYSREPO_CONFIGURE_FLAG = @DISTCHECK_SYSREPO_CONFIGURE_FLAG@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -361,6 +362,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KEA_CXXFLAGS = @KEA_CXXFLAGS@
+KEA_SRCID = @KEA_SRCID@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -413,6 +415,9 @@ SEP = @SEP@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SYSREPO_CPPFLAGS = @SYSREPO_CPPFLAGS@
+SYSREPO_LIBS = @SYSREPO_LIBS@
+SYSREPO_REPO = @SYSREPO_REPO@
 USE_LCOV = @USE_LCOV@
 VALGRIND = @VALGRIND@
 VERSION = @VERSION@
@@ -489,10 +494,10 @@ AM_CPPFLAGS = -I$(top_builddir)/src/lib -I$(top_srcdir)/src/lib \
 # Disabling the strict aliasing rule suppresses this warning.
 AM_CXXFLAGS = $(KEA_CXXFLAGS) $(WARNING_GCC_44_STRICT_ALIASING_CFLAG)
 lib_LTLIBRARIES = libkea-eval.la
-libkea_eval_la_SOURCES = eval_log.cc eval_log.h evaluate.cc evaluate.h \
-	token.cc token.h parser.cc parser.h lexer.cc location.hh \
-	position.hh stack.hh eval_context.cc eval_context.h \
-	eval_context_decl.h
+libkea_eval_la_SOURCES = dependency.cc dependency.h eval_log.cc \
+	eval_log.h evaluate.cc evaluate.h token.cc token.h parser.cc \
+	parser.h lexer.cc location.hh position.hh stack.hh \
+	eval_context.cc eval_context.h eval_context_decl.h
 nodist_libkea_eval_la_SOURCES = eval_messages.h eval_messages.cc
 libkea_eval_la_CXXFLAGS = $(AM_CXXFLAGS)
 libkea_eval_la_CPPFLAGS = $(AM_CPPFLAGS)
@@ -506,7 +511,7 @@ libkea_eval_la_LIBADD = $(top_builddir)/src/lib/dhcp/libkea-dhcp++.la \
 	$(top_builddir)/src/lib/util/libkea-util.la \
 	$(top_builddir)/src/lib/exceptions/libkea-exceptions.la \
 	$(LOG4CPLUS_LIBS) $(CRYPTO_LIBS) $(BOOST_LIBS)
-libkea_eval_la_LDFLAGS = -no-undefined -version-info 7:1:0 \
+libkea_eval_la_LDFLAGS = -no-undefined -version-info 10:0:0 \
 	$(CRYPTO_LDFLAGS)
 EXTRA_DIST = eval.dox eval_messages.mes lexer.ll parser.yy
 
@@ -523,6 +528,7 @@ CLEANFILES = eval_messages.h eval_messages.cc s-messages
 # Specify the headers for copying into the installation directory tree.
 libkea_eval_includedir = $(pkgincludedir)/eval
 libkea_eval_include_HEADERS = \
+	dependency.h \
 	eval_context.h \
 	eval_context_decl.h \
 	eval_log.h \
@@ -609,6 +615,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_eval_la-dependency.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_eval_la-eval_context.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_eval_la-eval_log.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkea_eval_la-eval_messages.Plo@am__quote@
@@ -637,6 +644,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
+libkea_eval_la-dependency.lo: dependency.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_eval_la_CPPFLAGS) $(CPPFLAGS) $(libkea_eval_la_CXXFLAGS) $(CXXFLAGS) -MT libkea_eval_la-dependency.lo -MD -MP -MF $(DEPDIR)/libkea_eval_la-dependency.Tpo -c -o libkea_eval_la-dependency.lo `test -f 'dependency.cc' || echo '$(srcdir)/'`dependency.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libkea_eval_la-dependency.Tpo $(DEPDIR)/libkea_eval_la-dependency.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dependency.cc' object='libkea_eval_la-dependency.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_eval_la_CPPFLAGS) $(CPPFLAGS) $(libkea_eval_la_CXXFLAGS) $(CXXFLAGS) -c -o libkea_eval_la-dependency.lo `test -f 'dependency.cc' || echo '$(srcdir)/'`dependency.cc
 
 libkea_eval_la-eval_log.lo: eval_log.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkea_eval_la_CPPFLAGS) $(CPPFLAGS) $(libkea_eval_la_CXXFLAGS) $(CXXFLAGS) -MT libkea_eval_la-eval_log.lo -MD -MP -MF $(DEPDIR)/libkea_eval_la-eval_log.Tpo -c -o libkea_eval_la-eval_log.lo `test -f 'eval_log.cc' || echo '$(srcdir)/'`eval_log.cc
