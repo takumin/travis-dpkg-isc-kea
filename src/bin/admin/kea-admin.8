@@ -1,13 +1,13 @@
 '\" t
 .\"     Title: kea-admin
 .\"    Author: 
-.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: June 15, 2018
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: Dec 14, 2018
 .\"    Manual: Kea
-.\"    Source: ISC Kea 1.4.0
+.\"    Source: ISC Kea 1.5.0
 .\"  Language: English
 .\"
-.TH "KEA\-ADMIN" "8" "June 15, 2018" "ISC Kea 1.4.0" "Kea"
+.TH "KEA\-ADMIN" "8" "Dec 14, 2018" "ISC Kea 1.5.0" "Kea"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -31,7 +31,7 @@
 kea-admin \- Shell script for managing Kea databases
 .SH "SYNOPSIS"
 .HP \w'\fBkea\-admin\fR\ 'u
-\fBkea\-admin\fR [command] [backend] [\fB\-u\ \fR\fB\fIdatabase\ username\fR\fR] [\fB\-p\ \fR\fB\fIdatabase\ password\fR\fR] [\fB\-n\ \fR\fB\fIdatabase\ name\fR\fR] [\fB\-d\ \fR\fB\fIscripts\ directory\fR\fR] [\fB\-4\ |\ \-6\fR] [\fB\-o\ \fR\fB\fIoutput\ file\fR\fR]
+\fBkea\-admin\fR [command] [backend] [\fB\-u\ \fR\fB\fIdatabase\ username\fR\fR] [\fB\-p\ \fR\fB\fIdatabase\ password\fR\fR] [\fB\-n\ \fR\fB\fIdatabase\ name\fR\fR] [\fB\-d\ \fR\fB\fIscripts\ directory\fR\fR] [\fB\-4\ |\ \-6\fR] [\fB\-o\ \fR\fB\fIoutput\ file\fR\fR] [\fB\-v\fR]
 .SH "DESCRIPTION"
 .PP
 kea\-admin is a shell script which offers database maintenance\&. In particular, it features database initialization, database version checking and database schema upgrade\&.
@@ -92,6 +92,11 @@ Used for override scripts directory\&. That script is used during upgrades, data
 Required for lease\-dump, Specifies the file to which the lease data will be dumped\&.
 .RE
 .PP
+\fB\-v|\-\-version\fR
+.RS 4
+Prints kea\-admin version and quits\&.
+.RE
+.PP
 \fB\-4\fR
 .RS 4
 Directs kea\-admin to lease\-dump the DHCPv4 leases\&. Incompatible with the \-6 option\&.
@@ -108,6 +113,7 @@ Directs kea\-admin to lease\-dump the DHCPv6 leases\&. Incompatible with the \-4
 \fBkea-dhcp6\fR(8),
 \fBkea-dhcp-ddns\fR(8),
 \fBkea-ctrl-agent\fR(8),
+\fBkea-netconf\fR(8),
 \fBkeactrl\fR(8),
 \fBperfdhcp\fR(8),
 Kea Administrator Guide\&.

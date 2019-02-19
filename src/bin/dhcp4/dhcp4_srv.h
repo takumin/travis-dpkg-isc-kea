@@ -22,7 +22,7 @@
 #include <dhcpsrv/network_state.h>
 #include <dhcpsrv/subnet.h>
 #include <hooks/callout_handle.h>
-#include <dhcpsrv/daemon.h>
+#include <process/daemon.h>
 
 #include <boost/noncopyable.hpp>
 
@@ -191,7 +191,7 @@ typedef boost::shared_ptr<Dhcpv4Exchange> Dhcpv4ExchangePtr;
 /// This class does not support any controlling mechanisms directly.
 /// See the derived \ref ControlledDhcpv4Srv class for support for
 /// command and configuration updates over msgq.
-class Dhcpv4Srv : public Daemon {
+class Dhcpv4Srv : public process::Daemon {
 private:
 
     /// @brief Pointer to IO service used by the server.
@@ -241,7 +241,7 @@ public:
     }
 
     /// @brief returns Kea version on stdout and exit.
-    /// redeclaration/redefinition. @ref Daemon::getVersion()
+    /// redeclaration/redefinition. @ref isc::process::Daemon::getVersion()
     static std::string getVersion(bool extended);
 
     /// @brief Main server processing loop.

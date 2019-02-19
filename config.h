@@ -10,9 +10,6 @@
 /* Check logger messages? */
 /* #undef ENABLE_LOGGER_CHECKS */
 
-/* Extended Kea version */
-#define EXTENDED_VERSION "git 8d6db9371f6785ff6d05648ade95c8bfb90695f8"
-
 /* Does this platform have some undefined pthreads behavior? */
 /* #undef HAS_UNDEFINED_PTHREAD_BEHAVIOR */
 
@@ -81,6 +78,9 @@
 /* PostgreSQL is present */
 /* #undef HAVE_PGSQL */
 
+/* Using sysrepo < 0.7.6 */
+/* #undef HAVE_PRE_0_7_6_SYSREPO */
+
 /* Define to 1 if you have the `pselect' function. */
 #define HAVE_PSELECT 1
 
@@ -92,7 +92,7 @@
 /* #undef HAVE_SRANDOMDEV */
 
 /* Define to 1 if stdbool.h conforms to C99. */
-#define HAVE_STDBOOL_H 1
+/* #undef HAVE_STDBOOL_H */
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -105,6 +105,9 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
+
+/* SYSREPO is present */
+/* #undef HAVE_SYSREPO */
 
 /* Define to 1 if you have the <sys/devpoll.h> header file. */
 /* #undef HAVE_SYS_DEVPOLL_H */
@@ -133,8 +136,7 @@
 /* Define to 1 if the system has the type `_Bool'. */
 /* #undef HAVE__BOOL */
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #define LT_OBJDIR ".libs/"
 
 /* Running on BSD? */
@@ -168,7 +170,7 @@
 #define PACKAGE_NAME "kea"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "kea 1.4.0"
+#define PACKAGE_STRING "kea 1.5.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "kea"
@@ -177,16 +179,19 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.4.0"
+#define PACKAGE_VERSION "1.5.0"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
+
+/* Define to 1 if C++11 regex is usable */
+#define USE_REGEX 1
 
 /* Was Kea statically linked? */
 /* #undef USE_STATIC_LINK */
 
 /* Version number of package */
-#define VERSION "1.4.0"
+#define VERSION "1.5.0"
 
 /* Compile with Botan crypto */
 #define WITH_BOTAN /**/

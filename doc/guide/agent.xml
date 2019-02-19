@@ -75,7 +75,7 @@
             },
             "dhcp6": {
                 "socket-type": "unix",
-                "socket-name": "/path/to/the/unix/socket-v4",
+                "socket-name": "/path/to/the/unix/socket-v6",
                 "user-context": { "version": 3 }
             }
         },
@@ -295,23 +295,6 @@ http {
 
   </section>
 
-  <section xml:id="agent-limitations">
-    <title>Control Agent Limitations</title>
-    <para>
-      Control Agent is a new component, first released in Kea 1.2. In
-      this release it comes with one notable limitation:
-      <itemizedlist>
-        <listitem>
-          <simpara>
-            keactrl hasn't been updated to manage the Control Agent (start, stop
-            reload). As a result, the CA must be started directly as described in
-            <xref linkend="agent-launch"/>
-          </simpara>
-        </listitem>
-      </itemizedlist>
-    </para>
-  </section>
-
   <section xml:id="agent-launch">
     <title>Starting Control Agent</title>
     <para>
@@ -320,6 +303,7 @@ http {
 <screen>
 $ ./kea-ctrl-agent -c /usr/local/etc/kea/kea-ctrl-agent.conf
 </screen>
+      It can be started by keactrl as well (see <xref linkend="keactrl"/>).
     </para>
   </section>
 

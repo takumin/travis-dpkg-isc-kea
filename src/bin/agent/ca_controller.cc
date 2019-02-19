@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Internet Systems Consortium, Inc. ("ISC")
+// Copyright (C) 2016-2018 Internet Systems Consortium, Inc. ("ISC")
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 #include <agent/ca_process.h>
 #include <agent/ca_command_mgr.h>
 #include <agent/parser_context.h>
+#include <boost/bind.hpp>
 
 using namespace isc::process;
 
