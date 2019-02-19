@@ -1,6 +1,6 @@
-isc-kea (1.5.0-1~1.gbp8d2a0f) UNRELEASED; urgency=medium
+isc-kea (1.5.0-1~2.gbp676785) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @8d2a0ffd9197ebcdb704f8502c3f2068999ae59a **
+  ** SNAPSHOT build @676785483ddb0ab6a993e9fffd2d4f9c718a6708 **
 
   [ Yuval Freund ]
   * Fix python dep issue.
@@ -20,8 +20,10 @@ isc-kea (1.5.0-1~1.gbp8d2a0f) UNRELEASED; urgency=medium
   * Update d/watch to use better mangling and https:// URL
   * Update ISC signing key
   * New upstream version 1.5.0
+  * Update changelog for 1.5.0-1~1.gbp8d2a0f release
+  * Bump debhelper compat level to v12
 
- -- Ondřej Surý <ondrej@debian.org>  Tue, 19 Feb 2019 12:33:05 +0000
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 19 Feb 2019 12:37:13 +0000
 
 isc-kea (1.4.0.P1-5) unstable; urgency=medium
 
