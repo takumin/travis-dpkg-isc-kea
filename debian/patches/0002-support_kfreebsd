@@ -3,25 +3,14 @@ Date: Fri, 13 Jul 2018 17:06:51 +0000
 Subject: support_kfreebsd
 
 ---
- configure    | 4 ++--
- configure.ac | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/configure.ac b/configure.ac
+index c880b77..188c512 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -7,7 +7,10 @@
- # For GIT versions, this is x.y.z-git, where x.y.z denotes the software
- # version that was used as a base + changes that were made later, but
- # are not released yet.
--AC_INIT(kea,1.4.0, kea-dev@lists.isc.org)
-+# For patch releases, this is x.y.x-Pn, where x.y.z denotes the release
-+# that was used as the base and n is the patch number. Patchlevel
-+# counts from 1.
-+AC_INIT(kea,1.4.0-P1, kea-dev@lists.isc.org)
- AC_CONFIG_SRCDIR(README)
- 
- # serial-tests is not available in automake version before 1.13, so
-@@ -396,7 +399,7 @@
+@@ -404,7 +404,7 @@ case "$host" in
          [AC_MSG_RESULT([OS X >= 10.9])
           kea_undefined_pthread_behavior=yes])
          ;;
@@ -30,7 +19,7 @@ Subject: support_kfreebsd
          # On FreeBSD10.1 pthread_cond_destroy doesn't work as documented, which
          # causes the CondVarTest.destroyWhileWait test to fail. According to the
          # pthread_cond_destroy documentation for FreeBSD, this function should
-@@ -519,7 +522,7 @@
+@@ -527,7 +527,7 @@ case $host in
        BSD_TYPE="OSX"
        CPPFLAGS="$CPPFLAGS -DOS_BSD"
        ;;
