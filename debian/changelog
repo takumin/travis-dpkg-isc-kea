@@ -1,6 +1,6 @@
-isc-kea (1.4.0.P1-6) UNRELEASED; urgency=medium
+isc-kea (1.5.0-1~1.gbp8d2a0f) UNRELEASED; urgency=medium
 
-  * Non-maintainer upload.
+  ** SNAPSHOT build @8d2a0ffd9197ebcdb704f8502c3f2068999ae59a **
 
   [ Yuval Freund ]
   * Fix python dep issue.
@@ -12,7 +12,16 @@ isc-kea (1.4.0.P1-6) UNRELEASED; urgency=medium
   ** Remove "LogsDirectory" and "LogsDirectoryMode" (they are not
      supported in systemd 232)
 
- -- Badreddin Aboubakr <badreddin.aboubakr@cloud.ionos.com>  Tue, 08 Jan 2019 17:14:15 +0100
+  [ jason.e.guy@gmail.com ]
+  * Added a new patch to fix the kea-admin script.
+  * Fixed the postrm script (Closes: #905421)
+
+  [ Ondřej Surý ]
+  * Update d/watch to use better mangling and https:// URL
+  * Update ISC signing key
+  * New upstream version 1.5.0
+
+ -- Ondřej Surý <ondrej@debian.org>  Tue, 19 Feb 2019 12:33:05 +0000
 
 isc-kea (1.4.0.P1-5) unstable; urgency=medium
 
