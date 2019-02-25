@@ -1,5 +1,5 @@
 [Unit]
-Description=ISC KEA Control Agent
+Description=Kea Control Agent
 Documentation=man:kea-ctrl-agent(8)
 After=network-online.target time-sync.target
 

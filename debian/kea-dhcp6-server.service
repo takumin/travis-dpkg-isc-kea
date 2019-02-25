@@ -1,5 +1,5 @@
 [Unit]
-Description=ISC KEA IPv6 DHCP daemon
+Description=Kea IPv6 DHCP daemon
 Documentation=man:kea-dhcp6(8)
 Wants=network-online.target
 After=network-online.target
