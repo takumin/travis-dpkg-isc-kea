@@ -28,6 +28,7 @@ Vcs-Browser: https://salsa.debian.org/debian/isc-kea
 
 Package: kea-dhcp4-server
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
 Depends: kea-common (= ${binary:Version}),
          lsb-base,
          ${misc:Depends},
@@ -41,6 +42,7 @@ Description: ISC KEA IPv4 DHCP server
 
 Package: kea-dhcp6-server
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
 Depends: kea-common (= ${binary:Version}),
          lsb-base,
          ${misc:Depends},
@@ -54,6 +56,7 @@ Description: ISC KEA IPv6 DHCP server
 
 Package: kea-dhcp-ddns-server
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
 Depends: kea-common (= ${binary:Version}),
          lsb-base,
          ${misc:Depends},
@@ -67,6 +70,7 @@ Description: ISC KEA DHCP Dynamic DNS service
 
 Package: kea-ctrl-agent
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
 Depends: kea-common (= ${binary:Version}),
          lsb-base,
          ${misc:Depends},
