@@ -10,6 +10,9 @@ isc-kea (1.5.0-1) unstable; urgency=medium
     (Closes: #910671)
   * Add the netconf stuff to d/not-installed
   * Greatly simplify d/copyright (Closes: #905214)
+  * Fix dpkg-statoverride usage in maintscripts
+  * Add adduser to kea-common Depends
+  * Add Pre-Depends: ${misc:Pre-Depends} for systemd Pre-Depends
 
   [ Yuval Freund ]
   * Fix python dep issue. (Closes: #905977, #908491)
@@ -25,7 +28,7 @@ isc-kea (1.5.0-1) unstable; urgency=medium
   * Added a new patch to fix the kea-admin script.
   * Fixed the postrm script (Closes: #905421)
 
- -- Ondřej Surý <ondrej@debian.org>  Mon, 25 Feb 2019 10:21:41 +0000
+ -- Ondřej Surý <ondrej@debian.org>  Mon, 25 Feb 2019 10:53:39 +0000
 
 isc-kea (1.4.0.P1-5) unstable; urgency=medium
 
