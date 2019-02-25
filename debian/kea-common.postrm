@@ -7,8 +7,11 @@ set -e
 
 case "$1" in
     purge)
-        dpkg-statoverride --force --remove /var/log/kea
-	dpkg-statoverride --force --remove /var/lib/kea
+	for d in /var/log/kea /var/lib/kea; do
+	    if dpkg-statoverride --list $d >/dev/null 2>&1; then
+		dpkg-statoverride --remove $d
+	    fi
+	done
 
 	deluser --system _kea >/dev/null || /bin/true
     ;;

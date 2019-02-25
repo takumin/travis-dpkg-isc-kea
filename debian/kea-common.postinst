@@ -11,8 +11,11 @@ case "$1" in
            --shell /bin/false --no-create-home --disabled-password --disabled-login \
 	   --gecos "Kea DHCP User" _kea >/dev/null || exit 1
 
-	dpkg-statoverride --force --update --add _kea _kea 0750 /var/log/kea
-	dpkg-statoverride --force --update --add _kea _kea 0750 /var/lib/kea
+	for d in /var/log/kea /var/lib/kea; do
+	    if ! dpkg-statoverride --list $d >/dev/null 2>&1; then
+		dpkg-statoverride --update --add _kea _kea 0750 $d
+	    fi
+	done
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
