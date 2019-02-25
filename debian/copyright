@@ -5,249 +5,60 @@ Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
 License: MPL-2.0
 
 Files: debian/*
-Copyright: 2016-2018, Adam Majer <adamm@zombino.com> / 2017-2018, Jason Guy (jason.e.guy@gmail.com) / 2018-2018, Internet Systems Consortium, Inc.
-License: MPL-2.0
-
-Files: doc/*
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: m4macros/*
-Copyright: 1994-2013, Free Software Foundation, Inc.
-License: MPL-2.0
-
-Files: src/bin/*
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/admin/kea-admin.8
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/admin/tests/data/*
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
+Copyright: 2016-2018, Adam Majer <adamm@zombino.com>
+	   2017-2018, Jason Guy (jason.e.guy@gmail.com)
+	   2018-2019, Internet Systems Consortium, Inc.
 License: MPL-2.0
 
 Files: src/bin/admin/tests/dhcpdb_create_1.0.cql
-Copyright: 2015-2018, Deutsche Telekom AG.
-License: Apache-2.0
-
-Files: src/bin/agent/agent_lexer.cc
-  src/bin/agent/kea-ctrl-agent.8
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/agent/agent_parser.cc
-  src/bin/agent/agent_parser.h
-  src/bin/agent/location.hh
-  src/bin/agent/position.hh
-  src/bin/agent/stack.hh
-Copyright: 2002-2015, Free Software Foundation, Inc.
-License: GPL-3+
-
-Files: src/bin/agent/tests/testdata/*
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/d2/d2_lexer.cc
-  src/bin/d2/kea-dhcp-ddns.8
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/d2/d2_parser.cc
-  src/bin/d2/d2_parser.h
-  src/bin/d2/location.hh
-  src/bin/d2/position.hh
-  src/bin/d2/stack.hh
-Copyright: 2002-2015, Free Software Foundation, Inc.
-License: GPL-3+
-
-Files: src/bin/d2/images/*
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/d2/tests/testdata/*
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/d2/tests/testdata/d2_cfg_tests.json
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/dhcp4/dhcp4_lexer.cc
-  src/bin/dhcp4/kea-dhcp4.8
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/dhcp4/dhcp4_parser.cc
-  src/bin/dhcp4/dhcp4_parser.h
-  src/bin/dhcp4/location.hh
-  src/bin/dhcp4/position.hh
-  src/bin/dhcp4/stack.hh
-Copyright: 2002-2015, Free Software Foundation, Inc.
-License: GPL-3+
-
-Files: src/bin/dhcp6/dhcp6_lexer.cc
-  src/bin/dhcp6/kea-dhcp6.8
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/dhcp6/dhcp6_parser.cc
-  src/bin/dhcp6/dhcp6_parser.h
-  src/bin/dhcp6/location.hh
-  src/bin/dhcp6/position.hh
-  src/bin/dhcp6/stack.hh
-Copyright: 2002-2015, Free Software Foundation, Inc.
-License: GPL-3+
-
-Files: src/bin/keactrl/*
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/keactrl/keactrl.xml
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/lfc/kea-lfc.8
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/perfdhcp/perfdhcp.8
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/perfdhcp/tests/testdata/*
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/bin/shell/kea-shell.8
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/hooks/*
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/lib/*
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/lib/config/tests/testdata/*
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/lib/dhcp/dhcp4.h
-Copyright: 2004-2018, Internet Systems Consortium, Inc. ("ISC")
-  1995-2003, Internet Software Consortium
-License: MPL-2.0
-
-Files: src/lib/dhcpsrv/benchmarks/*
-Copyright: 2016-2018, Internet Systems Consortium, Inc. ("ISC")
-  2015-2017, Deutsche Telekom AG.
-License: Apache-2.0
-
-Files: src/lib/dhcpsrv/benchmarks/benchmarks.dox
-  src/lib/dhcpsrv/benchmarks/memfile_lease_mgr_benchmark.cc
-  src/lib/dhcpsrv/benchmarks/parameters.h
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/lib/dhcpsrv/benchmarks/run_benchmarks.cc
-Copyright: 2015-2018, Deutsche Telekom AG.
-License: Apache-2.0
-
-Files: src/lib/dhcpsrv/cql_connection.cc
-  src/lib/dhcpsrv/cql_connection.h
+       src/lib/dhcpsrv/benchmarks/
+       src/lib/dhcpsrv/cql_connection.cc
+       src/lib/dhcpsrv/cql_connection.h
   src/lib/dhcpsrv/cql_exchange.cc
   src/lib/dhcpsrv/cql_exchange.h
   src/lib/dhcpsrv/cql_host_data_source.h
   src/lib/dhcpsrv/cql_lease_mgr.cc
   src/lib/dhcpsrv/cql_lease_mgr.h
   src/lib/dhcpsrv/sql_common.h
-Copyright: 2015-2018, Deutsche Telekom AG.
-License: Apache-2.0
-
-Files: src/lib/dhcpsrv/cql_host_data_source.cc
-Copyright: 2016-2018, Internet Systems Consortium, Inc. ("ISC")
-  2015-2017, Deutsche Telekom AG.
-License: Apache-2.0
-
-Files: src/lib/dhcpsrv/images/*
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/lib/dhcpsrv/tests/cql_connection_unittest.cc
-Copyright: 2017, Deutsche Telekom AG.
-License: MPL-2.0
-
-Files: src/lib/dhcpsrv/tests/cql_host_data_source_unittest.cc
+  src/lib/dhcpsrv/cql_host_data_source.cc
+  src/lib/dhcpsrv/tests/cql_host_data_source_unittest.cc
   src/lib/dhcpsrv/tests/cql_lease_mgr_unittest.cc
-Copyright: 2016-2018, Internet Systems Consortium, Inc. ("ISC")
-  2015-2017, Deutsche Telekom AG.
+  src/share/database/scripts/cql/*
+Copyright: 2015-2018, Deutsche Telekom AG.
+	   2015-2018, Internet Systems Consortium, Inc. ("ISC")
 License: Apache-2.0
 
-Files: src/lib/dns/tests/testdata/*
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/lib/eval/lexer.cc
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/lib/eval/location.hh
+Files: src/bin/agent/agent_parser.cc
+  src/bin/agent/agent_parser.h
+  src/bin/agent/location.hh
+  src/bin/agent/position.hh
+  src/bin/agent/stack.hh
+  src/bin/d2/d2_parser.cc
+  src/bin/d2/d2_parser.h
+  src/bin/d2/location.hh
+  src/bin/d2/position.hh
+  src/bin/d2/stack.hh
+  src/bin/dhcp4/dhcp4_parser.cc
+  src/bin/dhcp4/dhcp4_parser.h
+  src/bin/dhcp4/location.hh
+  src/bin/dhcp4/position.hh
+  src/bin/dhcp4/stack.hh
+  src/bin/dhcp6/dhcp6_parser.cc
+  src/bin/dhcp6/dhcp6_parser.h
+  src/bin/dhcp6/location.hh
+  src/bin/dhcp6/position.hh
+  src/bin/dhcp6/stack.hh
+  src/lib/eval/location.hh
   src/lib/eval/parser.cc
   src/lib/eval/parser.h
   src/lib/eval/position.hh
   src/lib/eval/stack.hh
 Copyright: 2002-2015, Free Software Foundation, Inc.
-License: GPL-3+
-
-Files: src/lib/log/log_messages.cc
-  src/lib/log/log_messages.h
-  src/lib/log/logimpl_messages.cc
-  src/lib/log/logimpl_messages.h
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
+License: GPL-3+-with-bison-exception
 
 Files: src/lib/util/encode/*
 Copyright: 2002, Robert Ramey - http:www.rrsd.com .
 License: BSL-1.0
-
-Files: src/lib/util/encode/base32hex.h
-  src/lib/util/encode/base64.h
-  src/lib/util/encode/base_n.cc
-  src/lib/util/encode/hex.h
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/share/*
-Copyright: 2016-2018, Internet Systems Consortium.
-License: MPL-2.0
-
-Files: src/share/database/scripts/cql/*
-Copyright: 2015-2018, Deutsche Telekom AG.
-License: Apache-2.0
-
-Files: src/share/database/scripts/cql/soft_wipe.cql
-Copyright: 2016-2018, Internet Systems Consortium.
-License: MPL-2.0
-
-Files: src/share/database/scripts/mysql/*
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: src/share/database/scripts/pgsql/dhcpdb_create.pgsql
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: tools/*
-Copyright: 2006-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
-
-Files: tools/cql_config
-  tools/cql_config_defines.sh.sample
-Copyright: 2010-2018, Internet Systems Consortium, Inc. ("ISC")
-License: MPL-2.0
 
 License: Apache-2.0
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -263,11 +74,21 @@ License: Apache-2.0
  On Debian systems, the complete text of the Apache License,
  Version 2.0 can be found in '/usr/share/common-licenses/Apache-2.0'.
 
-License: GPL-3+
+License: GPL-3+-with-bison-exception
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; version 3 dated June, 2007, or (at
  your option) any later version.
+ .
+ As a special exception, you may create a larger work that contains
+ part or all of the Bison parser skeleton and distribute that work
+ under terms of your choice, so long as that work isn't itself a
+ parser generator using the skeleton or a modified version thereof
+ as a parser skeleton.  Alternatively, if you modify or redistribute
+ the parser skeleton itself, you may (at your option) remove this
+ special exception, which will cause the skeleton and the resulting
+ Bison output files to be licensed under the GNU General Public
+ License without this special exception.
  .
  On Debian systems, the complete text of version 3 of the GNU General
  Public License can be found in '/usr/share/common-licenses/GPL-3'.
@@ -601,3 +422,28 @@ License: MPL-2.0
    .
    This Source Code Form is "Incompatible With Secondary Licenses", as
    defined by the Mozilla Public License, v. 2.0.
+
+License: BSL-1.0
+ Boost Software License - Version 1.0 - August 17th, 2003
+ .
+ Permission is hereby granted, free of charge, to any person or organization
+ obtaining a copy of the software and accompanying documentation covered by
+ this license (the "Software") to use, reproduce, display, distribute,
+ execute, and transmit the Software, and to prepare derivative works of the
+ Software, and to permit third-parties to whom the Software is furnished to
+ do so, all subject to the following:
+ .
+ The copyright notices in the Software and this entire statement, including
+ the above license grant, this restriction and the following disclaimer,
+ must be included in all copies of the Software, in whole or in part, and
+ all derivative works of the Software, unless such copies or derivative
+ works are solely in the form of machine-executable object code generated by
+ a source language processor.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
+ SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
+ FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
+ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ DEALINGS IN THE SOFTWARE.
