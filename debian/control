@@ -114,7 +114,8 @@ Description: Development headers for ISC KEA DHCP server
 Package: kea-common
 Architecture: any
 Section: libs
-Depends: ${misc:Depends},
+Depends: adduser,
+         ${misc:Depends},
          ${shlibs:Depends}
 Description: Common libraries for the ISC KEA DHCP server
  KEA is an IPv4 and IPv6 DHCP server developed by Internet Systems Consortium.
