@@ -4,7 +4,11 @@ services:
   - docker
 env:
   global:
+    - TRAVIS_DEBIAN_DERIVATIVE="ubuntu"
     - TRAVIS_DEBIAN_DISTRIBUTION="bionic"
+    - TRAVIS_DEBIAN_COMPONENTS="main restricted universe multiverse"
+    - TRAVIS_DEBIAN_MIRROR="http://us-east-1.ec2.archive.ubuntu.com/ubuntu"
+    - TRAVIS_DEBIAN_SECURITY_UPDATES="true"
 script:
   - wget -O- http://travis.debian.net/script.sh | sh -
 # if:
