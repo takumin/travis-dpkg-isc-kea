@@ -1,11 +1,11 @@
 dist: xenial
 language: minimal
-
 services:
   - docker
-
+env:
+  global:
+    - TRAVIS_DEBIAN_DISTRIBUTION="bionic"
 script:
   - wget -O- http://travis.debian.net/script.sh | sh -
-
 # if:
 #   tag IS blank
