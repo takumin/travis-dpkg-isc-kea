@@ -8,7 +8,7 @@ env:
     - TRAVIS_DEBIAN_DISTRIBUTION="bionic"
     - TRAVIS_DEBIAN_COMPONENTS="main restricted universe multiverse"
     - TRAVIS_DEBIAN_MIRROR="http://us-east-1.ec2.archive.ubuntu.com/ubuntu"
-    - TRAVIS_DEBIAN_TARGET_DIR="/dist"
+    - TRAVIS_DEBIAN_TARGET_DIR="${TRAVIS_BUILD_DIR}/dist"
 script:
   - wget -O- http://travis.debian.net/script.sh | sh -
 deploy:
@@ -17,7 +17,7 @@ deploy:
     secure: "de9yHrbFLbpgQVtjZ3DP/D14s11V2nv9TEY7OoaxpOehyhX39Z3/xd/v+biikI6p1NoN5SKswRBN3yB1zO2otzT65/Avm4jYXw47wWh1otW/28iuURJ5F/kjMjLxwpf6RjHRsR/2z2/GqE1lSK4kEVsASrjGkrIDemqs15gjLDa93AerurC0yOuyP6HVRsSMjO1O8m5kcn24g01hat5iYCklqgNbnk4JwEfe4tKlOvdjob2sppt0gK28wDx9FN8lZChIJIWdYtrEUxfBpLFln+PET5AM/ORtOKTPlxu57P8hJVy1mf5u5d8oEmbsYMUFganVfwg/9vjibZTtVVAPjGiF4RX7c+J7U+Hm4D6LthAuNmej1wQWqR4j8rrma50eKvvhTAD3dc50n5WRr8HawM/4S6PB550V/p3nXMS11me2DI0mRQSFBshf1HZJ2uf+QImHuyd7kyMaNyOw4D0ruZsRonkDfp/T/0R4sb9LHpOUM3o8RIcC+1PCCkTTNB3l8CMFiTABcsKAqV0OQZP9/uwVdFEMUfBaQWn1EPHRm+3ZpwNnc17lYthw9Q7pbY/Ko1WFbnNiOAfV94D0GlVeG1sFEf8D7ubrF6Hvfy+DSP9Ygbi72FaX4rE0LJ0TgL3ZF7VhROiLbvcyEwLfY8MZ98ylyEekw5Rd+gl5IkgTTPY="
   file_glob: true
   file:
-    - "/dist/*"
+    - "${TRAVIS_BUILD_DIR}/dist/*"
   skip_cleanup: true
   on:
     tags: true
